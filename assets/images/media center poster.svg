@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="89" height="89" viewBox="0 0 89 89">
+  <g id="Group_14721" data-name="Group 14721" transform="translate(-782 -508)">
+    <circle id="Ellipse_2913" data-name="Ellipse 2913" cx="44.5" cy="44.5" r="44.5" transform="translate(871 508) rotate(90)" fill="#571300"/>
+    <g id="Group_14714" data-name="Group 14714" transform="translate(-7 -3)">
+      <g id="Group_14710" data-name="Group 14710" transform="translate(813.552 531.402)">
+        <g id="Rectangle_3448" data-name="Rectangle 3448" transform="translate(0.448 -0.402)" fill="none" stroke="#fff" stroke-width="3">
+          <rect width="39" height="49" rx="5" stroke="none"/>
+          <rect x="1.5" y="1.5" width="36" height="46" rx="3.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Group_14713" data-name="Group 14713" transform="translate(819.99 537.429)">
+        <g id="Rectangle_3448-2" data-name="Rectangle 3448" transform="translate(0.01 -0.429)" fill="none" stroke="#fff" stroke-width="3">
+          <rect width="27" height="22" rx="5" stroke="none"/>
+          <rect x="1.5" y="1.5" width="24" height="19" rx="3.5" fill="none"/>
+        </g>
+      </g>
+      <line id="Line_130" data-name="Line 130" x2="24" transform="translate(821.331 563.776)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="3"/>
+      <line id="Line_131" data-name="Line 131" x2="24" transform="translate(821.331 571.776)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="3"/>
+    </g>
+  </g>
+</svg>

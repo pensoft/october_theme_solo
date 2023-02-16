@@ -1,0 +1,27 @@
+title = "Login"
+url = "/login"
+layout = "default"
+is_hidden = 0
+robot_index = "index"
+robot_follow = "follow"
+
+[account]
+redirect = "internal-documents"
+paramCode = "code"
+forceSecure = 0
+requirePassword = 0
+==
+{% if not user %}
+<div class="container" style="padding-right: 10%;">
+    <div class="login_info row start-xs">
+        <div class="login_image aos-init aos-animate" data-aos="fade-up">
+            <img src="{{'login.jpg'|media}}"></div>
+        <div class="logn_form">
+            <p>This is an internal password protected environment for consortium members only.</p>
+            {% partial 'components/account/signin' %}
+        </div>
+    </div>
+</div>
+
+
+{% endif %}

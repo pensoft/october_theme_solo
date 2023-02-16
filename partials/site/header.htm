@@ -1,0 +1,108 @@
+[menu]
+start = "id-1"
+activeNode = 0
+listItemClasses = "nav-item"
+primaryClasses = "navbar-nav"
+secondaryClasses = "dropdown-menu"
+numberOfLevels = 2
+
+[menu login]
+start = "id-9"
+activeNode = 0
+listItemClasses = "item"
+primaryClasses = "nav nav-pills"
+secondaryClasses = "dropdown-menu"
+numberOfLevels = 2
+==
+{% if user %}
+<nav class="fixed navbar-loggedin-user ">
+    <div class="navbar-collapse collapse row middle-xs">
+        <div class="col-xs-12 col-md-9">{% component 'login' %}</div>
+        <div class="col-xs-2 end-xs  col-md-3">
+            {% if user.avatar %}
+            <a href="/profile" class="profile_name"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="{{ user.name }} {{ user.surname }}" src="{{user.avatar.getThumb(30,30, { mode : 'crop' } )}}" style="border-radius: 50%; margin-right:20px;" align="right"> </a>
+            {% else %}
+
+            <a href="/profile" class="profile_name"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="{{ user.name }} {{ user.surname }}" src="{{ 'CMS_icons_avatar_white.svg'|media }}" width="30" height="30" style="margin-right:20px;" align="right"></a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+{% endif %}
+<nav class="navbar fixed pr-1 pl-1" id="headernavbar" {% if user %} style="margin-top:77px;"{% endif %}>
+    <div id="menuToggle">
+        <input type="checkbox" />
+        <span></span>
+        <span></span>
+        <span></span>
+        {% component 'menu' %}
+    </div>
+
+
+    <a href="{{'home'|page}}" class="navbar-brand" id="navbar-brand" style="background-image: url('{{ this.theme.site_logo.getPath() }}'); background-position: center; background-size: contain;"></a>
+
+
+    <div class="navbar-collapse collapse end-xs" id="headerNavbarNav" style="display: none;">
+        {% component 'menu' %}
+        <div id="headerNavbarLogin">
+            <ul class="navbar-nav" style="padding: 0; margin: 0;">
+
+            </ul>
+        </div>
+    </div>
+
+
+    <div id="search" class="search" style="display: none;">
+        <div class="close-search" onclick="hideSearchForm();">&#10006;</div>
+        <form class="input-group align-items-start" action="{{ url('search')}}" method="get">
+            <input class="form-control search_input" name="q" type="text" autocomplete="on" placeholder="Search">
+            <button class="btn btn-link pr p-search big text-grey-search-btn" type="submit"></button>
+        </form>
+    </div>
+
+</nav>
+
+
+
+<div class="container-fluid header_container_background">
+{% if this.theme.header_image and page_id == 'home' %}
+<div class="header-image {{page_id}}">
+
+    <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') top right no-repeat; background-size: contain;"></div>
+    <div class="jumbotron" data-aos="fade-right">
+        {% if page_id != 'home' and page_id != 'search' %}
+        <h1 class="underline white">
+            {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
+        {%endif%}
+        {% if page_id == 'home' and tag_line%}
+        <div class="container">
+            <div class="intro">
+                <div class="logo_main"></div>
+                <p>{{tag_line|raw}}</p>
+                <div class="intro_btn"><a href="{{'about'|page}}">More about the project <i></i> </a> </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+    {% else %}
+    <div class="header-image {{page_id}}">
+        <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:77px;{% endif %}"></div>
+
+        <div class="jumbotron" data-aos="fade-right">
+            <h1 class="underline white">
+                {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
+        </div>
+    </div>
+{% endif %}
+</div>
+
+
+
+
+{% if user %}
+<script>$(document).trigger('profile')</script>
+<script>$(document).trigger('signout')</script>
+{% else %}
+<script>$(document).trigger('signin')</script>
+{% endif %}

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="187" height="303" viewBox="0 0 187 303">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2641" data-name="Rectangle 2641" width="60.745" height="57.736" fill="none" stroke="#fff" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Group_14669" data-name="Group 14669" transform="translate(-590 -468)">
+    <g id="Ellipse_2675" data-name="Ellipse 2675" transform="translate(777 468) rotate(90)" fill="none" stroke="#571300" stroke-width="27" opacity="0.233">
+      <circle cx="93.5" cy="93.5" r="93.5" stroke="none"/>
+      <circle cx="93.5" cy="93.5" r="80" fill="none"/>
+    </g>
+    <circle id="Ellipse_2676" data-name="Ellipse 2676" cx="38.5" cy="38.5" r="38.5" transform="translate(722 694) rotate(90)" fill="#571300" opacity="0.233"/>
+    <circle id="Ellipse_2689" data-name="Ellipse 2689" cx="44.5" cy="44.5" r="44.5" transform="translate(728 517) rotate(90)" fill="#571300"/>
+    <g id="Group_14281" data-name="Group 14281" transform="translate(-433.5 -1748)">
+      <g id="Group_14282" data-name="Group 14282" transform="translate(1086.127 2280.633)">
+        <g id="Group_14281-2" data-name="Group 14281" transform="translate(0 0)" clip-path="url(#clip-path)">
+          <circle id="Ellipse_2692" data-name="Ellipse 2692" cx="3.796" cy="3.796" r="3.796" transform="translate(1.099 39.826)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <circle id="Ellipse_2693" data-name="Ellipse 2693" cx="3.796" cy="3.796" r="3.796" transform="translate(52.053 39.826)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <circle id="Ellipse_2694" data-name="Ellipse 2694" cx="3.796" cy="3.796" r="3.796" transform="translate(25.801 39.822)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <circle id="Ellipse_2695" data-name="Ellipse 2695" cx="3.796" cy="3.796" r="3.796" transform="translate(38.914 30.064)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <circle id="Ellipse_2696" data-name="Ellipse 2696" cx="3.796" cy="3.796" r="3.796" transform="translate(13.031 49.044)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <circle id="Ellipse_2697" data-name="Ellipse 2697" cx="3.796" cy="3.796" r="3.796" transform="translate(13.031 30.064)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <circle id="Ellipse_2698" data-name="Ellipse 2698" cx="3.796" cy="3.796" r="3.796" transform="translate(38.914 49.044)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <line id="Line_24" data-name="Line 24" y1="20.023" transform="translate(29.597 13.258)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <path id="Path_26518" data-name="Path 26518" d="M39.3,25.345c-1.875-8.954,10.222-9.661,13.827-9.67-.015,3.619-.731,15.688-9.671,13.824A5.378,5.378,0,0,1,39.3,25.345Z" transform="translate(-8.776 -3.518)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <line id="Line_25" data-name="Line 25" x1="5.142" y2="4.708" transform="translate(32.196 18.645)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <path id="Path_26519" data-name="Path 26519" d="M33.062,15.25C24.109,17.125,23.4,5.028,23.392,1.423c3.619.015,15.688.731,13.824,9.671A5.378,5.378,0,0,1,33.062,15.25Z" transform="translate(-5.25 -0.319)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+          <line id="Line_26" data-name="Line 26" x2="4.708" y2="5.142" transform="translate(24.63 8.115)" fill="none" stroke="#fff" stroke-miterlimit="10" stroke-width="2.835"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

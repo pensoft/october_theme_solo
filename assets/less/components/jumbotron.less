@@ -1,0 +1,424 @@
+.jumbotron {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+
+    .breakpoint-large-down({
+        padding-top: 95px;
+    });
+}
+
+
+.flip_cards_container{
+    .col-md.col-xs-12{
+        max-width: 20%;
+        .breakpoint-huge-down({
+            max-width: 30%;
+            margin: 0 auto;
+        });
+        .breakpoint-large-down({
+            max-width: 100%;
+            margin: 0 auto;
+        });
+    }
+    /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+    .flip-card {
+        background-color: transparent;
+        width: 290px;
+        max-width: 98%;
+        height: 405px;
+        margin-bottom: 100px;
+        perspective: 1000px; /* Remove this if you don't want the 3D effect */
+        color: @white-color;
+        text-align: center;
+        .breakpoint-large-down({
+            margin: 30px auto;
+        });
+
+    }
+
+    /* This container is needed to position the front and back side */
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+
+    }
+
+    /* Do an horizontal flip when you move the mouse over the flip box container */
+    .flip-card:hover .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    /* Position the front and back side */
+    .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden; /* Safari */
+        backface-visibility: hidden;
+        border-radius: 10px;
+    }
+
+    /* Style the front side (fallback if image is missing) */
+    .flip-card-front {
+        background-color: #183150;
+        p{
+            padding: 30px;
+            height: 160px;
+            font-size: 26px;
+            line-height: 38px;
+
+            font-weight: bold;
+        }
+    }
+
+    /* Style the back side */
+    .flip-card-back {
+        background-color: #183150;
+        transform: rotateY(180deg);
+        p{
+            padding: 30px;
+            text-align: center;
+
+            font-size: 20px;
+        }
+    }
+
+    .col-md.col-xs-12 .flip-card-front span{
+        background: url("../../assets/images/WP-image.png") center no-repeat;
+        background-size: 177px;
+        width: 177px;
+        height: 177px;
+        margin: 0px auto 30px auto;
+        color: white;
+        font-size: 36px;
+        font-weight: bold;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+}
+
+.home .background-dots{
+    //background: url("../../assets/images/TIER2-dots.svg") center no-repeat;
+    background-size: 100%;
+    background-position: center -106px;
+    .breakpoint-large-down({
+        //background: url("../../assets/images/TIER2-dots.svg") center no-repeat;
+        background-size: cover;
+        background-position: center 7px;
+    });
+}
+
+.about{
+    .container:has(.background){
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .aims{
+        padding-top: 0;
+        padding-bottom: 0;
+        text-align: center;
+    }
+    .image_bg{
+        padding: 0!important;
+        .container{
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    }
+}
+
+.background_info_background{
+    background: url("../../assets/images/about-background-graphics-2.svg") bottom left no-repeat;
+    background-position: left 0px bottom 0px;
+    background-size: 273px;
+    .background{
+        width: 100%;
+        min-height: 232px;
+        display: flex;
+        padding-bottom: 200px;
+        position: relative;
+        margin-top: 200px;
+
+        .some_background{
+            background: url("../../assets/images/about.jpg") bottom right no-repeat;
+            background-size: 731px 432px;
+            position: absolute;
+            border-radius: 10px;
+            right: 0;
+            bottom: 0;
+            width: 731px;
+            height: 421px;
+            .breakpoint-large-down({
+                display: none;
+            });
+        }
+
+        .container{
+            background: @link-color;
+            color: @white-color;
+            padding-top: 45px!important;
+            padding-bottom: 45px!important;
+            padding-left: 45px!important;
+            padding-right: 45px!important;
+            border-radius: 10px;
+            width: 641px;
+            display: block;
+            float: left;
+            position: absolute;
+            top: -200px;
+            .breakpoint-large-down({
+                padding-top: 25px!important;
+                padding-bottom: 25px!important;
+                padding-left: 25px!important;
+                padding-right: 25px!important;
+                width: 85%;
+            });
+        }
+
+        h1{
+            color: @white-color;
+            text-align: left!important;
+            font-size: 30px;
+        }
+    }
+}
+
+
+
+.list_background{
+    background: url("../../assets/images/about-background-graphics-3.svg") right no-repeat;
+    background-position: right -50px bottom 60%;
+    .list_mission{
+        font-size: 18px!important;
+        line-height: 28px;
+        color: @default-color;
+        padding: 0;
+
+        ul{
+            list-style-type: none;
+            margin-bottom: 20px;
+            padding: 0;
+            li{
+                background: url("../../assets/images/bullet_arrow.svg") left no-repeat;
+                background-size: 41px;
+                padding-left: 65px;
+                min-height: 41px;
+                line-height: 41px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+        }
+    }
+}
+
+.objectives_background{
+    background: url("../../assets/images/about-background.jpg") center no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+    width: 100%;
+    padding: 90px 0 50px 0!important;
+
+    h1{
+        color: @white-color;
+        margin-bottom: 100px!important;
+        font-size: 30px;
+    }
+    .objectives{
+        padding: 0;
+        .container{
+            padding: 0;
+        }
+        .objectives_list{
+            display: flex;
+            justify-content: center;
+            div{
+                padding-top: 140px;
+                padding-left: 50px;
+                padding-right: 50px;
+                text-align: center;
+                margin-bottom: 100px;
+                font-size: 16px;
+                color: @white-color;
+
+                &:nth-of-type(1){
+                    background: url("../../assets/images/objective1.svg") top center no-repeat;
+                    background-size: 120px;
+                }
+                &:nth-of-type(2){
+                    background: url("../../assets/images/objective2.svg") top center no-repeat;
+                    background-size: 120px;
+                }
+                &:nth-of-type(3){
+                    background: url("../../assets/images/objective3.svg") top center no-repeat;
+                    background-size: 120px;
+                }
+                &:nth-of-type(4){
+                    background: url("../../assets/images/objective4.svg") top center no-repeat;
+                    background-size: 120px;
+                }
+                &:nth-of-type(5){
+                    background: url("../../assets/images/objective5.svg") top center no-repeat;
+                    background-size: 120px;
+                }
+
+            }
+        }
+    }
+}
+
+.container.work_packages{
+    padding-bottom: 150px;
+    .breakpoint-laptop-down({
+        padding-bottom: 180px;
+    });
+    .breakpoint-large-down({
+        padding-top: 0px;
+    });
+}
+
+
+.work_packages{
+    margin-top: 90px;
+    h2{
+        font-size: 30px!important;
+        line-height: 1.7em!important;
+        text-align: center!important;
+        width: 100%;
+    }
+
+
+    .work_packages_container{
+        position: relative;
+
+        .wp_content{
+            display: none;
+            position: absolute;
+            top: 311px;
+            width: 100%;
+            height: fit-content;
+            background: #57130033;
+            border-radius: 10px;
+            padding: 35px;
+
+            .breakpoint-laptop-down({
+                width: 94%;
+                margin: 0 auto;
+            });
+
+            .breakpoint-large-down({
+                position: relative;
+                top: 0;
+            });
+
+            ol {
+                list-style: none;
+                counter-reset: item;
+                li {
+                    counter-increment: item;
+                    margin-bottom: 15px;
+                    color: @default-color;
+                    font-size:calc(16px + 1.5vw);
+                    line-height: calc(20px + 1.5vw);
+                    //background: url("../../assets/images/bullet.svg") left center no-repeat;
+                    //background-size: 69px 69px;
+                    position: relative;
+                    //min-height: 89px;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 42px;
+                    margin: 30px 0;
+                    //margin-left: 20px;
+                    //.breakpoint-laptop-down({
+                    //    height: auto;
+                    //    min-height: 55px;
+                    //    background-size: 55px 55px;
+                    //    padding-left: 76px;
+                    //    margin-left: 13px;
+                    //    font-size:calc(16px + 1.5vw);
+                    //    line-height: calc(22px + 1.5vw);
+                    //    font-weight: normal;
+                    //});
+                }
+                li:before {
+                    content: counter(item);
+                    position: absolute;
+                    color: @link-color;
+
+                    width: 25px;
+                    height: 25px;
+                    border: 1px solid @link-color;
+                    border-radius: 50%;
+                    /* margin-bottom: 35px; */
+                    text-align: center;
+                    //padding-left: 29px;
+                    display: inline-block;
+                    font-size: 16px;
+                    font-weight: bold;
+                    line-height: 25px;
+                    margin-left: -41px;
+                    //.breakpoint-laptop-down({
+                    //    margin-left: -60px;
+                    //    font-size: 30px;
+                    //});
+                }
+            }
+
+        }
+
+        .prefix_container{
+            background: url("../../assets/images/arrow down.svg") bottom center no-repeat;
+            background-size: 36px;
+            padding-bottom: 50px;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            position: relative;
+
+            .wp_prefix{
+                background: @dark-color;
+                width: 100px;
+                height: 100px;
+                line-height: 100px;
+                font-size: 22px;
+                font-weight: bold;
+                text-align: center;
+                color: @white-color;
+                border-radius: 50%;
+                margin: 30px auto;
+                border: 9px solid @dark-color;
+                transition: all 0.5s;
+                -webkit-transition: all 0.5s;
+            }
+
+            .wp_title{
+                font-size: 22px;
+                color: @default-color;
+                text-align: center;
+            }
+            &:hover{
+                cursor: pointer;
+                background: url("../../assets/images/arrow up.svg") bottom center no-repeat;
+                &>.wp_prefix{
+                    border: 9px solid #57130036!important;
+                    background: @white-color;
+                    color: @link-color;
+                }
+            }
+
+
+
+        }
+
+    }
+}
+
+
+

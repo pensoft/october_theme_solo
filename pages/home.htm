@@ -1,0 +1,135 @@
+url = "/"
+layout = "default"
+title = "SOLO"
+is_hidden = 0
+meta_description = "homepage desc"
+seo_keywords = "keywords"
+robot_index = "index"
+robot_follow = "follow"
+
+[jumbotron intro]
+jumbotron = "intro-homepage"
+title = 0
+background = "transperant"
+templates = "template1"
+description_limit = 0
+
+[jumbotron intro_image]
+jumbotron = "intro-homepage-image"
+title = 0
+background = "transperant"
+templates = "template1"
+description_limit = 0
+==
+<?php
+use Pensoft\Calendar\Models\Entry;
+use Pensoft\Articles\Models\Article;
+use Carbon\Carbon;
+function onStart(){
+    $this['entries'] = Entry::where('show_on_timeline', true)->where('is_internal', false)->orderBy('start', 'asc')->take(3)->get();
+    $this['news'] = Article::news()->where('published_at', '<=', 'now()')->where('published', 'true')->take(3)->orderBy('published_at', 'DESC')->get();
+}
+?>
+==
+<div class="container">
+		<div class="row between-md around-xs middle-xs">
+			<div class="col-lg-6 col-xs-12 intro">
+				{% component 'intro' %}
+			</div>
+			<div class="col-lg-6 col-xs-12 intro_image">
+				{% component 'intro_image' %}
+			</div>
+		</div>
+	</div>
+
+
+<!-- latest from news -->
+    <div class="container highlights-news">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="base_heading highlight_new_template_3">Latest News</h1>
+            </div>
+        </div>
+        <div class="row newslist">
+            <div class="col-xs-12">
+                    {% for highlight in news %}
+                    <div class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
+
+
+                        <div class="row news_column">
+                            <a href="{{'news'|page}}/{{highlight.slug}}">
+                                <div class="news_image">
+                                    <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(368, 223, {'mode': 'crop'}) }}" />
+                                </div>
+                                <div class="news-container">
+                                    <div class="news-title">
+                                        <h3 class="card-title">{{highlight.title}}</h3>
+                                    </div>
+                                    <div class="read_more">Read more</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+	<div class="container mt-4">
+	<div class="row between-xs">
+		<div class="col-lg-7 col-xs-12 upcoming_events_container">
+			<h1 class="base_heading">Upcoming Events</h1>
+            {% for event in entries %}
+                <div class="row entry_item">
+                    <div class="col-md-2 col-xs-12 start-md center-xs">
+                        <span class="date_day">{{event.start|date("d")}}</span>
+                        <span class="date_month">{{event.start|date("M")}}</span>
+                        <span class="date_year">{{event.start|date("Y")}}</span>
+                    </div>
+                    <div class="col-md-10 col-xs-12 start-md center-xs mt-md-0 mt-1">
+                        <h3>{{event.title|raw}}</h3>
+                        {{event.place}}
+                    </div>
+                    <div class="col-md-12 col-xs-12 end-md center-xs mt-md-0 mt-1">
+                        <a href="{{'events'|page}}/{{event.slug}}" class="read_more">Read more</a>
+                    </div>
+                </div>
+            {% endfor %}
+		</div>
+
+        <div class="col-lg-5 col-xs-12 social_media_conainer">
+            <h1 class="base_heading">Follow SOLO</h1>
+            <div class="twitter-widget">
+                <a class="twitter-timeline" href="https://twitter.com/soils4europe?ref_src=twsrc%5Etfw">Tweets by @SELINAHorizonEU</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+
+            <div class="row subscribe-items start-md center-xs">
+                {% if this.theme.twitter %}
+                <a href="{{this.theme.twitter_url}}" target="_blank" class="btn p-primary pr p-twitter medium"></a>
+                {% endif %}
+                {% if this.theme.facebook %}
+                <a href="{{this.theme.facebook_url}}" target="_blank" class="btn pr p-primary p-facebook medium"></a>
+                {% endif %}
+                {% if this.theme.linkedin %}
+                <a href="{{this.theme.linkedin_url}}" target="_blank" class="btn pr p-primary p-linkedin medium"></a>
+                {% endif %}
+                {% if this.theme.youtube %}
+                <a href="{{this.theme.youtube_url}}" target="_blank" class="btn pr p-primary p-youtube medium"></a>
+                {% endif %}
+                {% if this.theme.instagram %}
+                <a href="{{this.theme.instagram_url}}" target="_blank" class="btn pr p-primary p-instagram medium"></a>
+                {% endif %}
+                {% if this.theme.researchgate %}
+                <a href="{{this.theme.researchgate_url}}" target="_blank" class="btn pr p-primary p-researchgate medium"></a>
+                {% endif %}
+            </div>
+
+
+        </div>
+
+	</div>
+
+</div>

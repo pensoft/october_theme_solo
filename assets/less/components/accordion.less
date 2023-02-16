@@ -1,0 +1,112 @@
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+    border: none!important;
+    background: none!important;
+    font-weight: normal;
+    color: unset!important;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active {
+    border: none!important;
+    background: none!important;
+    font-weight: normal;
+    color: unset!important;
+}
+
+.ui-accordion .ui-accordion-content {
+    padding: 0;
+    border-top: 0;
+    overflow: unset!important;
+    height: unset!important;
+}
+
+.ui-accordion .ui-accordion-header {
+    display: block!important;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin: 0!important;
+    padding: 0 1rem 0 0!important;
+    font-size: 100%;
+    outline: none;
+    .breakpoint-large-down({
+        padding: 0!important;
+        text-align: left!important;
+        width: 100%;
+    });
+}
+
+.ui-accordion .ui-accordion-content {
+    padding: 0 0 0 1rem!important;
+    border-top: 0;
+    overflow: unset!important;
+    .breakpoint-large-down({
+        padding: 0!important;
+        text-align: left!important;
+    });
+}
+
+
+.ui-icon {
+    display: none!important;
+}
+
+.ui-widget {
+    font-size: 1em;
+}
+
+.ui-widget div{
+
+}
+
+/*------------------------*/
+
+.ui-icon {
+    &.small, &.large, &.huge {
+        .line-height;
+        vertical-align: middle;
+    }
+    &.small {
+        .font-size(0.80);
+    }
+    &.normal {
+        font-size: 20px;
+        float: left;
+        margin-right: 5px;
+        height: 20px;
+    }
+    &.big {
+        .font-size(2);
+    }
+    &.large {
+        .font-size(3);
+    }
+    &.huge {
+        .font-size(5);
+    }
+}
+
+#ui-id-1,
+#ui-id-2,
+#ui-id-3,
+#ui-id-4,
+#ui-id-5,
+#ui-id-6,
+#ui-id-7,
+#ui-id-8,
+#ui-id-9,
+#ui-id-10,
+#ui-id-11,
+#ui-id-12,
+#ui-id-13,
+#ui-id-14,
+#ui-id-15,
+#ui-id-16{
+    a{
+        color: @link-color;
+    }
+    .breakpoint-large-down({
+        display: flex!important;
+        width: 100%;
+        flex-direction: column;
+    })
+}

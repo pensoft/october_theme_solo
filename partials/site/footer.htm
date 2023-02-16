@@ -1,0 +1,118 @@
+[menu about_menu]
+start = "id-10"
+activeNode = 0
+listItemClasses = "footer-menu-item"
+primaryClasses = "footer-menu"
+secondaryClasses = "dropdown-menu"
+numberOfLevels = 1
+
+[menu latest_menu]
+start = "id-11"
+activeNode = 0
+listItemClasses = "footer-menu-item"
+primaryClasses = "footer-menu"
+secondaryClasses = "dropdown-menu"
+numberOfLevels = 1
+
+[menu resources_menu]
+start = "id-12"
+activeNode = 0
+listItemClasses = "footer-menu-item"
+primaryClasses = "footer-menu"
+secondaryClasses = "dropdown-menu"
+numberOfLevels = 1
+
+[cookieConsent]
+message = "This website uses cookies to ensure you get the best experience on our website."
+dismiss = "Got it!"
+learnMore = "More info"
+link = "/privacy-policy"
+theme = "dark-bottom"
+
+[jumbotron footer_funds_text]
+jumbotron = "footer-intro"
+background = "transperant"
+templates = "template1"
+description_limit = 0
+==
+<div class="some-background"></div>
+<div class="container-fluid border-box dark-background">{% component 'cookieConsent' %}
+    <div class="container">
+        <div class="row top-xs between-xs footer-menu-container">
+            <div class="col-md-7 col-xs-12 footer-right-border">
+                <div class="row">
+                    <div class="col-xs-12 start-md center-xs">
+                        <img class="project_footer_logo" src="{{ 'assets/images/solo_white.svg'|theme }}" />
+                    </div>
+                </div>
+                <div class="row between-xs">
+                    <div class="col-xs-12 col-md-3 start-md center-xs col-sm-6 start-sm">
+                        <div class="head">GET IN TOUCH
+                            <div class="social-networks">
+                                <div class="icons mt-1">
+                                    {% if enable_facebook and facebook_url %}
+                                    <a href="{{facebook_url}}" target="_blank" class="pr p-secondary p-facebook big" target="_blank"></a>
+                                    {% endif %}
+                                    {% if enable_twitter and twitter_url %}
+                                    <a href="{{twitter_url}}" target="_blank" class="pr p-secondary p-twitter big" target="_blank"></a>
+                                    {% endif %}
+                                    {% if enable_linkedin and linkedin_url %}
+                                    <a  href="{{linkedin_url}}" target="_blank" class="pr p-secondary p-linkedin big" target="_blank"></a>
+                                    {% endif %}
+                                    {% if enable_youtube and youtube_url %}
+                                    <a  href="{{youtube_url}}" target="_blank" class="pr p-secondary p-youtube big" target="_blank"></a>
+                                    {% endif %}
+                                    {% if enable_instagram and instagram_url %}
+                                    <a  href="{{instagram_url}}" target="_blank" class="pr p-secondary p-instagram big" target="_blank"></a>
+                                    {% endif %}
+                                    <a href="{{'contact'|page}}"> <img class="mail_icon" src="{{ 'assets/images/mail.svg'|theme }}" /> </a>
+                                </div>
+                                <p><a style="flex:0 0 auto; font-size: 18px; font-weight: normal;" href="/privacy-policy">Privacy Policy</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-3 start-md center-xs col-sm-6 start-sm">
+                        <div class="head">ABOUT</div>
+                        {% component 'about_menu' %}
+                    </div>
+                    <div class="col-xs-12 col-md-3 start-md center-xs col-sm-6 start-sm">
+                        <div class="head">LATEST</div>
+                        {% component 'latest_menu' %}
+
+                    </div>
+                    <div class="col-xs-12 col-md-3 start-md center-xs col-sm-6 start-sm">
+                        <div class="head">RESOURCES</div>
+                        {% component 'resources_menu' %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 col-xs-12">
+                {% if (footer_funds_flag != null or footer_funds_text != '') %}
+                <div class="funding flex-column my-1 my-lg-0 flex-lg-row px-1 align-items-center col-xs-12">
+                    {% if footer_funds_flag %}
+                    <img class="text mr-0 mr-lg-1" style="height:50px;" src="{{ footer_funds_flag }}"/>
+                    {% endif %}
+                    {% if footer_funds_text %}
+                    <span class="align-items-center mt-sm-0 mt-1">{{this.theme.footer_funds_text}}</span>
+                    {%endif %}
+                </div>
+                <div class="funding-text col-xs-12">
+                    {% component 'footer_funds_text' %}
+                </div>
+                {% endif %}
+                <div class="col-xs-12 powered-by-container">
+                    <div class="row middle-xs">
+                        <div class="col-xs-12 start-md center-xs nowrap">
+                            <div class="powered-by my-1 my-lg-0 px-1 start-sm center-xs nowrap">
+                                <span>Designed and powered by</span> <a href="https://pensoft.net/" target="_blank">
+                                <img class="pensoft_logo" src="{{ 'assets/images/pensoft-logo.svg'|theme }}" /></a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

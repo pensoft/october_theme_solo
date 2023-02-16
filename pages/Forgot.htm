@@ -1,0 +1,27 @@
+title = "Forgot"
+url = "/forgot"
+layout = "default"
+is_hidden = 0
+robot_index = "index"
+robot_follow = "follow"
+
+[resetPassword]
+paramCode = "code"
+==
+{% if not user %}
+<div class="container" style="padding-right: 10%;">
+    <div class="login_info row start-xs">
+        <div class="login_image aos-init aos-animate" data-aos="fade-up">
+            <img src="{{'login.jpg'|media}}"></div>
+        <div class="logn_form">
+            {% if resetPassword.code == null %}
+            {% partial 'components/resetpassword/restore' %}
+            {% else %}
+            {% partial 'components/resetpassword/reset' %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endif %}

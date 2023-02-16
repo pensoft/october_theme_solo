@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="51" height="66.127" viewBox="0 0 51 66.127">
+  <g id="Group_14724" data-name="Group 14724" transform="translate(-404 -507.119)">
+    <g id="Group_14549" data-name="Group 14549" transform="translate(8 109)">
+      <g id="Group_14548" data-name="Group 14548" transform="translate(396.349 389.755)">
+        <g id="Rectangle_3353" data-name="Rectangle 3353" transform="translate(-0.349 27.491)" fill="none" stroke="#571300" stroke-width="3">
+          <rect width="51" height="47" rx="4" stroke="none"/>
+          <rect x="1.5" y="1.5" width="48" height="44" rx="2.5" fill="none"/>
+        </g>
+        <path id="Icon_awesome-check" data-name="Icon awesome-check" d="M8.191,22.207.353,14.37a1.206,1.206,0,0,1,0-1.705l1.705-1.705a1.206,1.206,0,0,1,1.705,0l5.28,5.28L20.352,4.93a1.206,1.206,0,0,1,1.705,0l1.705,1.705a1.206,1.206,0,0,1,0,1.705L9.9,22.207A1.206,1.206,0,0,1,8.191,22.207Z" transform="translate(13.39 37.423)" fill="#571300"/>
+        <line id="Line_98" data-name="Line 98" x2="48" transform="translate(1.151 19.46)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_99" data-name="Line 99" x2="48" transform="translate(1.151 9.864)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+      </g>
+    </g>
+  </g>
+</svg>

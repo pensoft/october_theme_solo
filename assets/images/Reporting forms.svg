@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="68" height="64" viewBox="0 0 68 64">
+  <g id="Group_14541" data-name="Group 14541" transform="translate(-1630.5 -571)">
+    <g id="Rectangle_3365" data-name="Rectangle 3365" transform="translate(1630.5 571)" fill="none" stroke="#571300" stroke-width="3">
+      <rect width="31" height="64" rx="4" stroke="none"/>
+      <rect x="1.5" y="1.5" width="28" height="61" rx="2.5" fill="none"/>
+    </g>
+    <path id="Path_26563" data-name="Path 26563" d="M0,0H28" transform="translate(1669 573.218)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <path id="Path_26564" data-name="Path 26564" d="M0,0H20.085" transform="translate(1669 585.218)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <path id="Path_26568" data-name="Path 26568" d="M0,0H20.085" transform="translate(1669 633.218)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <path id="Path_26566" data-name="Path 26566" d="M0,0H14" transform="translate(1669 609.218)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <path id="Path_26565" data-name="Path 26565" d="M0,0H26.979" transform="translate(1669 597.218)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <path id="Path_26567" data-name="Path 26567" d="M0,0H26.979" transform="translate(1669 621.218)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <path id="Icon_awesome-check" data-name="Icon awesome-check" d="M5.417,16.237.234,11.054a.8.8,0,0,1,0-1.128L1.361,8.8a.8.8,0,0,1,1.128,0L5.981,12.29,13.46,4.811a.8.8,0,0,1,1.128,0l1.128,1.128a.8.8,0,0,1,0,1.128L6.545,16.237A.8.8,0,0,1,5.417,16.237Z" transform="translate(1638.025 574.694)" fill="#571300"/>
+    <path id="Icon_awesome-check-2" data-name="Icon awesome-check" d="M5.417,16.237.234,11.054a.8.8,0,0,1,0-1.128L1.361,8.8a.8.8,0,0,1,1.128,0L5.981,12.29,13.46,4.811a.8.8,0,0,1,1.128,0l1.128,1.128a.8.8,0,0,1,0,1.128L6.545,16.237A.8.8,0,0,1,5.417,16.237Z" transform="translate(1638.025 592.476)" fill="#571300"/>
+    <path id="Icon_awesome-check-3" data-name="Icon awesome-check" d="M5.417,16.237.234,11.054a.8.8,0,0,1,0-1.128L1.361,8.8a.8.8,0,0,1,1.128,0L5.981,12.29,13.46,4.811a.8.8,0,0,1,1.128,0l1.128,1.128a.8.8,0,0,1,0,1.128L6.545,16.237A.8.8,0,0,1,5.417,16.237Z" transform="translate(1638.025 610.258)" fill="#571300"/>
+  </g>
+</svg>

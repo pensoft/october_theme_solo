@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="53.624" height="66.857" viewBox="0 0 53.624 66.857">
+  <g id="Group_14727" data-name="Group 14727" transform="translate(-910.258 -508.524)">
+    <g id="Group_14546" data-name="Group 14546" transform="translate(0 112)">
+      <g id="Group_14545" data-name="Group 14545">
+        <g id="Group_14544" data-name="Group 14544" transform="translate(857.103 341.978)">
+          <g id="Group_1779" data-name="Group 1779" transform="translate(53.516 54)">
+            <g id="Rectangle_3353" data-name="Rectangle 3353" transform="translate(0 19.445)" fill="none" stroke="#571300" stroke-width="3">
+              <rect width="23.598" height="47.958" rx="4" stroke="none"/>
+              <rect x="1.5" y="1.5" width="20.598" height="44.958" rx="2.5" fill="none"/>
+            </g>
+            <g id="Rectangle_3354" data-name="Rectangle 3354" transform="translate(28.166 40.759)" fill="#571300" stroke="#571300" stroke-width="3">
+              <rect width="23.598" height="26.643" rx="4" stroke="none"/>
+              <rect x="1.5" y="1.5" width="20.598" height="23.643" rx="2.5" fill="none"/>
+            </g>
+          </g>
+        </g>
+        <line id="Line_94" data-name="Line 94" x2="50.624" transform="translate(911.758 407.619)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_96" data-name="Line 96" x2="22.882" transform="translate(939.5 417.215)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+        <line id="Line_97" data-name="Line 97" x2="22.882" transform="translate(939.5 426.81)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+      </g>
+      <line id="Line_95" data-name="Line 95" x2="50.624" transform="translate(911.758 398.024)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    </g>
+  </g>
+</svg>

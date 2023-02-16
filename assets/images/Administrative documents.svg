@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="54.112" height="57.627" viewBox="0 0 54.112 57.627">
+  <g id="Group_14551" data-name="Group 14551" transform="translate(-149.5 -409.119)">
+    <g id="Group_14550" data-name="Group 14550" transform="translate(7 23.286)">
+      <g id="Group_433" transform="translate(144 407)">
+        <path id="Path_1441" data-name="Path 1441" d="M689.754,723.833l-.047,6.124H658.4a.445.445,0,0,0-.407.268l-9.535,22.12.047-32.7a.591.591,0,0,1,.582-.582h10.163a.584.584,0,0,1,.582.582l-.047,3.644,29.384-.047A.594.594,0,0,1,689.754,723.833Z" transform="translate(-648.46 -719.06)" fill="#571300"/>
+      </g>
+      <path id="Path_26571" data-name="Path 26571" d="M699.285,731.073l-8.755,20.758a.588.588,0,0,1-.536.349H649.83l9.325-21.642a.445.445,0,0,1,.407-.268h39.187A.576.576,0,0,1,699.285,731.073Z" transform="translate(-504.235 -310.219)" fill="none" stroke="#571300" stroke-width="3"/>
+    </g>
+    <line id="Line_100" data-name="Line 100" x2="48" transform="translate(151 420.215)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+    <line id="Line_101" data-name="Line 101" x2="48" transform="translate(151 410.619)" fill="none" stroke="#571300" stroke-linecap="round" stroke-width="3"/>
+  </g>
+</svg>
