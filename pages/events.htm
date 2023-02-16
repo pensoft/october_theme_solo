@@ -99,9 +99,11 @@ $this['slug'] = $this->param('slug');
 
                 {% endfor %}
             </div>
+            {% if entries.count > 20 %}
             <div class="row container">
                 {{ entries.fragment('listView').render|raw }}
             </div>
+            {% endif %}
 
         </div>
     </div>
