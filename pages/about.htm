@@ -100,7 +100,7 @@ function onStart(){
     <h2>Work Packages</h2>
     <div class="row work_packages_container">
         {% for key, item in accorions %}
-        <div class="col-md col-xs-12">
+        <div class="col-md col-xs-12" onclick="showHideWP(this);">
             <div class="prefix_container">
                 <div class="wp_prefix">{{item.prefix | uppercase}}</div>
                 <div class="wp_title">{{item.title|raw}}</div>
