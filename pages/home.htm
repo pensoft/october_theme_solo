@@ -26,7 +26,7 @@ use Pensoft\Calendar\Models\Entry;
 use Pensoft\Articles\Models\Article;
 use Carbon\Carbon;
 function onStart(){
-    $this['entries'] = Entry::where('show_on_timeline', true)->where('is_internal', false)->orderBy('start', 'asc')->take(3)->get();
+    $this['entries'] = Entry::where('start', '>', Carbon::now())->where('show_on_timeline', true)->where('is_internal', false)->orderBy('start', 'asc')->take(3)->get();
     $this['news'] = Article::news()->where('published_at', '<=', 'now()')->where('published', 'true')->take(3)->orderBy('published_at', 'DESC')->get();
 }
 ?>
