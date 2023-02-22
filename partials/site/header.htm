@@ -29,7 +29,7 @@ numberOfLevels = 2
     </div>
 </nav>
 {% endif %}
-<nav class="navbar fixed pr-1 pl-1" id="headernavbar" {% if user %} style="margin-top:77px;"{% endif %}>
+<nav class="navbar fixed pr-1 pl-1" id="headernavbar" {% if user %} style="margin-top:57px;"{% endif %}>
     <div id="menuToggle">
         <input type="checkbox" />
         <span></span>
@@ -71,7 +71,7 @@ numberOfLevels = 2
     <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') top right no-repeat; background-size: contain;"></div>
     <div class="jumbotron" data-aos="fade-right">
         {% if page_id != 'home' and page_id != 'search' %}
-        <h1 class="underline white">
+        <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
             {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
         {%endif%}
         {% if page_id == 'home' and tag_line%}
@@ -87,10 +87,10 @@ numberOfLevels = 2
 </div>
     {% else %}
     <div class="header-image {{page_id}}">
-        <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:77px;{% endif %}"></div>
+        <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:57px;{% endif %}"></div>
 
         <div class="jumbotron" data-aos="fade-right">
-            <h1 class="underline white">
+            <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
                 {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
         </div>
     </div>

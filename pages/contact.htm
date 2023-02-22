@@ -23,14 +23,14 @@ function onStart(){
 ==
 {% component 'siteSearchInclude' %}
 
-<div class="container" style="padding-right: 10%;">
+<div class="container" style="padding-right: 24%; padding-top: 0;">
     <div class="row contacts_page end-md around-xs">
         {% for profile in profiles %}
         <div class="col-xs-12 profile-item">
 
             <div class="contact_info row start-xs">
                 <div class="coordinator_image aos-init aos-animate" data-aos="fade-up">
-                    <img src="{{profile.avatar.thumb(392, 465, {'mode':'crop'})}}"></div>
+                    <img src="{{profile.avatar.thumb(292, 365, {'mode':'crop'})}}"></div>
                 <div class="coordinator_info">
                     <h3>{{profile.names}}</h3>
                     {% if profile.position %}<p class="card_title">{{profile.position}}</p>{% endif %}
@@ -44,4 +44,3 @@ function onStart(){
         {% endfor %}
     </div>
 </div>
-
