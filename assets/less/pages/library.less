@@ -28,17 +28,53 @@
         margin-bottom: 10px;
         background: @link-color;
         color: @white-color;
-        width: 220px;
+        width: 30%;
+        padding-left: 40px;
         height: 48px;
         border-bottom-right-radius: 50px;
         border-top-right-radius: 50px;
         display: flex;
         align-items: center;
-        justify-content: center;
         position: absolute;
         left: 0;
         top: 33px;
         font-size: 18px;
+
+        &.type_color_68{
+            background: #575757;
+        }
+
+        &.type_color_71{
+            background: #007D44;
+        }
+
+        &.type_color_16{
+            background: #269DA1;
+        }
+
+        &.type_color_89{
+            background: #C19435;
+        }
+
+        &.type_color_19{
+            background: #B65859;
+        }
+
+        &.type_color_107{
+            background: #8D5616;
+        }
+
+        &.type_color_39{
+            background: #554E43;
+        }
+
+        &.type_color_65{
+            background: #A1A100;
+        }
+
+        &.type_color_113{
+            background: #00637F;
+        }
 
         .doc_year {
             display: none;
@@ -83,6 +119,13 @@
         flex-direction: row;
         color: @black-color!important;
         font-weight: normal;
+    }
+
+    &.external_library_item{
+        .body{
+            color: @black-color!important;
+            font-size: 18px;
+        }
     }
 
     .download_text{
