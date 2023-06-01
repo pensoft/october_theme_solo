@@ -67,16 +67,14 @@ $this['slug'] = $this->param('slug');
 {% if not slug %}
 <div class="container">
     <div class="tabs">
-        <a class="" href="#calendarView">Calendar view</a>
         <a class="" href="#listView">List view</a>
+        <a class="" href="#calendarView">Calendar view</a>
     </div>
 </div>
 <!--tabs content	-->
 <div class="container-fluid">
     <div class="container">
-        <div class="row" id="calendarView">
-            {% component 'calendar' %}
-        </div>
+        
         <div class="row" id="listView">
             <div class="events_list_container">
                 {% for entry in entries %}
@@ -105,6 +103,9 @@ $this['slug'] = $this->param('slug');
             </div>
             {% endif %}
 
+        </div>
+        <div class="row" id="calendarView">
+            {% component 'calendar' %}
         </div>
     </div>
 

@@ -13,6 +13,9 @@ nav:not(.navbar){
     .news-title{
         min-height: 86px;
     }
+    .newslist{
+        justify-content: start!important;
+    }
 }
 
 .news-title {
@@ -313,7 +316,7 @@ nav:not(.navbar){
 .home{
     .newslist .col-xs-12:first-child{
         display: flex;
-        justify-content: space-between;
+        justify-content: start;
         padding: 0;
         margin: 0;
         .breakpoint-large-down({
@@ -349,7 +352,7 @@ nav:not(.navbar){
 .home .news-item{
     margin-bottom: 30px;
     flex-basis: 30%;
-    max-width: 30%;
+    // max-width: 30%;
 
     .news_column{
         width: 360px;
