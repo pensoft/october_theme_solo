@@ -27,8 +27,15 @@ function onFetchMailingList(){
             ->leftJoin('pensoft_mailing_groups_users', 'pensoft_mailing_groups_users.groups_id', '=', 'pensoft_mailing_groups.id')
             ->leftJoin('users', 'pensoft_mailing_groups_users.user_id', '=', 'users.id')
             ->whereRaw('users.email ILIKE \''.post('search_str').'\' OR pensoft_mailing_groups.name ILIKE \''.post('search_str').'\'')
-            ->select('users.*')
+            ->selectRaw('users.*')
             ->orderBy('users.email', 'asc')
+            ->get();
+
+        $this['group_email'] = DB::table('pensoft_mailing_groups')
+            ->leftJoin('pensoft_mailing_groups_users', 'pensoft_mailing_groups_users.groups_id', '=', 'pensoft_mailing_groups.id')
+            ->leftJoin('users', 'pensoft_mailing_groups_users.user_id', '=', 'users.id')
+            ->whereRaw('users.email ILIKE \''.post('search_str').'\' OR pensoft_mailing_groups.name ILIKE \''.post('search_str').'\'')
+            ->selectRaw('pensoft_mailing_groups.*')
             ->get();
     }
 }
