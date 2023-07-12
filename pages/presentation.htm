@@ -1,12 +1,12 @@
-url = "/media-center/poster"
+url = "/media-center/presentations"
 layout = "default"
-title = "Poster"
+title = "Presentations"
 is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
 
-[builderList mediaGraphicList]
-modelClass = "pensoft\Media\Models\Graphic"
+[builderList mediaPresentationsList]
+modelClass = "pensoft\Media\Models\Presentations"
 scope = "-"
 scopeValue = "{{ :scope }}"
 displayColumn = "name"
@@ -16,11 +16,11 @@ detailsUrlParameter = "id"
 pageNumber = "{{ :page }}"
 ==
 <?php
-use Pensoft\Media\Models\Graphic;
+use Pensoft\Media\Models\Presentations;
 use System\Models\File;
 
 function onStart(){
-	$this['mediaGraphicList'] =  Graphic::get();
+	$this['mediaPresentationsList'] =  Presentations::get();
 	if(get('download')){
 		$file = File::find((int)get('download'));
 		$file_name = $file->getLocalPath();
@@ -50,19 +50,19 @@ return Redirect::to('/media-center/flyer');
 ==
 <div class="container">
     <div class="row">
-        {% set records = mediaGraphicList %}
-        {% set displayColumn = mediaGraphicList.displayColumn %}
-        {% set noRecordsMessage = mediaGraphicList.noRecordsMessage %}
-        {% set detailsPage = mediaGraphicList.detailsPage %}
-        {% set detailsKeyColumn = mediaGraphicList.detailsKeyColumn %}
-        {% set detailsUrlParameter = mediaGraphicList.detailsUrlParameter %}
+        {% set records = mediaPresentationsList %}
+        {% set displayColumn = mediaPresentationsList.displayColumn %}
+        {% set noRecordsMessage = mediaPresentationsList.noRecordsMessage %}
+        {% set detailsPage = mediaPresentationsList.detailsPage %}
+        {% set detailsKeyColumn = mediaPresentationsList.detailsKeyColumn %}
+        {% set detailsUrlParameter = mediaPresentationsList.detailsUrlParameter %}
 
         {% for record in records %}
         {# Use spaceless tag to remove spaces inside the A tag. #}
         {% spaceless %}
-        {% if record.image %}
+        {% if record.presentation_image %}
         <div class="col-md-3 col-xs-12 center-xs">
-            <p class="logo_container"><img src="{{record.image.path}}" title="{{record.name}}"></p>
+            <p class="logo_container"><img src="{{record.presentation_image.path}}" title="{{record.name}}"></p>
 
             {% if record.file %}
             <div class="col-xs-12">
