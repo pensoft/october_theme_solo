@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": ">=5.4",
-        "composer/installers": "~1.0"
+        "composer/installers": "~1.0",
+        "pion/laravel-chunk-upload": "^1.5"
     },
     "extra": {
         "branch-alias": {
