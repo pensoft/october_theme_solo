@@ -15,9 +15,16 @@ secondaryClasses = "dropdown-menu"
 numberOfLevels = 2
 ==
 {% if user %}
+    {% set is_external = false %}
+    {% for group in user.groups %}
+        {% if group.code == 'external-users' %}
+            {% set is_external = true %}
+        {% endif %}
+    {% endfor %}
+
 <nav class="fixed navbar-loggedin-user ">
     <div class="navbar-collapse collapse row middle-xs">
-        <div class="col-xs-12 col-md-9">{% component 'login' %}</div>
+        <div class="col-xs-12 col-md-9">{% if not is_external %} {% component 'login' %} {% endif %}</div>
         <div class="col-xs-2 end-xs  col-md-3">
             {% if user.avatar %}
             <a href="/profile" class="profile_name"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="{{ user.name }} {{ user.surname }}" src="{{user.avatar.getThumb(30,30, { mode : 'crop' } )}}" style="border-radius: 50%; margin-right:20px;" align="right"> </a>
@@ -68,7 +75,7 @@ numberOfLevels = 2
 {% if this.theme.header_image and page_id == 'home' %}
 <div class="header-image {{page_id}}">
 
-    <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') top right no-repeat; background-size: contain;"></div>
+    <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') right no-repeat; background-size: contain;"></div>
     <div class="jumbotron" data-aos="fade-right">
         {% if page_id != 'home' and page_id != 'search' %}
         <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>

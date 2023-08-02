@@ -11,6 +11,17 @@ paramCode = "code"
 forceSecure = 0
 requirePassword = 0
 ==
+<?php
+
+use RainLab\User\Models\User;
+
+public function onStart(){
+    $this['arpha_topics'] = (new User())->getTopicsOptions();
+}
+
+
+?>
+==
 <div class="container">
     <div class="row">
 

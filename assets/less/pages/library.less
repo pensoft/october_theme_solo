@@ -352,7 +352,6 @@
             width: 100%;
             text-align: center;
             float: left;
-            text-align: center;
             padding: 5px 0;
         });
 
@@ -362,4 +361,94 @@
     }
 
 }
+
+.external_documents{
+    position: relative;
+    //padding-top: 400px;
+    .some_news_background{
+        background: url("../../assets/images/news-graphic-2.svg") top left no-repeat;
+        background-size: 200px;
+        left: 0px;
+        top: 0;
+        width: 200px;
+        height: 400px;
+        position: absolute;
+        transform: rotate(-90deg);
+        .breakpoint-huge-down({
+            display: none;
+        });
+    }
+    .some_news_background2{
+        background: url("../../assets/images/news-graphic-2.svg") top right no-repeat;
+        background-size: 200px;
+        right: 0px;
+        width: 200px;
+        top: 0;
+        height: 400px;
+        position: absolute;
+        transform: rotate(90deg);
+        .breakpoint-huge-down({
+            display: none;
+        });
+    }
+
+    .library-item a{
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        i{
+            width: 36px!important;
+            height: 36px!important;
+            border-radius: 50%;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
+        &:hover{
+            opacity: 0.7;
+        }
+    }
+
+    .library-type-label{
+        &.soil-organic-carbon-stocks{
+            background: #575757;
+        }
+        &.climate-smart-agriculture{
+            background: #007D44;
+        }
+        &.erosion-prevention{
+            background: #269DA1;
+        }
+        &.footprint-on-soils{
+            background: #C19435;
+        }
+        &.land-degradation{
+            background: #B65859;
+        }
+        &.nature-conservation-of-soil-biodiversity{
+            background: #8D5616;
+        }
+        &.pollution-and-restoration{
+            background: #554E43;
+        }
+        &.soil-literacy{
+            background: #A1A100;
+        }
+        &.soil-organic-carbon-stocks{
+            background: #00637F;
+        }
+        &.soil-sealing-and-urban-soils{
+            background: #707070;
+        }
+        &.soil-structure{
+            background: red;
+        }
+    }
+}
+
 

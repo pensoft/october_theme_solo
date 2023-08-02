@@ -1,0 +1,31 @@
+<div class="library-item-top"></div>
+<div class="library-item">
+    <div class="row">
+        <div class="col-xs-12 col-md-9">
+            <div class="library-type-label {{record.subjects_list|slug}}">
+                <span class="doc_type">{{record.subjects_list}}</span></div>
+            <h3 class="card-title">{{ record.name|raw }}</h3>
+            <div class="body">
+                <div>
+                    <span class="text-bold">Authors:</span>
+
+                    <span class="text-ligth">{{record.authors_list|replace({",": ", "})}}</span>
+
+                </div>
+
+            </div>
+        </div>
+
+        {% if user %}
+            {% set url = 'http://pwt.kremena.pensoft.com/login.php?back_uri=preview.php&document_id='~record.document_id~'&expire_autolog_hash='~autolog_hash~'&view_role=5' %}
+        {% else %}
+            {% set url = '/login' %}
+        {% endif %}
+
+        <div class="col-xs-12 col-md-3 end-xs end-md">
+            <a target="_blank" href="{{url}}">Review this document <i class="btn-primary"> &#8250; </i>
+            </a>
+        </div>
+    </div>
+
+</div>

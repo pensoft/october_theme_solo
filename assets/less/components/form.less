@@ -66,9 +66,18 @@
 
     /* Hide the default checkbox */
     input[type="checkbox"] {
-        visibility: hidden;
+        /*visibility: hidden; */
+        opacity: 0;
         cursor: pointer;
-        margin-right: 10px
+        /* margin-right: 10px; */
+        min-width: 20px;
+        min-height: 20px;
+        left: -12px;
+        position: relative;
+        /* height: 20px; */
+        /* float: left; */
+        display: block;
+        z-index: 2;
     }
 
     /* Create a custom checkbox */

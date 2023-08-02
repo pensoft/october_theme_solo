@@ -741,7 +741,7 @@ footer .align-items-center{
     z-index: 2;
 }
 
-.login, .Forgot{
+.login, .Forgot, .register{
 
     .container{
         .breakpoint-large-down({
@@ -823,6 +823,17 @@ footer .align-items-center{
             });
         }
     }
+}
+
+.register{
+    .field.inline {
+        margin: 0 0 0 25px!important;
+    }
+    label:not(.notbold){
+        text-align: left;
+        font-weight: bold;
+    }
+
 }
 
 .Forgot{
@@ -927,4 +938,47 @@ now override the 3.3 new styles for modern browsers & apply opacity
     -ms-transition: none !important;
     -o-transition: none !important;
     transition: none !important;
+}
+
+.create_document{
+    min-height: 350px;
+    a{
+        width: 208px;
+        height: 208px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-transform: uppercase;
+        text-align: center;
+        margin: 0px auto;
+        background: @dark-color;
+        font-size: 20px;
+        font-weight: bold;
+        word-spacing: 100px;
+        border: 30px solid white;
+        position: relative;
+        transition: all 0.3s;
+        &:hover{
+            border: 30px solid #ddd1cd;
+            &:after{
+                visibility: visible;
+                opacity: 1;
+            }
+        }
+        &:after{
+            position: absolute;
+            content: ' ';
+            width: 330px;
+            height: 330px;
+            border-radius: 50%;
+            border: 5px solid #ddd1cd;
+            top: -65px;
+            left: -65px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+    }
 }

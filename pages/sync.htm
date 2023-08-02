@@ -1,0 +1,16 @@
+title = "Sync"
+layout = "default"
+url = "/sync"
+
+==
+<?php
+
+use Pensoft\Externalregistration\Models\Registration;
+
+function onStart()
+{
+	$result = (new Registration())->syncUsers();
+
+}
+?>
+==
