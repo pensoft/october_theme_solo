@@ -33,6 +33,7 @@ function onStart(){
 ?>
 ==
 <img src="{{ env('ARPHA_DOMAIN') }}login.php?logout=1&logout_from_cookie=1" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
+<img src="{{ env('PENSOFT_DOMAIN') }}lib/set_autologin_cookie.php?autologin_hash={{ hash }}" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
 <img src="{{ env('ARPHA_DOMAIN') }}lib/set_autologin_cookie.php?autologin_hash={{ hash }}" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
 <script type="text/javascript">
     window.onload = function() {
