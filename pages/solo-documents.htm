@@ -14,7 +14,7 @@ journal = 122
         <div class="some_news_background"></div>
         <div class="create_document">
             {% if user %}
-                {% set url = 'http://pwt.kremena.pensoft.com/login.php?back_uri=create_document.php&journal_id=122&expire_autolog_hash='~autolog_hash %}
+                {% set url = env('AWT_URL')~'login.php?back_uri=create_document.php&journal_id=122&expire_autolog_hash='~autolog_hash %}
             {% else %}
                 {% set url = '/login' %}
             {% endif %}
