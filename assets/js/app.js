@@ -36,8 +36,8 @@ $(document).ready(function() {
 
 
     if (width > 990) { // desktop
-        $("#menuToggle input").on("mouseover", function () {
-            this.checked = !this.checked;
+        $("#menuToggle input").on("change", function () {
+            // this.checked = !this.checked;
             $('#menu').show();
             $('#search').hide();
             $('#menu, #menu *').css({
