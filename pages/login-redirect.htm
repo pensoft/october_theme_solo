@@ -1,15 +1,15 @@
 url = "/login-redirect"
 title = "Login redirect"
-is_hidden = 1
+is_hidden = 0
 ==
 <?php
 
 function onStart(){
-
-    if (!Auth::check()) {
-        return Redirect::to('/login');
+    if (!\Auth::check()) {
+        return \Redirect::to('/login');
     }
-    $user = Auth::getUser();
+    $user = \Auth::getUser();
+
     if($user->is_activated){
         $this['redirect'] = '/external-documents';
         foreach ($user->groups->toArray() as $item){
@@ -18,7 +18,7 @@ function onStart(){
             }
         }
 
-        $arphaUser = DB::connection('arpha')
+        $arphaUser = \DB::connection('arpha')
             ->select('SELECT u2.id, u2.autolog_hash
                 FROM usr u
                 JOIN usr u2 ON u2.id = u.primary_uid
@@ -32,8 +32,9 @@ function onStart(){
 
 ?>
 ==
+<img src="{{ env('ARPHA_DOMAIN') }}login.php?logout=1&logout_from_cookie=1" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
 <img src="{{ env('ARPHA_DOMAIN') }}lib/set_autologin_cookie.php?autologin_hash={{ hash }}" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
-<script>
+<script type="text/javascript">
     window.onload = function() {
         window.location.href = "{{redirect}}";
     }
