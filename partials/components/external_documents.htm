@@ -17,7 +17,7 @@
         </div>
 
         {% if user %}
-            {% set url = 'http://pwt.kremena.pensoft.com/login.php?back_uri=preview.php&document_id='~record.document_id~'&expire_autolog_hash='~autolog_hash~'&view_role=5' %}
+            {% set url = __SELF__.encryptStringUrl(record.document_id) %}
         {% else %}
             {% set url = '/login' %}
         {% endif %}

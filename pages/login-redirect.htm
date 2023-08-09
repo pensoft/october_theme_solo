@@ -1,0 +1,40 @@
+url = "/login-redirect"
+title = "Login redirect"
+is_hidden = 1
+==
+<?php
+
+function onStart(){
+
+    if (!Auth::check()) {
+        return Redirect::to('/login');
+    }
+    $user = Auth::getUser();
+    if($user->is_activated){
+        $this['redirect'] = '/external-documents';
+        foreach ($user->groups->toArray() as $item){
+            if (isset($item['code']) && $item['code'] == 'internal-users'){
+                $this['redirect'] = '/internal-repository';
+            }
+        }
+
+        $arphaUser = DB::connection('arpha')
+            ->select('SELECT u2.id, u2.autolog_hash
+                FROM usr u
+                JOIN usr u2 ON u2.id = u.primary_uid
+                WHERE lower(u.uname) = \'' . strtolower(trim($user->email)) . '\';');
+        $this['hash'] = $arphaUser[0]->autolog_hash;
+
+    }else{
+        $this['redirect'] = '/login';
+    }
+}
+
+?>
+==
+<img src="{{ env('ARPHA_DOMAIN') }}lib/set_autologin_cookie.php?autologin_hash={{ hash }}" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
+<script>
+    window.onload = function() {
+        window.location.href = "{{redirect}}";
+    }
+</script>
