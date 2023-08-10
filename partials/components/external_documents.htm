@@ -15,9 +15,8 @@
 
             </div>
         </div>
-
         {% if user %}
-            {% set url = __SELF__.encryptStringUrl(record.document_id) %}
+            {% set url = __SELF__.encryptStringUrl(record.document_id, user.arpha_id) %}
         {% else %}
             {% set url = '/login' %}
         {% endif %}

@@ -27,8 +27,10 @@ function onStart(){
                 FROM usr u
                 JOIN usr u2 ON u2.id = u.primary_uid
                 WHERE lower(u.uname) = \'' . strtolower(trim($user->email)) . '\';');
-        $this['hash'] = $arphaUser[0]->autolog_hash;
 
+                if($arphaUser){
+                    $this['hash'] = $arphaUser[0]->autolog_hash;
+                }
     }else{
         $this['redirect'] = '/login';
     }
