@@ -1,4 +1,4 @@
-url = "/login-redirect"
+url = "/login-redirect/:create_document?|[0-9]"
 title = "Login redirect"
 is_hidden = 0
 ==
@@ -11,10 +11,14 @@ function onStart(){
     $user = \Auth::getUser();
 
     if($user->is_activated){
-        $this['redirect'] = '/external-documents';
-        foreach ($user->groups->toArray() as $item){
-            if (isset($item['code']) && $item['code'] == 'internal-users'){
-                $this['redirect'] = '/internal-repository';
+        if((int)$this->param('create_document')) {
+            $this['redirect'] = 'https://arpha.pensoft.net/create_document.php?journal_id=122';
+        } else {
+            $this['redirect'] = '/external-documents';
+            foreach ($user->groups->toArray() as $item){
+                if (isset($item['code']) && $item['code'] == 'internal-users'){
+                    $this['redirect'] = '/internal-repository';
+                }
             }
         }
 
@@ -28,6 +32,7 @@ function onStart(){
     }else{
         $this['redirect'] = '/login';
     }
+
 }
 
 ?>
