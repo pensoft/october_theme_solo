@@ -15,46 +15,63 @@ redirect_to_detailed_page = "false"
 ==
 <?php
 use Pensoft\Calendar\Models\Entry;
+use Pensoft\EventReporting\Models\EventsreportingData as Data;
+use Pensoft\EventReporting\Models\EventsreportingAttendants as Attendant;
 
 function onStart(){
 
     if($this->param('slug')){
-$this['entry'] =  Entry::select(
-'*',
-'title',
-'place',
-'description',
-'url',
+        $this['entry'] =  Entry::select(
+                    '*',
+                    'title',
+                    'place',
+                    'description',
+                    'url',
 
-DB::raw("to_char(\"start\", 'DD') as start_day"),
-DB::raw("to_char(\"start\", 'YYYY') as start_year"),
-DB::raw("to_char(\"end\", 'DD') as end_day"),
-DB::raw("to_char(\"end\", 'YYYY') as end_year"),
-DB::raw("to_char(\"start\", 'month') as start_month"),
-DB::raw("to_char(\"end\", 'month') as end_month"),
-DB::raw("
-\"end\" is not null as has_end
-")
-
-
-)->where('slug', $this->param('slug'))->first();
+                    DB::raw("to_char(\"start\", 'DD') as start_day"),
+                    DB::raw("to_char(\"start\", 'YYYY') as start_year"),
+                    DB::raw("to_char(\"end\", 'DD') as end_day"),
+                    DB::raw("to_char(\"end\", 'YYYY') as end_year"),
+                    DB::raw("to_char(\"start\", 'month') as start_month"),
+                    DB::raw("to_char(\"end\", 'month') as end_month"),
+                    DB::raw("
+                    \"end\" is not null as has_end
+                    ")
 
 
+                    )->where('slug', $this->param('slug'))->first();
 
-\BennoThommo\Meta\Meta::set('twitter:card', 'summary');
-\BennoThommo\Meta\Meta::set('twitter:title', $this['entry']['title']);
-\BennoThommo\Meta\Meta::set('twitter:description', str_limit(Html::strip($this['entry']['description']), 255));
-\BennoThommo\Meta\Meta::set('og:title', $this['entry']['title']);
-\BennoThommo\Meta\Meta::set('og:description', str_limit(Html::strip($this['entry']['description']), 255) );
-\BennoThommo\Meta\Meta::set('og:type', 'article');
-\BennoThommo\Meta\Meta::set('og:url', $this->pageUrl(''));
-if($this['entry']['cover_image']){
-\BennoThommo\Meta\Meta::set('twitter:image', $this['entry']['cover_image']->getThumb(300, 300, ['mode' => 'crop']));
 
-\BennoThommo\Meta\Meta::set('og:image', $this['entry']['cover_image']->getThumb(600, 314, ['mode' => 'crop']));
-\BennoThommo\Meta\Meta::set('og:image:width', 600);
-\BennoThommo\Meta\Meta::set('og:image:height', 314);
-}
+
+                    \BennoThommo\Meta\Meta::set('twitter:card', 'summary');
+                    \BennoThommo\Meta\Meta::set('twitter:title', $this['entry']['title']);
+                    \BennoThommo\Meta\Meta::set('twitter:description', str_limit(Html::strip($this['entry']['description']), 255));
+                    \BennoThommo\Meta\Meta::set('og:title', $this['entry']['title']);
+                    \BennoThommo\Meta\Meta::set('og:description', str_limit(Html::strip($this['entry']['description']), 255) );
+                    \BennoThommo\Meta\Meta::set('og:type', 'article');
+                    \BennoThommo\Meta\Meta::set('og:url', $this->pageUrl(''));
+                    if($this['entry']['cover_image']){
+                        \BennoThommo\Meta\Meta::set('twitter:image', $this['entry']['cover_image']->getThumb(300, 300, ['mode' => 'crop']));
+
+                        \BennoThommo\Meta\Meta::set('og:image', $this['entry']['cover_image']->getThumb(600, 314, ['mode' => 'crop']));
+                        \BennoThommo\Meta\Meta::set('og:image:width', 600);
+                        \BennoThommo\Meta\Meta::set('og:image:height', 314);
+                    }
+
+                    $this['attendees'] = new class {
+                        public function getIM($id) {
+                        return Attendant::where('event_id', $id)
+                        ->join('users', 'users.id', '=', 'pensoft_eventreporting_attendants.user_id')
+                        ->get();
+                        }
+                    };
+
+                    $this['internalData'] = new class {
+                        public function getIM($id) {
+                        return Data::where('slug', $id)->first();
+                        }
+                    };
+
 
 }
 $this['page_url'] = $this->pageUrl('');
@@ -74,7 +91,7 @@ $this['slug'] = $this->param('slug');
 <!--tabs content	-->
 <div class="container-fluid">
     <div class="container">
-        
+
         <div class="row" id="listView">
             <div class="events_list_container">
                 {% for entry in entries %}
@@ -139,11 +156,38 @@ $this['slug'] = $this->param('slug');
             </div>
 
         </div>
+
+        {% if internalData.getIM(entry.slug).organiser %}
+        <div class="col-xs-12">
+        <div class="content">
+            <span class="text-bold">Organiser:</span>
+            <span class="text-ligth">{{internalData.getIM(entry.slug).organiser}}</span>
+        </div>
+        </div>
+        {% endif %}
+
+        {% if user %}
+            {% if attendees.getIM(entry.id).count %}
+        <div class="col-xs-12">
+            <div class="content">
+                <span class="text-bold">Attendees:</span>
+                {% for profile in attendees.getIM(entry.id) %}
+                <span class="text-ligth">{{profile.name}} {{profile.surname}}</span>
+                {% if not loop.last %},&nbsp;{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+            {% endif %}
+
+        {% endif %}
+
         <div class="col-xs-12">
 
             {% if entry.url %}
             <br><br><a href="{{entry.url}}" class="read_more" target="_blank">Go to event website</a>
             {% endif %}
+
+
 
 
 
@@ -161,6 +205,16 @@ $this['slug'] = $this->param('slug');
 
 
         </div>
+
+        {% if user  %}
+        <div class="col-xs-12 col-md-7">
+            <a href="{{'event-attendance-form'|page}}/{{entry.id}}" class="btn btn-primary mb-1 mt-1" style="width: 230px;  font-size: unset;">Add attendance</a>
+            {% if internalData.getIM(entry.slug).id %}
+            <a href="{{'event-attendance-report'|page}}" class="btn btn-primary mb-1 mt-1">Edit</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
     </div>
 </div>
 

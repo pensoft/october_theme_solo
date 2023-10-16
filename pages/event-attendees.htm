@@ -42,14 +42,13 @@ function onStart(){
 
     <p>&nbsp;</p>
     <div class="tabs">
+
+        <a class="active" href="#listView">List view</a>
         <a class="" href="#calendarView">Calendar view</a>
-        <a class="" href="#listView">List view</a>
     </div>
     <!--tabs content	-->
 <p>&nbsp;</p>
-    <div class="row" id="calendarView">
-        {% component 'calendar' %}
-    </div>
+
     <div class="row" id="listView">
         <div class="library-items col-xs-12" id="partialLibraries">
             {% for event in events %}
@@ -91,6 +90,7 @@ function onStart(){
                                 <span class="text-ligth">{{onlineHybridOnsite[event.online_hybrid_onsite]}}</span>
                             </div>
                             {% endif %}
+
                             {% if attendees.getIM(event.id).count %}
                             <div>
                                 <span class="text-bold">Attendees:</span>
@@ -123,6 +123,9 @@ function onStart(){
             {{ events.fragment('listView').render|raw }}
         </div>
 
+    </div>
+    <div class="row" id="calendarView">
+        {% component 'calendar' %}
     </div>
 
 
