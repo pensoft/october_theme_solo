@@ -61,7 +61,7 @@ return Redirect::to('/media-center/flyer');
         {# Use spaceless tag to remove spaces inside the A tag. #}
         {% spaceless %}
         {% if record.image %}
-        <div class="col-md-3 col-xs-12 center-xs">
+        <div class="col-md-4 col-xs-12 center-xs">
             <p class="logo_container"><img src="{{record.image.path}}" title="{{record.name}}"></p>
 
             {% if record.file %}
