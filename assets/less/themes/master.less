@@ -1002,3 +1002,234 @@ now override the 3.3 new styles for modern browsers & apply opacity
     }
 
 }
+
+
+.think_tanks_container{
+    .breakpoint-large-down({
+        padding-top: 20px;
+    });
+    .tabs{
+        width: 100%;
+        display: block;
+        .breakpoint-large-down({
+            width: fit-content;
+            margin: 0 auto;
+        });
+
+        a{
+            cursor: pointer;
+            color: transparent;
+            background: #FFFFFF;
+            box-shadow: 0px 1px 19px #00000019;
+            border-radius: 13px;
+            float: left;
+            width: 218px;
+            height: 126px;
+            margin: 0 20px 20px 0;
+            border: 6px solid white;
+            .breakpoint-large-down({
+                margin: 0 5px 10px 5px;
+                display: flex;
+                float: left;
+                width: 26%;
+                height: 53px;
+            });
+
+            &.active, &:hover{
+                border: 6px solid #D6CBC8;
+            }
+
+            &:first-of-type{
+                background: url("../../assets/images/SOLO-Degradation-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(2){
+                background: url("../../assets/images/SOLO-Carbon-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(3){
+                background: url("../../assets/images/SOLO-Urban-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(4){
+                background: url("../../assets/images/SOLO-Pesticide-rgb_v2.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(5){
+                background: url("../../assets/images/SOLO-Erosion-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(6){
+                background: url("../../assets/images/SOLO-Footprint-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(7){
+                background: url("../../assets/images/SOLO-Structure-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(8){
+                background: url("../../assets/images/SOLO-Literacy-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            &:nth-of-type(9){
+                background: url("../../assets/images/SOLO-Conservation-rgb.svg") center no-repeat;
+                background-size: 321px 52px;
+                width: 27%;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+        }
+
+    }
+
+    strong em, strong a{
+        color: #269DA1;
+        font-style: normal;
+    }
+    p a{
+        color: #269DA1;
+    }
+
+
+    .col-md-6.col-xs-12, .col-md-5.col-xs-12, .col-md-7.col-xs-12{
+        padding: 0;
+        &.brown_bg{
+            background: #571300;
+            border-radius: 10px;
+            color: white;
+            padding: 0 30px!important;
+            display: flex;
+            align-items: center;
+            flex-basis: 45%;
+            max-width: 45%;
+            .breakpoint-large-down({
+                flex-basis: 100%;
+                max-width: 100%;
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                padding: 20px!important;
+            });
+        }
+    }
+
+    .col-md-5.col-xs-12{
+        padding: 0;
+        &.brown_bg{
+            flex-basis: 35%;
+            max-width: 35%;
+            .breakpoint-large-down({
+                flex-basis: 100%;
+                max-width: 100%;
+            });
+        }
+    }
+    .col-md-7.col-xs-12{
+        padding: 0;
+        &.brown_bg{
+            flex-basis: 55%;
+            max-width: 55%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            .breakpoint-large-down({
+                flex-basis: 100%;
+                max-width: 100%;
+            });
+
+            p:last-of-type{
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    h3{
+        color: #571300;
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 40px;
+    }
+
+    ul.arrows{
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        list-style-type: none;
+        padding: 0;
+        margin: 20px 0;
+        .breakpoint-large-down({
+            display: block;
+        });
+        li{
+            display: table-cell;
+            background: url("../../assets/images/arrow-down.svg") top left no-repeat;
+            background-size: 41px;
+            padding-top: 73px;
+            padding-right: 20px;
+            .breakpoint-large-down({
+                display: block;
+                margin-bottom: 40px;
+                padding-right: 0px;
+                padding-top: 63px;
+            });
+        }
+    }
+
+    ol {
+        list-style: none;
+        counter-reset: item;
+        margin-bottom: 40px;
+        li {
+            counter-increment: item;
+            color: @default-color;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            padding-left: 42px;
+            margin: 30px 0 15px 0;
+        }
+        li:before {
+            content: counter(item);
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border: 1px solid @link-color;
+            background: @link-color;
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            display: inline-block;
+            font-size: 18px;
+            line-height: 28px;
+            margin-left: -41px;
+        }
+    }
+}
+
+

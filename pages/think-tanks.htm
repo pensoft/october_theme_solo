@@ -1,0 +1,128 @@
+title = "THINK TANKS"
+layout = "default"
+url = "/think-tanks"
+
+[siteSearchInclude]
+
+[jumbotron]
+jumbotron = "reduce-land-degradation"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron jumbotron2]
+jumbotron = "conserve-and-increase-soil-organic-carbon-stocks"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron jumbotron3]
+jumbotron = "no-net-soil-sealing-and-increase-reuse-urban-soils"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron jumbotron4]
+jumbotron = "prevent-erosion"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron jumbotron5]
+jumbotron = "nature-conservation-soil-biodiversity"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron structure]
+jumbotron = "improve-soil-structure"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron jumbotron7]
+jumbotron = "reduce-soil-pesticide-pollution-and-enhance-restoration"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron footprint]
+jumbotron = "reduce-eu-global-footprint-soils"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron literacy]
+jumbotron = "increase-soil-literacy-member-states"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
+==
+{% component 'siteSearchInclude' %}
+<div class="container think_tanks_container">
+    <div class="row">
+        <div class="tabs">
+            <a href="#Land-degradation">Land degradation</a>
+            <a href="#Soil-organic-carbon-stocks">Soil organic carbon stocks</a>
+            <a href="#Soil-sealing-and-urban-soils">Soil sealing and urban soils</a>
+            <a href="#Pollution-and-restoration">Pollution and restoration</a>
+            <a href="#Erosion-prevention">Erosion prevention</a>
+            <a href="#Footprint-on-soils">Footprint on soils</a>
+            <a href="#Soil-structure">Soil structure</a>
+            <a href="#Soil-literacy">Soil literacy</a>
+            <a href="#Nature-conservation-of-soil-biodiversity">Nature conservation of soil biodiversity</a>
+        </div>
+    </div>
+
+    <div class="row" id="Land-degradation">
+    {% component 'jumbotron' %}
+    </div>
+
+
+    <div class="row" id="Soil-organic-carbon-stocks">
+    {% component 'jumbotron2' %}
+    </div>
+
+
+    <div class="row" id="Soil-sealing-and-urban-soils">
+    {% component 'jumbotron3' %}
+    </div>
+
+
+    <div class="row" id="Pollution-and-restoration">
+    {% component 'jumbotron7' %}
+    </div>
+
+
+    <div class="row" id="Erosion-prevention">
+    {% component 'jumbotron4' %}
+    </div>
+
+    <div class="row" id="Footprint-on-soils">
+    {% component 'footprint' %}
+    </div>
+
+
+    <div class="row" id="Soil-structure">
+    {% component 'structure' %}
+    </div>
+
+
+    <div class="row" id="Soil-literacy">
+    {% component 'literacy' %}
+    </div>
+
+
+    <div class="row" id="Nature-conservation-of-soil-biodiversity">
+    {% component 'jumbotron5' %}
+    </div>
+</div>
