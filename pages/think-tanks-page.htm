@@ -1,0 +1,30 @@
+title = "THINK TANKS"
+layout = "default"
+url = "/think-tanks-page"
+
+[siteSearchInclude]
+
+[jumbotron]
+jumbotron = "think-tanks-intro"
+background = "transperant"
+templates = "template3"
+description_limit = 0
+==
+{% component 'siteSearchInclude' %}
+{% component 'jumbotron' %}
+<div class="container think_tanks_container">
+    
+    <div class="row">
+        <div class="tabs">
+            <a href="{{'think-tanks'|page}}#Land-degradation">Land degradation</a>
+            <a href="{{'think-tanks'|page}}#Soil-organic-carbon-stocks">Soil organic carbon stocks</a>
+            <a href="{{'think-tanks'|page}}#Soil-sealing-and-urban-soils">Soil sealing and urban soils</a>
+            <a href="{{'think-tanks'|page}}#Pollution-and-restoration">Pollution and restoration</a>
+            <a href="{{'think-tanks'|page}}#Erosion-prevention">Erosion prevention</a>
+            <a href="{{'think-tanks'|page}}#Footprint-on-soils">Footprint on soils</a>
+            <a href="{{'think-tanks'|page}}#Soil-structure">Soil structure</a>
+            <a href="{{'think-tanks'|page}}#Soil-literacy">Soil literacy</a>
+            <a href="{{'think-tanks'|page}}#Nature-conservation-of-soil-biodiversity">Nature conservation of soil biodiversity</a>
+        </div>
+    </div>
+</div>
