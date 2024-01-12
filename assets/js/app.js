@@ -187,7 +187,7 @@ $(document).ready(function() {
     });
 
 
-    
+
 
     $('<div class="col-xs-12 col-sm-3 card internal no-border" style="margin-bottom: 15px">\n' +
         '<a class="folder-background" style="display:flex; background: url(/storage/app/media/forms.svg) center center no-repeat; background-size: 100px; height: 200px" href="/internal-repository/reporting-forms" title="Reporting forms"></a>\n' +
@@ -290,6 +290,10 @@ $(document).ready(function() {
             // Prevent the anchor\'s default click action
             e.preventDefault();
         });
+    });
+
+    $('#userSigninLogin').on("mouseleave", function (){
+        $(this).val($(this).val().toLowerCase());
     });
 
 });
