@@ -292,7 +292,7 @@ $(document).ready(function() {
         });
     });
 
-    $('#userSigninLogin').on("mouseleave", function (){
+    $('#userSigninLogin').on("change keyup paste", function (){
         $(this).val($(this).val().toLowerCase());
     });
 
