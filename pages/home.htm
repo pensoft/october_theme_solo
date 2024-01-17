@@ -77,7 +77,7 @@ function onStart(){
 
 
 
-	<div class="container mt-4">
+	<div class="container mt-4 mb-4">
 	<div class="row between-xs">
 		<div class="col-lg-7 col-xs-12 upcoming_events_container">
 			<h1 class="base_heading"><a href="{{'events'|page}}">Upcoming Events</a></h1>
@@ -136,10 +136,15 @@ function onStart(){
 
 
 {% if this.theme.subscribe %}
-<div class="container-fluid border-box">
-    <div class="row container subscribe-newsletter-background">
-        <div class="col-xs-12 center-xs mt-2 mb-1">Join our community by subscribing to our newsletter.</div>
-        <div class="col-xs-12 center-xs"><a href="{{this.theme.subscribe}}" class="btn btn-primary mb-2" target="_blank">Subscribe</a></div>
+<div class="container">
+    <div class="subscriber row between-md">
+        <div class="sub-text">
+            Join our community by subscribing to our newsletter!
+        </div>
+            <div class="btn-subscribe">
+                <a href="{{this.theme.subscribe}}">Subscribe</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endif %}
