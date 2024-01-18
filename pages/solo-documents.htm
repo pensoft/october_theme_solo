@@ -10,16 +10,16 @@ journal = 122
 ==
 {% component 'siteSearchInclude' %}
 <div class="container external_documents">
-        <div class="some_news_background2"></div>
-        <div class="some_news_background"></div>
-        <div class="create_document">
             {% if user %}
                 {% set url = '/login-redirect/1' %}
+                <div class="some_news_background2"></div>
+                <div class="some_news_background"></div>
+                <div class="create_document">
+                        <a href="{{url}}" target="_blank">Create document</a>
+                </div>
             {% else %}
                 {% set url = '/login' %}
             {% endif %}
-            <a href="{{url}}" target="_blank">Create document</a>
-        </div>
 
 {% component 'ExternalDocumentsList' %}
 </div>
