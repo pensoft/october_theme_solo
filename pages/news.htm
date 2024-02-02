@@ -4,7 +4,6 @@ title = "News"
 is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
-
 ==
 <?php
 use Pensoft\Articles\Models\Article;
@@ -84,8 +83,7 @@ $this['related'] = $related;
 }
 ?>
 ==
-
-	{% if is_detail_page %}
+{% if is_detail_page %}
 <div class="container" style="max-width: 950px;">
     <div class="some_news_background2"></div>
     <div class="some_news_background"></div>
@@ -158,12 +156,9 @@ $this['related'] = $related;
 
                 {% endfor %}
             </div>
-            {% if records.count > 15 %}
             <div class="row container">
                 {{ records.render|raw }}
             </div>
-            {% endif %}
 
         </div>
 	{% endif %}
-

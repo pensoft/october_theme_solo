@@ -1,11 +1,13 @@
 url = "/external-documents"
 layout = "default"
 title = "Roadmaps"
+header_text = "This page includes different roadmaps on the main knowledge gaps on research and innovation on soils across the different Mission Soil Objectives, created by SOLO's Think Tanks, which are ready for review. Please log in or create a profile in order to review them."
 
 [siteSearchInclude]
 
 [ExternalDocumentsList]
 externalLibrary = "arpha"
+paging = 10
 journal = 122
 ==
 {% component 'siteSearchInclude' %}
@@ -20,6 +22,11 @@ journal = 122
             {% else %}
                 {% set url = '/login' %}
             {% endif %}
-
+ <!-- Temporary Stopped becase -->
+ <!--     <div class="container external_documents">
+              APRHA is under maintenance. We will be back shortly. Thank you for your patience!
+          </div>
+ -->           
 {% component 'ExternalDocumentsList' %}
+    
 </div>
