@@ -1,6 +1,6 @@
-title = "Register"
 url = "/register"
 layout = "default"
+title = "Register"
 is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
@@ -10,9 +10,12 @@ redirect = "login"
 paramCode = "code"
 forceSecure = 0
 requirePassword = 0
+
+[session]
+security = "user"
+redirect = "login"
 ==
 <?php
-
 use RainLab\User\Models\User;
 
 public function onStart(){
@@ -36,10 +39,9 @@ public function onMyCustomRegister()
 
 }
 ?>
-
 ==
-
-    {% if not user %}
+{% component 'session' %}
+{% if not user %}
 
         {% partial 'components/account/register' %}
 
