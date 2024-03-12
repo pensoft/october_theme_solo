@@ -206,6 +206,11 @@ $(document).ready(function() {
 
     $('<div class="mark"></div>').insertAfter($('.group-holder input'));
 
+    $('.category-tabs-container a').click(function() {
+        $('.category-tabs-container a').removeClass('active');
+        $(this).addClass('active');
+    });
+
     $('.tabs').each(function(){
         // For each set of tabs, we want to keep track of
         // which tab is active and its associated content

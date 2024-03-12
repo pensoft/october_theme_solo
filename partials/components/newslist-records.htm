@@ -1,0 +1,27 @@
+<div class="row newslist" id="newslist-records">
+    {% for highlight in records %}
+    <div class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
+
+        <div class="row news_column">
+            <a href="{{'news'|page}}/{{highlight.slug}}">
+                <div class="news_image">
+                    <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(360, 223, {'mode': 'crop'}) }}" />
+                </div>
+                <div class="news-container">
+                    <div class="wrapper">
+                        <div class="news-title">
+                            <h3 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h3>
+                        </div>
+                        <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|slice(0, 200) ~ '...' : highlight.content|raw  }}</div>
+                    </div>
+                    <div class="read_more">Read more</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+<div class="row container">
+    {{ records.render|raw }}
+</div>

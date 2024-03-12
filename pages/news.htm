@@ -7,13 +7,36 @@ robot_follow = "follow"
 ==
 <?php
 use Pensoft\Articles\Models\Article;
+use Pensoft\Articles\Models\Category;
 
 function urlencode($string){
     return trim(urlencode($string));
 }
+
+function onFilterArticles()
+{
+    $categoryId = input('categoryId');
+
+    if ($categoryId === 'all') {
+        $this['records'] = Article::news()->where('published_at', '<=', 'now()')
+                                          ->where('published', 'true')
+                                          ->orderBy('published_at', 'DESC')
+                                          ->paginate(15);
+    } else {
+        $this['records'] = Article::news()->whereHas('categories', function ($query) use ($categoryId) {
+            $query->where('id', $categoryId);
+        })->where('published_at', '<=', 'now()')
+          ->where('published', 'true')
+          ->orderBy('published_at', 'DESC')
+          ->paginate(15);
+    }
+}
+
+
 function onStart()
 {
 $this['records'] = Article::news()->where('published_at', '<=', 'now()')->where('published', 'true')->orderBy('published_at', 'DESC')->paginate(15, ['*'], 'p');
+$this['categories'] = Category::orderBy('sort_order')->get();
 
     $this['article'] = Pensoft\Articles\Models\Article::where('slug', $this->param('id'))->where('published', 'true')->first();
 $this['is_detail_page'] = $this['article'] ? true : false;
@@ -129,36 +152,58 @@ $this['related'] = $related;
         </div>
 </div>
 	{% else %}
-        <div class="container">
-            <div class="row newslist">
-                {% for highlight in records %}
-                <div class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
-
-
-                    <div class="row news_column">
-                        <a href="{{'news'|page}}/{{highlight.slug}}">
-                            <div class="news_image">
-                                <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(360, 223, {'mode': 'crop'}) }}" />
-                            </div>
-                            <div class="news-container">
-                                <div class="wrapper">
-                                    <div class="news-title">
-                                        <h3 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h3>
-                                    </div>
-                                    <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|slice(0, 200) ~ '...' : highlight.content|raw  }}</div>
-                                </div>
-                                <div class="read_more">Read more</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-
-                {% endfor %}
-            </div>
-            <div class="row container">
-                {{ records.render|raw }}
-            </div>
-
+    <div class="container category-tabs-container">
+        {% if categories.count > 0 %}
+        <div class="row between-xs category-tabs">
+            <a href="javascript:;"
+               class="active"
+               data-request="onFilterArticles"
+               data-request-data="categoryId: 'all'"
+               data-request-update="'components/newslist-records': '#newslist-records'">
+               All News
+            </a>
+            {% for category in categories %}
+                <a href="javascript:;" 
+                   data-request="onFilterArticles" 
+                   data-request-data="categoryId: {{ category.id }}" 
+                   data-request-update="'components/newslist-records': '#newslist-records'">
+                   {{ category.name }}
+                </a>
+            {% endfor %}
         </div>
+        
+        {% endif %}
+    </div>
+    <div class="container" id="newslist-records">
+        <div class="row newslist">
+            {% for highlight in records %}
+            <div class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
+
+
+                <div class="row news_column">
+                    <a href="{{'news'|page}}/{{highlight.slug}}">
+                        <div class="news_image">
+                            <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(360, 223, {'mode': 'crop'}) }}" />
+                        </div>
+                        <div class="news-container">
+                            <div class="wrapper">
+                                <div class="news-title">
+                                    <h3 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h3>
+                                </div>
+                                <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|slice(0, 200) ~ '...' : highlight.content|raw  }}</div>
+                            </div>
+                            <div class="read_more">Read more</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+            {% endfor %}
+        </div>
+        <div class="row container">
+            {{ records.render|raw }}
+        </div>
+
+    </div>
 	{% endif %}
