@@ -1,6 +1,6 @@
-title = "THINK TANKS"
-layout = "default"
 url = "/think-tanks"
+layout = "default"
+title = "THINK TANKS"
 
 [siteSearchInclude]
 
@@ -66,6 +66,13 @@ title = 1
 background = "transperant"
 templates = "template3"
 description_limit = 0
+
+[jumbotron jumbotron6]
+jumbotron = "climate-smart-sustainable-agricultural-soil-management"
+title = 1
+background = "transperant"
+templates = "template3"
+description_limit = 0
 ==
 {% component 'siteSearchInclude' %}
 <div class="container think_tanks_container">
@@ -80,6 +87,7 @@ description_limit = 0
             <a href="#Soil-structure">Soil structure</a>
             <a href="#Soil-literacy">Soil literacy</a>
             <a href="#Nature-conservation-of-soil-biodiversity">Nature conservation of soil biodiversity</a>
+            <a href="#Climate-smart-sustainable-agricultural-soil-management">Climate-smart sustainable agricultural soil management</a>
         </div>
     </div>
 
@@ -124,5 +132,10 @@ description_limit = 0
 
     <div class="row" id="Nature-conservation-of-soil-biodiversity">
     {% component 'jumbotron5' %}
+    </div>
+
+    
+    <div class="row" id="Climate-smart-sustainable-agricultural-soil-management">
+    {% component 'jumbotron6' %}
     </div>
 </div>

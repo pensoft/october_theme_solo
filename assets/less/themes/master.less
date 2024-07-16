@@ -1246,8 +1246,17 @@ now override the 3.3 new styles for modern browsers & apply opacity
             }
             &:nth-of-type(9){
                 background: url("../../assets/images/SOLO-Conservation-rgb.svg") center no-repeat;
-                background-size: 321px 52px;
-                width: 27%;
+                // background-size: 321px 52px;
+                background-size: 183px 52px;
+                // width: 27%;
+                .breakpoint-large-down({
+                    background-size: contain;
+                });
+            }
+            
+            &:nth-of-type(10){
+                background: url("https://soils4europe.eu/storage/app/media/SOLO-Climate-smart-agriculture-rgb.svg") center no-repeat;
+                background-size: 183px 52px;
                 .breakpoint-large-down({
                     background-size: contain;
                 });
@@ -1265,14 +1274,15 @@ now override the 3.3 new styles for modern browsers & apply opacity
     }
 
 
-    .col-md-6.col-xs-12, .col-md-5.col-xs-12, .col-md-7.col-xs-12{
+    .col-md-6.col-xs-12, .col-md-5.col-xs-12, .col-md-7.col-xs-12, .col-md-10.col-xs-12{
         padding: 0;
         &.brown_bg{
+            display: none;
             background: #571300;
             border-radius: 10px;
             color: white;
             padding: 0 30px!important;
-            display: flex;
+            // display: flex;
             align-items: center;
             flex-basis: 45%;
             max-width: 45%;
@@ -1285,11 +1295,63 @@ now override the 3.3 new styles for modern browsers & apply opacity
                 padding: 20px!important;
             });
         }
+
+        
+        &.beige_bg{
+            background: #e2d8d5;
+            box-shadow: 0px 3px 44px #0000001D;
+            border-radius: 10px;
+            // opacity: 0.16;
+            color: #363636;
+            display: flex;
+            align-items: center;
+            padding: 40px 180px 40px 40px;
+            position: relative;
+            .breakpoint-large-down({
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                padding: 20px!important;
+            });
+            p{
+                margin-bottom: 0;
+            }
+
+            a.go_to_roadmap{
+                position: absolute;
+                right: -180px;
+                padding: 8px;
+                border: 1px solid transparent;
+                border-radius: 40px;
+                height: 61px;
+                display: flex;
+                .breakpoint-large-down({
+                    position: relative;
+                    right: unset;
+                    margin-top: 20px;
+                });
+                span{
+                    background: #571300;
+                    color: white;
+                    font-weight: bold;
+                    padding: 20px 90px;
+                    border-radius: 40px;
+                    line-height: 1em;
+                    .breakpoint-large-down({
+                        padding: 20px 40px;
+                    });
+                }
+                &:hover{
+                    border: 1px solid #571300;
+                }
+            }
+        }
     }
 
     .col-md-5.col-xs-12{
         padding: 0;
         &.brown_bg{
+            display: none;
             flex-basis: 35%;
             max-width: 35%;
             .breakpoint-large-down({
@@ -1301,6 +1363,7 @@ now override the 3.3 new styles for modern browsers & apply opacity
     .col-md-7.col-xs-12{
         padding: 0;
         &.brown_bg{
+            display: none;
             flex-basis: 55%;
             max-width: 55%;
             flex-direction: column;
@@ -1358,7 +1421,7 @@ now override the 3.3 new styles for modern browsers & apply opacity
             counter-increment: item;
             color: @default-color;
             position: relative;
-            display: flex;
+            // display: flex;
             align-items: flex-start;
             padding-left: 42px;
             margin: 30px 0 15px 0;
