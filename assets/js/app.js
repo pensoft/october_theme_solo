@@ -200,8 +200,8 @@ $(document).ready(function() {
         '</div>').insertAfter($('.card.internal:nth-child(6)'));
 
     $('<div class="col-xs-12 col-sm-3 card internal no-border" style="margin-bottom: 15px">\n' +
-        '<a class="folder-background" style="display:flex; background: url(/storage/app/media/external-documents.svg) center center no-repeat; background-size: 100px; height: 200px" href="/external-documents" title="External documents"></a>\n' +
-        '<h3 class="card-header"><a href="/external-documents" title="External documents">External documents</a></h3>\n' +
+        '<a class="folder-background" style="display:flex; background: url(/storage/app/media/external-documents.svg) center center no-repeat; background-size: 100px; height: 200px" href="/roadmaps" title="Roadmaps"></a>\n' +
+        '<h3 class="card-header"><a href="/roadmaps" title="Roadmaps">Roadmaps</a></h3>\n' +
         '</div>').insertAfter($('.card.internal:nth-child(8)'));
 
     $('<div class="mark"></div>').insertAfter($('.group-holder input'));
@@ -211,7 +211,7 @@ $(document).ready(function() {
         $(this).addClass('active');
     });
 
-    $('.tabs').each(function(){
+    $('.events .tabs').each(function(){
         // For each set of tabs, we want to keep track of
         // which tab is active and its associated content
         var $active, $content, $links = $(this).find('a');

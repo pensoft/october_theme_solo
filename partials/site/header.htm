@@ -88,7 +88,7 @@ numberOfLevels = 2
                 <div class="logo_main"></div>
                 <div class="site-tag"><p>{{tag_line|raw}}<a href="/about"><i></i></a></p></div>
                 <div class="home-btn-container col-md col-xs-12">
-                    <a class="btn-home" href="/external-documents">Roadmaps Review</a>
+                    <a class="btn-home" href="/roadmaps">Roadmaps Review</a>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@ numberOfLevels = 2
     <div class="header-image {{page_id}}">
         <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:57px;{% endif %}"></div>
 
-        <div class="jumbotron" data-aos="fade-right">
+        <div class="jumbotron container" data-aos="fade-right" style="padding-top: 0;">
             <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
                 {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
             {% if this.page.header_text %}

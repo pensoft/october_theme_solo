@@ -3,7 +3,6 @@ title = "Login redirect"
 is_hidden = 0
 ==
 <?php
-
 function onStart(){
     if (!\Auth::check()) {
         return \Redirect::to('/login');
@@ -14,10 +13,10 @@ function onStart(){
         if((int)$this->param('create_document')) {
             $this['redirect'] = 'https://arpha.pensoft.net/create_document.php?journal_id=122';
         } else {
-            $this['redirect'] = '/external-documents';
+            $this['redirect'] = '/roadmaps';
             foreach ($user->groups->toArray() as $item){
                 if (isset($item['code']) && $item['code'] == 'internal-users'){
-                    $this['redirect'] = '/internal-repository';
+                    $this['redirect'] = '/roadmaps';
                 }
             }
         }
@@ -36,7 +35,6 @@ function onStart(){
     }
 
 }
-
 ?>
 ==
 <img src="{{ env('ARPHA_DOMAIN') }}login.php?logout=1&logout_from_cookie=1" width="1" height="1" border="0" alt="" referrerpolicy="no-referrer-when-downgrade" />
