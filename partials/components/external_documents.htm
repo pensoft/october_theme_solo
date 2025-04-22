@@ -19,6 +19,9 @@ description_limit = 0
 
                 </div>
 
+                {% set due_date  = __SELF__.calculatePanelDueDateDays(record.panel_duedate) %}
+                <div class="available_label">Available for review in the next {{ due_date }}</div>
+
             </div>
         </div>
 
