@@ -19,7 +19,6 @@ use Pensoft\Cardprofiles\Models\Profiles;
 
 function onStart(){
 	$this['partners'] =  Partners::where('type', 1)->get();
-$this['a_partners'] =  Partners::where('type', '!=', 1)->get();
 $this['members'] = Profiles::where('category_id',  2)->get();
 
 }
