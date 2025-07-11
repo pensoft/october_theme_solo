@@ -409,15 +409,13 @@ ul.pagination{
                 background-position-y: 89px;
                 content: '';
                 position: absolute;
-                bottom: -25px;
+                bottom: 0px;
                 left: 50%;
                 transform: translate(-50%, 47%);
-                //margin-left: -25px;
-
-                //top: 50%;
-                //left: 50%;
-                //transform: translate(-50%, -50%);
                 border-radius: 50%;
+                .breakpoint-large-down({
+                    background-position-y: 40px;
+                });
             }
 
 
@@ -488,6 +486,9 @@ ul.pagination{
         left: 0;
         .content{
             text-align: right;
+            .breakpoint-large-down({
+                text-align: left;
+            });
         }
     }
 
@@ -508,6 +509,10 @@ ul.pagination{
         position: relative;
         border-radius: 6px;
 
+        .breakpoint-large-down({
+            padding: 17px 41px 63px 0px;
+        });
+
         &.location{
             font-weight: bold;
             font-size: 18px;
@@ -516,6 +521,10 @@ ul.pagination{
             background-size: 25px;
             background-position: 41px 17px;
             padding-left: 81px;
+            .breakpoint-large-down({
+                padding-left: 41px;
+                background-position: 0 17px;
+            });
         }
 
         &.calendar{
@@ -525,6 +534,10 @@ ul.pagination{
             background: url("../../assets/images/calendar.svg") no-repeat;
             background-size: 25px;
             background-position: right 244px top 17px;
+            .breakpoint-large-down({
+                padding-left: 41px;
+                background-position: 0 17px;
+            });
         }
 
         a{
