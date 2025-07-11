@@ -1,0 +1,49 @@
+title = "Soils for Europe conference 2026"
+layout = "default"
+url = "/soils-europe-conference-2026"
+
+[siteSearchInclude]
+==
+<?php
+use Pensoft\Partners\Models\Partners;
+
+function onStart(){
+	$this['partners'] =  Partners::where('type', 4)->get();
+}
+
+
+?>
+==
+{% component 'siteSearchInclude' %}
+
+<div class="container">
+    <div class="timeline">
+        <div class="timeline_container left first">
+            <div class="content"></div>
+        </div>
+        <div class="timeline_container right">
+            <div class="content location">
+                Coimbra, Portugal
+            </div>
+        </div>
+        <div class="timeline_container left">
+            <div class="content calendar">
+                7–11 September 2025
+            </div>
+        </div>
+        <div class="timeline_container right">
+            <div class="content">
+                <p>The event will be co-organised by several Mission Soil projects and will cover sessions on all Mission Objectives, including cross-cutting sessions, aiming to showcase the latest research being developed across Europe. While the event will allow for showcasing the innovations being produced by the various European-funded projects, the conference will be open to all researchers and practitioners in an effort to bring together the best and the most innovative initiatives in the European space. This also includes a day dedicated to the Living Labs initiatives. Stay tuned for more information.</p>
+            </div>
+        </div>
+        <div class="timeline_container left">
+            <div class="content logos">
+                {% for partner in partners %}
+                <a href="{{partner.instituion_url}}" target="_blank" title="{{partner.instituion}}">
+                    <img alt="{{ partner.instituion }}" src="{{partner.cover.thumb(auto,57,{'mode':'crop'})}}">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
