@@ -1,0 +1,123 @@
+url = "/solos-impact-assessment-framework/:id?|[a-zA-Z\-0-9]"
+layout = "default"
+title = "SOLO’S IMPACT ASSESSMENT FRAMEWORK"
+is_hidden = 0
+robot_index = "index"
+robot_follow = "follow"
+
+[siteSearchInclude]
+
+[jumbotron intro]
+jumbotron = "solos-impact-assessment-framework"
+background = "transperant"
+templates = "template3"
+description_limit = 0
+
+[jumbotron description]
+jumbotron = "kpi-items-description"
+background = "transperant"
+templates = "template3"
+description_limit = 0
+==
+<?php
+use Pensoft\Impact\Models\Sheet;
+use Pensoft\Impact\Models\Group;
+
+function onStart()
+{
+    $this['groups'] = Group::get();
+    $group = Group::where('slug', $this->param('id'))->first();
+    $this['is_detail_page'] = $group ? true : false;
+
+    if($this['is_detail_page']){
+        $this['group'] = Group::where('slug', $this->param('id'))->first();
+        $groupId = $group['id'];
+
+        $this['sheets'] = Sheet::whereHas('group', function ($query) use ($groupId) {
+            $query->where('group_id', $groupId);
+        })->get();
+
+    }
+
+
+
+
+}
+?>
+==
+{% component 'siteSearchInclude' %}
+
+{% if is_detail_page %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 go-back-link">
+            <a href="/solos-impact-assessment-framework" class="back">Back</a>
+        </div>
+    </div>
+    <div class="row">
+
+        <h2 class="kpi_group_title">{{group.title}}</h2>
+        {% for record in sheets %}
+        <div class="col-md-6 col-xs-12">
+            <div class="kpi_record">
+                <div class="row">
+                    <div class="col-xs-12"><div class="kpi_record_label">{{record.label}}</div></div>
+                    <div class="col-xs-12"><h3 class="kpi_record_title">{{record.title}}</h3></div>
+                    <div class="col-md-4 col-xs-12">
+                        <img src="{{record.cover.path}}" class="kpi_record_image">
+                        <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" title="{{record.title}}" class="download" target="_blank">
+                            Download pdf
+                            <i class="pr normal p-download"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-8 col-xs-12"><div class="kpi_record_desc">{{record.description|raw}}</div></div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% else %}
+
+<div class="container">
+    <div class="kpi_intro">
+        {% component 'intro' %}
+    </div>
+</div>
+
+<div class="container kpi_items">
+    <div class="row">
+        <div class="col-xs-12 kpi_items_intro">
+            <p>The assessment framework allows for the evaluation of 5 types of impact of Mission Soil Research and Innovation (R&I) activities. Each type of impact is assessed by a number of KPIs.</p>
+            <p>Detailed KPI sheets can be found in the categories below.</p>
+        </div>
+    </div>
+    <div class="row">
+        {% for group in groups %}
+            <div class="col-md col-xs-12">
+                <a class="kpi_item" href="/solos-impact-assessment-framework/{{group.slug}}">
+                    <div class="group_title_and_icon">
+                        <div class="group_icon" style="background: #D6CBC8 url({{group.cover.path}}) center no-repeat; background-size: 70% 60%;">&nbsp;</div>
+                        {{group.title}}
+                    </div>
+                    <div class="group_desc">
+                        {{group.description|raw}}
+                    </div>
+
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container kpi_description">
+    <div class="row">
+        <div class="col-md-4 col-xs-12"> <img src="{{ 'image.jpg' | media}}"> </div>
+        <div class="col-md-8 col-xs-12">{% component 'description' %}</div>
+    </div>
+
+</div>
+
+{% endif %}

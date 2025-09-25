@@ -84,10 +84,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0" nonce="X0nPVr3s"></script>
     <!-- Header -->
     <header id="layout-header">
+
+        {% if this.page.id == 'solos-impact-assessment-framework' and is_detail_page %}
+        {% set pageTitle = 'KPI Sheets' %}
+        {% else %}
+        {% set pageTitle = this.page.title %}
+        {% endif %}
+
+
         {% partial 'site/header'
         site_name=this.theme.site_name
         tag_line=this.theme.tag_line
-        page_title=this.page.title
+        page_title=pageTitle
         page_id=this.page.id
         %}
     </header>

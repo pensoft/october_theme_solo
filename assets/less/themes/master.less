@@ -93,6 +93,32 @@ p:has(.edit-link){
 }
 
 
+.go-back-link{
+    .back{
+        color: @link-color;
+        font-size: 18px;
+        height: 36px;
+        line-height: 36px;
+        background-position: right center;
+        //margin-bottom: 20px;
+        font-weight: bold;
+        width: fit-content;
+        padding: 5px 0 5px 45px;
+        position: relative;
+
+        &:before{
+            content: '';
+            width: 36px;
+            height: 36px;
+            position: absolute;
+            left: 0;
+            background: url("../../assets/images/red_arrow.svg") center no-repeat;
+            border-radius: 50px;
+            transform: rotate(180deg);
+        }
+    }
+}
+
 .read_more{
     color: @link-color;
     font-size: 18px;
