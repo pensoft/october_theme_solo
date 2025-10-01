@@ -22,6 +22,7 @@ description_limit = 0
 <?php
 use Pensoft\Impact\Models\Sheet;
 use Pensoft\Impact\Models\Group;
+use System\Models\File;
 
 function onStart()
 {
@@ -37,32 +38,36 @@ function onStart()
             $query->where('group_id', $groupId);
         })->get();
 
-    }
 
-    if(get('download')){
-        $file = File::find((int)get('download'));
-        $file_name = $file->getLocalPath();
+        if(get('download')){
+            $file = File::find((int)get('download'));
+            $file_name = $file->getLocalPath();
 
-        $ext= $file->getExtension();
-        $recordName = get('file_name') ? get('file_name') : 'SOLO_logo.'.$ext;
+            $ext= $file->getExtension();
+            $recordName = get('file_name') ? get('file_name') : 'SOLO_logo.'.$ext;
 
-        if (file_exists($file_name)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header("Content-Type: application/force-download");
-            header('Content-Disposition: atntachment; filename='.$recordName);
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($file_name));
-            ob_clean();
-            flush();
-            readfile($file_name);
-            exit();
+            if (file_exists($file_name)) {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header("Content-Type: application/force-download");
+                header('Content-Disposition: atntachment; filename='.$recordName);
+                header('Content-Transfer-Encoding: binary');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($file_name));
+                ob_clean();
+                flush();
+                readfile($file_name);
+                exit();
+            }
+            return Redirect::to('/solos-impact-assessment-framework');
         }
-        return Redirect::to('/solos-impact-assessment-framework');
+
+
     }
+
+
 
 
 
