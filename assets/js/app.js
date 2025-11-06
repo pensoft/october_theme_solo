@@ -189,10 +189,10 @@ $(document).ready(function() {
 
 
 
-    $('<div class="col-xs-12 col-sm-3 card internal no-border" style="margin-bottom: 15px">\n' +
-        '<a class="folder-background" style="display:flex; background: url(/storage/app/media/forms.svg) center center no-repeat; background-size: 100px; height: 200px" href="/internal-repository/reporting-forms" title="Reporting forms"></a>\n' +
-        '<h3 class="card-header"><a href="/internal-repository/reporting-forms" title="Forms">Reporting forms</a></h3>\n' +
-        '</div>').insertAfter($('.card.internal:nth-child(5)'));
+     $('<div class="col-xs-12 col-sm-3 card internal no-border" style="margin-bottom: 15px">\n' +
+         '<a class="folder-background" style="display:flex; background: url(/storage/app/media/forms.svg) center center no-repeat; background-size: 100px; height: 200px" href="/internal-repository/reporting-forms" title="Reporting forms"></a>\n' +
+         '<h3 class="card-header"><a href="/internal-repository/reporting-forms" title="Forms">Reporting forms</a></h3>\n' +
+         '</div>').insertAfter($('.card.internal:nth-child(5)'));
 
     $('<div class="col-xs-12 col-sm-3 card internal no-border" style="margin-bottom: 15px">\n' +
         '<a class="folder-background" style="display:flex; background: url(/storage/app/media/working-documents-live.svg) center center no-repeat; background-size: 100px; height: 200px" href="/internal-repository/living-documents" title="Working documents (live)"></a>\n' +
@@ -202,7 +202,7 @@ $(document).ready(function() {
     $('<div class="col-xs-12 col-sm-3 card internal no-border" style="margin-bottom: 15px">\n' +
         '<a class="folder-background" style="display:flex; background: url(/storage/app/media/external-documents.svg) center center no-repeat; background-size: 100px; height: 200px" href="/roadmaps" title="Roadmaps"></a>\n' +
         '<h3 class="card-header"><a href="/roadmaps" title="Roadmaps">Roadmaps</a></h3>\n' +
-        '</div>').insertAfter($('.card.internal:nth-child(8)'));
+        '</div>').insertAfter($('.card.internal:nth-child(7)'));
 
     $('<div class="mark"></div>').insertAfter($('.group-holder input'));
 

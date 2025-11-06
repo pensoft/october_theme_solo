@@ -8,6 +8,12 @@ allowedUserGroups[] = "internal-users"
 allowedUserGroups[] = "registered"
 allowedUserGroups[] = "guest"
 redirect = "home"
+
+[jumbotron reporting_forms]
+jumbotron = "reporting-forms"
+background = "transperant"
+templates = "template3"
+description_limit = 0
 ==
 {% component 'session' %}
 <div class="container list_background" style="background: none;">
@@ -27,15 +33,8 @@ redirect = "home"
 
 
 		<div class="col-xs-12 list_mission">
-		<ul>
-			<li><a href="https://docs.google.com/forms/d/1ouYPEgjNOlj7xBHqCQmRL04HRQ_bTKTIKkKBUyFcwT8/edit" target="_blank">SOLO Dissemination Activities Form</a></li>
-			<li><a href="https://docs.google.com/forms/d/1FEZ40Jt_5GAm1egRmg2hRqzR3hg1EINBl5FjMlqJOcg/edit" target="_blank">SOLO Datasets Form</a></li>
-			<li><a href="https://docs.google.com/forms/d/e/1FAIpQLSfeyg_b463wRrpuzqnvToqeOZVWTigrf3mIvR-WggI096MYhQ/viewform?usp=sf_link" target="_blank">SOLO Publications form</a></li>
-			<li><a href="https://docs.google.com/forms/d/e/1FAIpQLSdNqFeUiD-sMeL-EWvdUzJWe456Ecei1fUsoofRPrKYOLU-iQ/viewform?usp=sf_link" target="_blank">SOLO Communication Activities Form</a></li>
-		</ul>
 		
-
-			
+			{% component 'reporting_forms' %}
 
 
 
