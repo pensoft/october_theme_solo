@@ -80,44 +80,44 @@ function onStart()
 {% if is_detail_page %}
 
 <div class="container">
-    <div class="row">
+    <nav class="row" aria-label="Breadcrumb">
         <div class="col-xs-12 go-back-link">
             <a href="/solos-impact-assessment-framework" class="back">Back</a>
         </div>
-    </div>
-    <div class="row">
+    </nav>
+    <section class="row" aria-label="KPI details">
 
-        <h2 class="kpi_group_title">{{group.title}}</h2>
+        <h1 class="kpi_group_title">{{group.title}}</h1>
         {% for record in sheets %}
-        <div class="col-md-6 col-xs-12">
+        <article class="col-md-6 col-xs-12">
             <div class="kpi_record">
                 <div class="row">
-                    <div class="col-xs-12"><div class="kpi_record_label">{{record.label}}</div></div>
-                    <div class="col-xs-12"><h3 class="kpi_record_title">{{record.title}}</h3></div>
+                    <div class="col-xs-12"><span class="kpi_record_label">{{record.label}}</span></div>
+                    <div class="col-xs-12"><h2 class="kpi_record_title">{{record.title}}</h2></div>
                     <div class="col-md-4 col-xs-12">
-                        <img src="{{record.cover.path}}" class="kpi_record_image">
-                        <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" title="{{record.title}}" class="download" target="_blank">
+                        <img src="{{record.cover.path}}" class="kpi_record_image" alt="{{record.title}}">
+                        <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" class="download" target="_blank" rel="noopener" download aria-label="Download {{record.title}} PDF">
                             Download pdf
-                            <i class="pr normal p-download"></i>
+                            <i class="pr normal p-download" aria-hidden="true"></i>
                         </a>
                     </div>
                     <div class="col-md-8 col-xs-12"><div class="kpi_record_desc">{{record.description|raw}}</div></div>
                 </div>
             </div>
-        </div>
+        </article>
         {% endfor %}
-    </div>
+    </section>
 </div>
 
 {% else %}
 
 <div class="container">
-    <div class="kpi_intro">
+    <section class="kpi_intro" aria-label="Introduction">
         {% component 'intro' %}
-    </div>
+    </section>
 </div>
 
-<div class="container kpi_items">
+<section class="container kpi_items" aria-label="Impact assessment framework">
     <div class="row">
         <div class="col-xs-12 kpi_items_intro">
             <p>The assessment framework allows for the evaluation of 5 types of impact of Mission Soil Research and Innovation (R&I) activities. Each type of impact is assessed by a number of KPIs.</p>
@@ -126,28 +126,28 @@ function onStart()
     </div>
     <div class="row">
         {% for group in groups %}
-            <div class="col-md col-xs-12">
-                <a class="kpi_item" href="/solos-impact-assessment-framework/{{group.slug}}">
-                    <div class="group_title_and_icon">
-                        <div class="group_icon" style="background: #D6CBC8 url({{group.cover.path}}) center no-repeat; background-size: 70% 60%;">&nbsp;</div>
-                        {{group.title}}
-                    </div>
-                    <div class="group_desc">
-                        {{group.description|raw}}
-                    </div>
-
-                </a>
-            </div>
+        <article class="col-md col-xs-12">
+            <a class="kpi_item" href="/solos-impact-assessment-framework/{{group.slug}}" aria-label="View {{group.title}} KPIs">
+                <div class="group_title_and_icon">
+                    <div class="group_icon" style="background: #D6CBC8 url({{group.cover.path}}) center no-repeat; background-size: 70% 60%;" role="img" aria-label="{{group.title}} icon">&nbsp;</div>
+                    <h2>{{group.title}}</h2>
+                </div>
+                <div class="group_desc">
+                    {{group.description|raw}}
+                </div>
+            </a>
+        </article>
         {% endfor %}
     </div>
-</div>
+</section>
 
-<div class="container kpi_description">
+<section class="container kpi_description" aria-label="Additional information">
     <div class="row">
-        <div class="col-md-4 col-xs-12"> <img src="{{ 'image.jpg' | media}}"> </div>
+        <div class="col-md-4 col-xs-12">
+            <img src="{{ 'image.jpg' | media}}" alt="Impact assessment framework illustration">
+        </div>
         <div class="col-md-8 col-xs-12">{% component 'description' %}</div>
     </div>
-
-</div>
+</section>
 
 {% endif %}

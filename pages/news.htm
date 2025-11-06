@@ -108,102 +108,101 @@ $this['related'] = $related;
 ==
 {% if is_detail_page %}
 <div class="container" style="max-width: 950px;">
-    <div class="some_news_background2"></div>
-    <div class="some_news_background"></div>
-        <div class="row single-news-item">
-            {% if article.cover %}
-            <div class="col-md-6 col-xs-12">
-                <img class="content left" src="{{ article.cover|crop_image|resize(555, auto, { mode: 'crop' }) }}" />
-                {% if article.caption %}
-                {{article.caption|raw}}
-                {% endif %}
-            </div>
+    <div class="some_news_background2" role="presentation"></div>
+    <div class="some_news_background" role="presentation"></div>
+
+    <article class="row single-news-item">
+        {% if article.cover %}
+        <div class="col-md-6 col-xs-12">
+            {% if article.caption %}
+            <figure>
+                <img class="content left" src="{{ article.cover|crop_image|resize(555, auto, { mode: 'crop' }) }}" alt="{{article.title}}" />
+                <figcaption>{{article.caption|raw}}</figcaption>
+            </figure>
+            {% else %}
+            <img class="content left" src="{{ article.cover|crop_image|resize(555, auto, { mode: 'crop' }) }}" alt="{{article.title}}" />
             {% endif %}
-
-            <div class="col-md-6 col-xs-12">
-                    <div class="news-title">
-                        <h1 class="single-new-title">{{article.title}}</h1>
-                    </div>
-                    <div class="text-published">{{article.published_at|date("d M Y")}}</div>
-
-            </div>
-            <div class="col-xs-12">
-                <div class="content">
-                    {{article.content|raw}}
-                </div>
-            </div>
-            <div class="col-xs-12">
-
-
-                <div class="row share_container middle-xs">
-                    <div class="col-lg-1 col-xs-2 start-xs">Share</div>
-                    <div class="col-xs-10">
-                        <a href="http://twitter.com/share?text={{article.title}}&url={{page_url}}" target="_blank" class="btn p-primary pr p-twitter medium"></a>
-
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{page_url}}&amp;src=sdkpreparse" target="_blank" class="btn pr p-primary p-facebook medium"></a>
-
-                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{page_url}}" target="_blank" class="btn pr p-primary p-linkedin medium"></a>
-
-                    </div>
-                </div>
-
-
-            </div>
         </div>
-</div>
-	{% else %}
-    <div class="container category-tabs-container">
-        {% if categories.count > 0 %}
-        <div class="row between-xs category-tabs">
-            <a href="javascript:;"
-               class="active"
-               data-request="onFilterArticles"
-               data-request-data="categoryId: 'all'"
-               data-request-update="'components/newslist-records': '#newslist-records'">
-               All News
-            </a>
-            {% for category in categories %}
-                <a href="javascript:;" 
-                   data-request="onFilterArticles" 
-                   data-request-data="categoryId: {{ category.id }}" 
-                   data-request-update="'components/newslist-records': '#newslist-records'">
-                   {{ category.name }}
-                </a>
-            {% endfor %}
-        </div>
-        
         {% endif %}
-    </div>
-    <div class="container" id="newslist-records">
-        <div class="row newslist">
-            {% for highlight in records %}
-            <div class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
 
+        <div class="col-md-6 col-xs-12">
+            <header class="news-title">
+                <h1 class="single-new-title">{{article.title}}</h1>
+            </header>
+            <time class="text-published" datetime="{{article.published_at|date('Y-m-d')}}">{{article.published_at|date("d M Y")}}</time>
+        </div>
 
-                <div class="row news_column">
-                    <a href="{{'news'|page}}/{{highlight.slug}}">
-                        <div class="news_image">
-                            <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(360, 223, {'mode': 'crop'}) }}" />
-                        </div>
-                        <div class="news-container">
-                            <div class="wrapper">
-                                <div class="news-title">
-                                    <h3 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h3>
-                                </div>
-                                <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|slice(0, 200) ~ '...' : highlight.content|raw  }}</div>
+        <div class="col-xs-12">
+            <section class="content" aria-label="Article content">
+                {{article.content|raw}}
+            </section>
+        </div>
+
+        <div class="col-xs-12">
+            <aside class="row share_container middle-xs" aria-label="Share article">
+                <div class="col-lg-1 col-xs-2 start-xs"><span class="share-label">Share</span></div>
+                <nav class="col-xs-10" aria-label="Share on social media">
+                    <a href="http://twitter.com/share?text={{article.title}}&url={{page_url}}" target="_blank" class="btn p-primary pr p-twitter medium" rel="noopener" aria-label="Share on Twitter"></a>
+
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{page_url}}&amp;src=sdkpreparse" target="_blank" class="btn pr p-primary p-facebook medium" rel="noopener" aria-label="Share on Facebook"></a>
+
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{page_url}}" target="_blank" class="btn pr p-primary p-linkedin medium" rel="noopener" aria-label="Share on LinkedIn"></a>
+                </nav>
+            </aside>
+        </div>
+    </article>
+</div>
+
+{% else %}
+<section class="container category-tabs-container" aria-label="News categories">
+    {% if categories.count > 0 %}
+    <nav class="row category-tabs" aria-label="Filter news by category">
+        <a type="button"
+                class="active"
+                data-request="onFilterArticles"
+                data-request-data="categoryId: 'all'"
+                data-request-update="'components/newslist-records': '#newslist-records'"
+                aria-current="page">
+            All News
+        </a>
+        {% for category in categories %}
+        <a type="button"
+                data-request="onFilterArticles"
+                data-request-data="categoryId: {{ category.id }}"
+                data-request-update="'components/newslist-records': '#newslist-records'">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </nav>
+    {% endif %}
+</section>
+
+<section class="container" id="newslist-records" aria-label="News articles list">
+    <div class="row newslist">
+        {% for highlight in records %}
+        <article class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
+            <div class="row news_column">
+                <a href="{{'news'|page}}/{{highlight.slug}}">
+                    <div class="news_image">
+                        <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(360, 223, {'mode': 'crop'}) }}" alt="{{highlight.title|striptags}}" />
+                    </div>
+                    <div class="news-container">
+                        <div class="wrapper">
+                            <div class="news-title">
+                                <h2 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h2>
                             </div>
-                            <div class="read_more">Read more</div>
+                            <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|slice(0, 200) ~ '...' : highlight.content|raw  }}</div>
                         </div>
-                    </a>
-                </div>
+                        <span class="read_more">Read more</span>
+                    </div>
+                </a>
             </div>
-
-
-            {% endfor %}
-        </div>
-        <div class="row container">
-            {{ records.render|raw }}
-        </div>
-
+        </article>
+        {% endfor %}
     </div>
-	{% endif %}
+
+    <nav class="row container" aria-label="Pagination">
+        {{ records.render|raw }}
+    </nav>
+</section>
+{% endif %}

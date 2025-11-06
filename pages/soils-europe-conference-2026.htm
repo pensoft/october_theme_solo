@@ -14,34 +14,46 @@ function onStart(){
 ==
 {% component 'siteSearchInclude' %}
 
-<div class="container">
-    <div class="timeline">
-        <div class="timeline_container left first">
-            <div class="content"></div>
+<section class="container" aria-label="Conference timeline">
+    <div class="timeline" role="list">
+        <div class="timeline_container left first" role="listitem">
+            <div class="content" aria-hidden="true"></div>
         </div>
-        <div class="timeline_container right">
+
+        <article class="timeline_container right" role="listitem">
             <div class="content location">
-                Coimbra, Portugal
+                <h2 class="sr-only">Location</h2>
+                <i class="pr p-location" aria-hidden="true"></i>
+                <span>Coimbra, Portugal</span>
             </div>
-        </div>
-        <div class="timeline_container left">
+        </article>
+
+        <article class="timeline_container left" role="listitem">
             <div class="content calendar">
-                7–11 September 2026
+                <h2 class="sr-only">Date</h2>
+                <i class="pr p-calendar" aria-hidden="true"></i>
+                <time datetime="2026-09-07/2026-09-11">7–11 September 2026</time>
             </div>
-        </div>
-        <div class="timeline_container right">
+        </article>
+
+        <article class="timeline_container right" role="listitem">
             <div class="content">
+                <h2 class="sr-only">Event description</h2>
                 <p>The event will be co-organised by several Mission Soil projects and will cover sessions on all Mission Objectives, including cross-cutting sessions, aiming to showcase the latest research being developed across Europe. While the event will allow for showcasing the innovations being produced by the various European-funded projects, the conference will be open to all researchers and practitioners in an effort to bring together the best and the most innovative initiatives in the European space. This also includes a day dedicated to the Living Labs initiatives. Stay tuned for more information.</p>
             </div>
-        </div>
-        <div class="timeline_container left">
+        </article>
+
+        <article class="timeline_container left" role="listitem">
             <div class="content logos">
-                {% for partner in partners %}
-                <a href="{{partner.instituion_url}}" target="_blank" title="{{partner.instituion}}">
-                    <img alt="{{ partner.instituion }}" src="{{partner.cover.thumb(auto,57,{'mode':'crop'})}}">
-                </a>
-                {% endfor %}
+                <h2 class="sr-only">Co-organising partners</h2>
+                <nav aria-label="Partner organizations">
+                    {% for partner in partners %}
+                    <a href="{{partner.instituion_url}}" target="_blank" rel="noopener" aria-label="Visit {{partner.instituion}} website">
+                        <img alt="{{partner.instituion}} logo" src="{{partner.cover.thumb(auto,57,{'mode':'crop'})}}">
+                    </a>
+                    {% endfor %}
+                </nav>
             </div>
-        </div>
+        </article>
     </div>
-</div>
+</section>

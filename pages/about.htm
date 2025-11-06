@@ -51,36 +51,36 @@ function onStart(){
 ==
 {% component 'siteSearchInclude' %}
 
-<div class="container aims">
+<section class="container aims" aria-label="Project aims">
     <div class="row middle-xs">
         <div class="col-xs-12">
             {% component 'aims' %}
         </div>
     </div>
-</div>
+</section>
 
-<div class="container image_bg">
+<section class="container image_bg" aria-label="Project image">
     <div class="row middle-xs between-xs">
         <div class="col-xs-12">
             {% component 'image' %}
         </div>
     </div>
-</div>
+</section>
 
-<div class="container-fluid background_info_background">
+<section class="container-fluid background_info_background" aria-label="Background information">
     <div class="container mt-4">
         <div class="row middle-xs">
             <div class="col-xs-12">
                 <div class="background">
-                    <div class="some_background"></div>
+                    <div class="some_background" role="presentation"></div>
                     {% component 'background' %}
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="container-fluid list_background">
+<section class="container-fluid list_background" aria-label="Mission">
     <div class="container list_mission">
         <div class="row middle-xs">
             <div class="col-xs-12">
@@ -88,29 +88,29 @@ function onStart(){
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="container-fluid objectives_background">
+<section class="container-fluid objectives_background" aria-label="Objectives">
     <div class="container objectives">
         {% component 'objectives' %}
     </div>
-</div>
+</section>
 
-<div class="container work_packages">
+<section class="container work_packages" aria-label="Work packages">
     <h2>Work Packages</h2>
     <div class="row work_packages_container">
         {% for key, item in accorions %}
-        <div class="col-md col-xs-12" onclick="showHideWP(this);">
+        <a class="col-md col-xs-12" onclick="showHideWP(this);" onkeypress="if(event.key==='Enter'||event.key===' '){showHideWP(this); event.preventDefault();}" aria-expanded="false" aria-controls="wp_content_{{key}}" type="button">
             <div class="prefix_container">
                 <div class="wp_prefix">{{item.prefix | uppercase}}</div>
                 <div class="wp_title">{{item.title|raw}}</div>
             </div>
-        </div>
-        <div class="wp_content wp_content_{{key}}">
+        </a>
+        <div class="wp_content wp_content_{{key}}" id="wp_content_{{key}}" role="region" aria-labelledby="wp_button_{{key}}" hidden>
             {{item.body|raw}}
         </div>
 
         {% endfor %}
     </div>
-</div>
+</section>
 

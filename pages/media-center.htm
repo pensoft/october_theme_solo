@@ -26,92 +26,102 @@ function onStart(){
 }
 ?>
 ==
-<div class="container-fluid">
+<section class="container-fluid" aria-label="Media center">
     <div class="container">
-    <div class="row">
-        {% if logos.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/brand-kit" title="Brand Kit">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'logo.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/brand-kit" title="Brand Kit"></span></div>
-                    <span class="media_label">Brand Kit</span>
-                </a>
+        <div class="row">
+            {% if logos.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/brand-kit" aria-label="Brand Kit">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'logo.svg'|media}}) center center no-repeat;" role="img" aria-label="Brand Kit icon"></div>
+                        </div>
+                        <span class="media_label">Brand Kit</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-        {% if flyers.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/brochure" title="Brochure">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'brochure.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/brochure" title="Brochure"></span></div>
-                    <span class="media_label">Brochure</span>
-                </a>
+            {% if flyers.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/brochure" aria-label="Brochure">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'brochure.svg'|media}}) center center no-repeat;" role="img" aria-label="Brochure icon"></div>
+                        </div>
+                        <span class="media_label">Brochure</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-<!--        stickers-->
-        {% if graphics.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/stickers" title="Stickers">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'stickers.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/stickers" title="Stickers"></span></div>
-                    <span class="media_label">Stickers</span>
-                </a>
+            <!--stickers-->
+            {% if graphics.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/stickers" aria-label="Stickers">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'stickers.svg'|media}}) center center no-repeat;" role="img" aria-label="Stickers icon"></div>
+                        </div>
+                        <span class="media_label">Stickers</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-        {% if pressreleases.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/announcements" title="Announcements">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'announcements.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/announcements" title="Announcements"></span></div>
-                    <span class="media_label">Announcements</span>
-                </a>
+            {% if pressreleases.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/announcements" aria-label="Announcements">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'announcements.svg'|media}}) center center no-repeat;" role="img" aria-label="Announcements icon"></div>
+                        </div>
+                        <span class="media_label">Announcements</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
-        {% if newsletters.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/newsletters" title="Newsletter">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'newsletter.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/newsletters" title="Newsletter"></span></div>
-                    <span class="media_label">Newsletter</span>
-                </a>
+            {% endif %}
+
+            {% if newsletters.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/newsletters" aria-label="Newsletter">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'newsletter.svg'|media}}) center center no-repeat;" role="img" aria-label="Newsletter icon"></div>
+                        </div>
+                        <span class="media_label">Newsletter</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-
-        {% if videos.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/videos" title="Videos">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'videos.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/videos" title="Videos"></span></div>
-                    <span class="media_label">Videos</span>
-                </a>
+            {% if videos.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/videos" aria-label="Videos">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'videos.svg'|media}}) center center no-repeat;" role="img" aria-label="Videos icon"></div>
+                        </div>
+                        <span class="media_label">Videos</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
 
-
-
-        <!--        //Presentations-->
-        {% if presentations.count() %}
-        <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="card-container text-center">
-                <a href="{{url('media-center')}}/presentations" title="Presentations">
-                    <div class="card_border"><span class="card_image_container" style="background: url({{'poster.svg'|media}}) center center no-repeat;" href="{{url('media-center')}}/presentations" title="Presentations"></span></div>
-
-                    <span class="media_label">Presentations</span>
-                </a>
+            <!--Presentations-->
+            {% if presentations.count() %}
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="card-container text-center">
+                    <a href="{{url('media-center')}}/presentations" aria-label="Presentations">
+                        <div class="card_border">
+                            <div class="card_image_container" style="background: url({{'poster.svg'|media}}) center center no-repeat;" role="img" aria-label="Presentations icon"></div>
+                        </div>
+                        <span class="media_label">Presentations</span>
+                    </a>
+                </div>
             </div>
+            {% endif %}
+
         </div>
-        {% endif %}
-
-
     </div>
-</div>
-</div>
+</section>

@@ -23,24 +23,39 @@ function onStart(){
 ==
 {% component 'siteSearchInclude' %}
 
-<div class="container" style="padding-right: 24%; padding-top: 0;">
+<section class="container" style="padding-right: 24%; padding-top: 0;" aria-label="Contact persons">
     <div class="row contacts_page end-md around-xs">
         {% for profile in profiles %}
-        <div class="col-xs-12 profile-item">
-
+        <article class="col-xs-12 profile-item">
             <div class="contact_info row start-xs">
                 <div class="coordinator_image aos-init aos-animate" data-aos="fade-up">
-                    <img src="{{profile.avatar.thumb(292, 365, {'mode':'crop'})}}"></div>
+                    <img src="{{profile.avatar.thumb(292, 365, {'mode':'crop'})}}" alt="{{profile.names}}">
+                </div>
                 <div class="coordinator_info">
-                    <h3>{{profile.names}}</h3>
+                    <h2>{{profile.names}}</h2>
                     {% if profile.position %}<p class="card_title">{{profile.position}}</p>{% endif %}
                     {% if profile.department %}<p class="contact_affiliation">{{profile.department}}</p>{% endif %}
-                    {% if profile.address %}<p class="contact_address">{{profile.address}}</p>{% endif %}
-                    {% if profile.email %}<p class="contact_mail"><a href="mailto:{{profile.email}}">{{profile.email}}</a></p>{% endif %}
-                    {% if profile.phone %}<p class="contact_phone">{{profile.phone}}</p>{% endif %}
+                    {% if profile.address %}
+                    <p class="contact_address">
+                        <span class="sr-only">Address:</span>
+                        {{profile.address}}
+                    </p>
+                    {% endif %}
+                    {% if profile.email %}
+                    <p class="contact_mail">
+                        <span class="sr-only">Email:</span>
+                        <a href="mailto:{{profile.email}}" aria-label="Send email to {{profile.names}}">{{profile.email}}</a>
+                    </p>
+                    {% endif %}
+                    {% if profile.phone %}
+                    <p class="contact_phone">
+                        <span class="sr-only">Phone:</span>
+                        <a href="tel:{{profile.phone}}">{{profile.phone}}</a>
+                    </p>
+                    {% endif %}
                 </div>
             </div>
-        </div>
+        </article>
         {% endfor %}
     </div>
-</div>
+</section>

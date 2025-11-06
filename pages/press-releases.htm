@@ -33,35 +33,34 @@ function onStart(){
 {% set records = mediaPressreleasesList %}
 
 {% if records.count %}
-<div class="container">
+<section class="container" aria-label="Press releases list">
 
     <div class="row press-relieses-container">
-
 
         {% for record in records %}
         {# Use spaceless tag to remove spaces inside the A tag. #}
         {% spaceless %}
-        <div class="col-xs-12">
+        <article class="col-xs-12">
             <div class="press-relies-item">
-                <span class="date"> {{record.date |date('d F Y')}}</span> <br><br>
-                <span class="card_title">{{record.name}}</span><br><br>
-
+                <p class="date">
+                    <time datetime="{{record.date|date('Y-m-d')}}">{{record.date |date('d F Y')}}</time>
+                </p>
+                <h2 class="card_title">{{record.name}}</h2>
                 <div class="body">{{record.description | raw}}</div>
-                <div class="row link">
+                <nav class="row link" aria-label="Press release links">
                     {% for link in record.link %}
-                    <a href="{{link.url}}" target="_blank" class="btn btn-primary">{{link.text}}</a>
+                    <a href="{{link.url}}" target="_blank" class="btn btn-primary" rel="noopener" aria-label="{{link.text}} (opens in new tab)">{{link.text}}</a>
                     {% endfor %}
-                </div>
+                </nav>
             </div>
-        </div>
-
+        </article>
 
         {% endspaceless %}
         {% endfor %}
     </div>
-</div>
+</section>
 {% else %}
-<div class="container-fluid bg-secondary coming_soon">
+<section class="container-fluid bg-secondary coming_soon" aria-label="Coming soon">
     {% component 'jumbotron' %}
-</div>
+</section>
 {% endif %}

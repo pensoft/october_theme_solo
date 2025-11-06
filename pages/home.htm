@@ -31,120 +31,112 @@ function onStart(){
 }
 ?>
 ==
-<div class="container">
-		<div class="row between-md around-xs middle-xs">
-			<div class="col-lg-6 col-xs-12 intro">
-				{% component 'intro' %}
-			</div>
-			<div class="col-lg-6 col-xs-12 intro_image">
-				{% component 'intro_image' %}
-			</div>
-		</div>
-	</div>
+<section class="container" aria-label="Introduction">
+    <div class="row between-md around-xs middle-xs">
+        <div class="col-lg-6 col-xs-12 intro">
+            {% component 'intro' %}
+        </div>
+        <div class="col-lg-6 col-xs-12 intro_image">
+            {% component 'intro_image' %}
+        </div>
+    </div>
+</section>
 
 
 <!-- latest from news -->
-    <div class="container highlights-news">
-        <div class="row">
-            <div class="col-xs-12">
-                <h1 class="base_heading highlight_new_template_3">Latest News</h1>
-            </div>
-        </div>
-        <div class="row newslist">
-            <div class="col-xs-12">
-                    {% for highlight in news %}
-                    <div class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
-
-
-                        <div class="row news_column">
-                            <a href="{{'news'|page}}/{{highlight.slug}}">
-                                <div class="news_image">
-                                    <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(368, 223, {'mode': 'crop'}) }}" />
-                                </div>
-                                <div class="news-container">
-                                    <div class="news-title">
-                                        <h3 class="card-title">{{highlight.title}}</h3>
-                                    </div>
-                                    <div class="read_more">Read more</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    {% endfor %}
-            </div>
+<section class="container highlights-news" aria-label="Latest news">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="base_heading highlight_new_template_3">Latest News</h2>
         </div>
     </div>
+    <div class="row newslist">
+        <div class="col-xs-12">
+            {% for highlight in news %}
+            <article class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
+                <div class="row news_column">
+                    <a href="{{'news'|page}}/{{highlight.slug}}">
+                        <div class="news_image">
+                            <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(368, 223, {'mode': 'crop'}) }}" alt="{{highlight.title}}" />
+                        </div>
+                        <div class="news-container">
+                            <div class="news-title">
+                                <h3 class="card-title">{{highlight.title}}</h3>
+                            </div>
+                            <span class="read_more">Read more</span>
+                        </div>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 
 
 
-	<div class="container mt-4 mb-4">
-	<div class="row between-xs">
-		<div class="col-lg-7 col-xs-12 upcoming_events_container">
-			<h1 class="base_heading"><a href="{{'events'|page}}">Upcoming Events</a></h1>
+<div class="container mt-4 mb-4">
+    <div class="row between-xs">
+        <section class="col-lg-7 col-xs-12 upcoming_events_container" aria-label="Upcoming events">
+            <h2 class="base_heading"><a href="{{'events'|page}}">Upcoming Events</a></h2>
             {% for event in entries %}
-                <div class="row entry_item">
-                    <div class="col-md-2 col-xs-12 start-md center-xs">
+            <article class="row entry_item">
+                <div class="col-md-2 col-xs-12 start-md center-xs">
+                    <time datetime="{{event.start|date('Y-m-d')}}">
                         <span class="date_day">{{event.start|date("d")}}</span>
                         <span class="date_month">{{event.start|date("M")}}</span>
                         <span class="date_year">{{event.start|date("Y")}}</span>
-                    </div>
-                    <div class="col-md-10 col-xs-12 start-md center-xs mt-md-0 mt-1">
-                        <h3>{{event.title|raw}}</h3>
-                        {{event.place}}
-                    </div>
-                    <div class="col-md-12 col-xs-12 end-md center-xs mt-md-0 mt-1">
-                        <a href="{{'events'|page}}/{{event.slug}}" class="read_more">Read more</a>
-                    </div>
+                    </time>
                 </div>
+                <div class="col-md-10 col-xs-12 start-md center-xs mt-md-0 mt-1">
+                    <h3>{{event.title|raw}}</h3>
+                    <p>{{event.place}}</p>
+                </div>
+                <div class="col-md-12 col-xs-12 end-md center-xs mt-md-0 mt-1">
+                    <a href="{{'events'|page}}/{{event.slug}}" class="read_more" aria-label="Read more about {{event.title|striptags}}">Read more</a>
+                </div>
+            </article>
             {% endfor %}
-		</div>
+        </section>
 
-        <div class="col-lg-5 col-xs-12 social_media_conainer">
-            <h1 class="base_heading">Follow SOLO</h1>
-            <!-- <div class="twitter-widget">
-                <a class="twitter-timeline" href="https://twitter.com/soils4europe?ref_src=twsrc%5Etfw">Tweets by @SELINAHorizonEU</a>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </div> -->
-
-            <div class="row subscribe-items start-md center-xs">
+        <section class="col-lg-5 col-xs-12 social_media_conainer" aria-label="Social media">
+            <h2 class="base_heading">Follow SOLO</h2>
+            <nav class="row subscribe-items start-md center-xs" aria-label="Social media links">
                 {% if this.theme.twitter %}
-                <a href="{{this.theme.twitter_url}}" target="_blank" class="btn p-primary pr p-twitter middle"></a>
+                <a href="{{this.theme.twitter_url}}" target="_blank" class="btn p-primary pr p-twitter middle" rel="noopener" aria-label="Follow us on Twitter"></a>
                 {% endif %}
                 {% if this.theme.facebook %}
-                <a href="{{this.theme.facebook_url}}" target="_blank" class="btn pr p-primary p-facebook medium"></a>
+                <a href="{{this.theme.facebook_url}}" target="_blank" class="btn pr p-primary p-facebook medium" rel="noopener" aria-label="Follow us on Facebook"></a>
                 {% endif %}
                 {% if this.theme.linkedin %}
-                <a href="{{this.theme.linkedin_url}}" target="_blank" class="btn pr p-primary p-linkedin medium"></a>
+                <a href="{{this.theme.linkedin_url}}" target="_blank" class="btn pr p-primary p-linkedin medium" rel="noopener" aria-label="Follow us on LinkedIn"></a>
                 {% endif %}
                 {% if this.theme.youtube %}
-                <a href="{{this.theme.youtube_url}}" target="_blank" class="btn pr p-primary p-youtube medium"></a>
+                <a href="{{this.theme.youtube_url}}" target="_blank" class="btn pr p-primary p-youtube medium" rel="noopener" aria-label="Follow us on YouTube"></a>
                 {% endif %}
                 {% if this.theme.instagram %}
-                <a href="{{this.theme.instagram_url}}" target="_blank" class="btn pr p-primary p-instagram medium"></a>
+                <a href="{{this.theme.instagram_url}}" target="_blank" class="btn pr p-primary p-instagram medium" rel="noopener" aria-label="Follow us on Instagram"></a>
                 {% endif %}
                 {% if this.theme.researchgate %}
-                <a href="{{this.theme.researchgate_url}}" target="_blank" class="btn pr p-primary p-researchgate medium"></a>
+                <a href="{{this.theme.researchgate_url}}" target="_blank" class="btn pr p-primary p-researchgate medium" rel="noopener" aria-label="Follow us on ResearchGate"></a>
                 {% endif %}
-            </div>
+            </nav>
+        </section>
 
-
-        </div>
-
-	</div>
+    </div>
 
 </div>
 
 
 {% if this.theme.subscribe %}
-<div class="container">
+<section class="container" aria-label="Newsletter subscription">
     <div class="subscriber row between-md">
         <div class="sub-text">
             Join our community by subscribing to our newsletter!
         </div>
-            <div class="btn-subscribe">
-                <a href="{{this.theme.subscribe}}">Subscribe</a>
-            </div>
+        <div class="btn-subscribe">
+            <a href="{{this.theme.subscribe}}" target="_blank" rel="noopener">Subscribe</a>
         </div>
     </div>
-</div>
+</section>
 {% endif %}

@@ -48,7 +48,7 @@ return Redirect::to('/media-center/flyer');
 }
 ?>
 ==
-<div class="container">
+<section class="container" aria-label="Brochures list">
     <div class="row">
         {% set records = mediaFlyersList %}
         {% set displayColumn = mediaFlyersList.displayColumn %}
@@ -61,32 +61,32 @@ return Redirect::to('/media-center/flyer');
         {# Use spaceless tag to remove spaces inside the A tag. #}
         {% spaceless %}
         {% if record.flyer_image %}
-        <div class="col-md-3 col-xs-12 center-xs">
-            <p class="logo_container"><img src="{{record.flyer_image.path}}" title="{{record.name}}"></p>
+        <article class="col-md-3 col-xs-12 center-xs">
+            <p class="logo_container">
+                <img src="{{record.flyer_image.path}}" alt="{{record.name}} preview">
+            </p>
             <div class="col-xs-12">
                 <div class="text-center">
-                    <h3><b>{{record.name}}</b></h3>
+                    <h2>{{record.name}}</h2>
                     {% if record.file_lang_versions %}
-                    <div class="row lang_versions_btn">
-                        Download
+                    <nav class="row lang_versions_btn" aria-label="Download {{record.name}} in different languages">
+                        <p>Download</p>
                         {% for language_item in record.file_lang_versions %}
-                            <a href="{{ ''| page }}?{{queries}}&download={{language_item.id}}&file_name={{language_item.file_name|replace({' ': '_'})}}" title="{{language_item.file_name|replace({' ': '_'})}}" class="btn btn-primary">{{language_item.description}}</a>
+                        <a href="{{ ''| page }}?{{queries}}&download={{language_item.id}}&file_name={{language_item.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}} in {{language_item.description}}">{{language_item.description}}</a>
                         {% endfor %}
-                    </div>
+                    </nav>
                     {% else %}
-                        <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" title="{{record.name}}" class="btn btn-primary">Download</a>
+                    <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}}">Download</a>
                     {% endif %}
                 </div>
             </div>
-
-        </div>
-
+        </article>
 
         {% endif %}
 
         {% endspaceless %}
         {% else %}
-        {{ noRecordsMessage }}
+        <p>{{ noRecordsMessage }}</p>
         {% endfor %}
     </div>
-</div>
+</section>

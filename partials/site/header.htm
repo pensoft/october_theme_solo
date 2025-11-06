@@ -15,100 +15,99 @@ secondaryClasses = "dropdown-menu"
 numberOfLevels = 2
 ==
 {% if user %}
-    {% set is_external = false %}
-    {% for group in user.groups %}
-        {% if group.code == 'external-users' %}
-            {% set is_external = true %}
-        {% endif %}
-    {% endfor %}
-
-<nav class="fixed navbar-loggedin-user ">
-    <div class="navbar-collapse collapse row middle-xs">
-        <div class="col-xs-12 col-md-9">{% if not is_external %} {% component 'login' %} {% endif %}</div>
-        <div class="col-xs-2 end-xs col-md-3 profile_container">
-            {% if user.avatar %}
-                <a href="/profile" class="profile_name"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="{{ user.name }} {{ user.surname }}" src="{{user.avatar.getThumb(30,30, { mode : 'crop' } )}}" style="border-radius: 50%;"> </a>
-            {% else %}
-                <a href="/profile" class="profile_name"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="{{ user.name }} {{ user.surname }}" src="{{ 'CMS_icons_avatar_white.svg'|media }}" width="30" height="30"></a>
-            {% endif %}
-            <a data-request="onLogout" data-request-data="redirect: '/'" class="logoutbtn" title="Logout">&nbsp;</a>
-        </div>
-    </div>
-</nav>
+{% set is_external = false %}
+{% for group in user.groups %}
+{% if group.code == 'external-users' %}
+{% set is_external = true %}
 {% endif %}
-<nav class="navbar fixed pr-1 pl-1" id="headernavbar" {% if user %} style="margin-top:57px;"{% endif %}>
-    <div id="menuToggle">
-        <input type="checkbox" />
-        <span></span>
-        <span></span>
-        <span></span>
-        {% component 'menu' %}
-    </div>
+{% endfor %}
 
-
-    <a href="{{'home'|page}}" class="navbar-brand" id="navbar-brand" style="background-image: url('{{ this.theme.site_logo.getPath() }}'); background-position: center; background-size: contain;"></a>
-
-
-    <div class="navbar-collapse collapse end-xs" id="headerNavbarNav" style="display: none;">
-        {% component 'menu' %}
-        <div id="headerNavbarLogin">
-            <ul class="navbar-nav" style="padding: 0; margin: 0;">
-
-            </ul>
-        </div>
-    </div>
-
-
-    <div id="search" class="search" style="display: none;">
-        <div class="close-search" onclick="hideSearchForm();">&#10006;</div>
-        <form class="input-group align-items-start" action="{{ url('search')}}" method="get">
-            <input class="form-control search_input" name="q" type="text" autocomplete="on" placeholder="Search">
-            <button class="btn btn-link pr p-search big text-grey-search-btn" type="submit"></button>
-        </form>
-    </div>
-
-</nav>
-
-
-
-<div class="container-fluid header_container_background">
-{% if this.theme.header_image and page_id == 'home' %}
-<div class="header-image {{page_id}}">
-
-    <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') right no-repeat; background-size: contain;"></div>
-    <div class="jumbotron" data-aos="fade-right">
-        {% if page_id != 'home' and page_id != 'search' %}
-        <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
-            {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
-
-        {%endif%}
-        {% if page_id == 'home' and tag_line%}
-        <div class="container">
-            <div class="intro">
-                <div class="logo_main"></div>
-                <div class="site-tag"><p>{{tag_line|raw}}<a href="/about"><i></i></a></p></div>
-                <div class="home-btn-container col-md col-xs-12">
-                    <a class="btn-home" href="/roadmaps">Roadmaps Review</a>
-                    <a class="btn-home" href="/2026conference">Soils for Europe Conference 2026</a>
-                </div>
+<header>
+    <nav class="fixed navbar-loggedin-user" aria-label="User account navigation">
+        <div class="navbar-collapse collapse row middle-xs">
+            <div class="col-xs-12 col-md-9">{% if not is_external %} {% component 'login' %} {% endif %}</div>
+            <div class="col-xs-2 end-xs col-md-3 profile_container">
+                {% if user.avatar %}
+                <a href="/profile" class="profile_name" aria-label="View profile for {{ user.name }} {{ user.surname }}"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="" src="{{user.avatar.getThumb(30,30, { mode : 'crop' } )}}" style="border-radius: 50%;" role="presentation"> </a>
+                {% else %}
+                <a href="/profile" class="profile_name" aria-label="View profile for {{ user.name }} {{ user.surname }}"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="" src="{{ 'CMS_icons_avatar_white.svg'|media }}" width="30" height="30" role="presentation"></a>
+                {% endif %}
+                <button data-request="onLogout" data-request-data="redirect: '/'" class="logoutbtn" aria-label="Logout">&nbsp;</button>
             </div>
         </div>
-        {% endif %}
-    </div>
-</div>
+    </nav>
+</header>
+{% endif %}
+
+<header>
+    <nav class="navbar fixed pr-1 pl-1" id="headernavbar" {% if user %} style="margin-top:57px;"{% endif %} aria-label="Main navigation">
+        <div id="menuToggle">
+            <input type="checkbox" id="mobileMenuToggle" aria-label="Toggle mobile menu" aria-expanded="false" />
+            <span></span>
+            <span></span>
+            <span></span>
+            {% component 'menu' %}
+        </div>
+
+        <a href="{{'home'|page}}" class="navbar-brand" id="navbar-brand" style="background-image: url('{{ this.theme.site_logo.getPath() }}'); background-position: center; background-size: contain;" aria-label="Home"></a>
+
+        <div class="navbar-collapse collapse end-xs" id="headerNavbarNav" style="display: none;">
+            {% component 'menu' %}
+            <div id="headerNavbarLogin">
+                <ul class="navbar-nav" style="padding: 0; margin: 0;">
+                </ul>
+            </div>
+        </div>
+
+        <section id="search" class="search" style="display: none;" aria-label="Search">
+            <button class="close-search" onclick="hideSearchForm();" aria-label="Close search">&#10006;</button>
+            <form class="input-group align-items-start" action="{{ url('search')}}" method="get" role="search">
+                <label for="searchInput" class="sr-only">Search</label>
+                <input id="searchInput" class="form-control search_input" name="q" type="text" autocomplete="on" placeholder="Search" aria-label="Search">
+                <button class="btn btn-link pr p-search big text-grey-search-btn" type="submit" aria-label="Submit search"></button>
+            </form>
+        </section>
+    </nav>
+</header>
+
+<div class="container-fluid header_container_background">
+    {% if this.theme.header_image and page_id == 'home' %}
+    <section class="header-image {{page_id}}" aria-label="Page header">
+
+        <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') right no-repeat; background-size: contain;" role="img" aria-label="Header background image"></div>
+        <div class="jumbotron" data-aos="fade-right">
+            {% if page_id != 'home' and page_id != 'search' %}
+            <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
+                {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
+
+            {%endif%}
+            {% if page_id == 'home' and tag_line%}
+            <div class="container">
+                <div class="intro">
+                    <div class="logo_main" role="img" aria-label="Site logo"></div>
+                    <div class="site-tag"><p>{{tag_line|raw}}<a href="/about" aria-label="Learn more about us"><i aria-hidden="true"></i></a></p></div>
+                    <nav class="home-btn-container col-md col-xs-12" aria-label="Quick links">
+                        <a class="btn-home" href="/roadmaps">Roadmaps Review</a>
+                        <a class="btn-home" href="/2026conference">Soils for Europe Conference 2026</a>
+                    </nav>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
     {% else %}
-    <div class="header-image {{page_id}}">
-        <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:57px;{% endif %}"></div>
+    <section class="header-image {{page_id}}" aria-label="Page header">
+        <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:57px;{% endif %}" role="img" aria-label="Header background image"></div>
 
         <div class="jumbotron container" data-aos="fade-right" style="padding-top: 0;">
             <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
                 {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
             {% if this.page.header_text %}
-            <span class="subtitle">{{this.page.header_text}}</span>
+            <p class="subtitle">{{this.page.header_text}}</p>
             {%endif%}
         </div>
-    </div>
-{% endif %}
+    </section>
+    {% endif %}
 </div>
 
 

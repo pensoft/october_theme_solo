@@ -57,35 +57,36 @@ return Redirect::to('/media-center/newsletters');
 {% set records = mediaNewslettersList %}
 
 {% if records.count %}
-<div class="container">
+<section class="container" aria-label="Newsletters list">
     <div class="row newsletter_container start-md around-xs">
 
         {% for record in records %}
         {# Use spaceless tag to remove spaces inside the A tag. #}
         {% spaceless %}
         {% if record.newsletter_image %}
-        <div class="col-md-4 col-xs-12 newsletter_item">
+        <article class="col-md-4 col-xs-12 newsletter_item">
             <div class="text-center">
-                <span class="card_title" style="min-height: 100px;">{{record.name}}</span><br><br>
-                <span class="card_image_container" style="background: url({{record.newsletter_image.path}}) center center no-repeat; height: 350px; background-size: contain;" title="{{record.name}}"></span>
-                <div class="date">{{record.date |date('F Y')}}</div>
-                
-                <br><a href="{{ record.file.path }}#{{record.file.file_name}}" target="_blank" title="{{record.name}}" class="btn btn-primary">Download</a>
+                <h2 class="card_title" style="min-height: 100px;">{{record.name}}</h2>
+                <div class="card_image_container" style="background: url({{record.newsletter_image.path}}) center center no-repeat; height: 350px; background-size: contain;" role="img" aria-label="{{record.name}} cover image"></div>
+                <p class="date">
+                    <time datetime="{{record.date|date('Y-m')}}">{{record.date |date('F Y')}}</time>
+                </p>
+                <a href="{{ record.file.path }}#{{record.file.file_name}}" target="_blank" class="btn btn-primary" rel="noopener" download aria-label="Download {{record.name}} newsletter (opens in new tab)">Download</a>
             </div>
-        </div>
+        </article>
 
         {% endif %}
 
         {% endspaceless %}
         {% else %}
-        {{ noRecordsMessage }}
+        <p>{{ noRecordsMessage }}</p>
         {% endfor %}
     </div>
-</div>
+</section>
 
 
 {% else %}
-<div class="container-fluid bg-secondary coming_soon">
+<section class="container-fluid bg-secondary coming_soon" aria-label="Coming soon">
     {% component 'jumbotron' %}
-</div>
+</section>
 {% endif %}

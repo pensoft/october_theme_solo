@@ -48,8 +48,7 @@ return Redirect::to('/media-center/logo');
 }
 ?>
 ==
-<div class="container">
-
+<section class="container" aria-label="Brand kit downloads">
 
     {% set records = mediaLogosList %}
     {% set displayColumn = mediaLogosList.displayColumn %}
@@ -63,31 +62,43 @@ return Redirect::to('/media-center/logo');
         {# Use spaceless tag to remove spaces inside the A tag. #}
         {% spaceless %}
         {% if record.logo_image %}
-        <div class="col-md-3 col-xs-12 center-xs">
-            <p class="logo_container"><img src="{{record.logo_image.path}}" title="{{record.name}}"></p>
+        <article class="col-md-3 col-xs-12 center-xs">
+            <p class="logo_container">
+                <img src="{{record.logo_image.path}}" alt="{{record.name}} logo">
+            </p>
             <div class="col-xs-12">
                 <div class="text-center">
-                    <b>Download {{record.name}}</b> <br><br>
-                    {% if record.file_jpg %}
-                    <a href="{{ ''| page }}?{{queries}}&download={{record.file_jpg.id}}&file_name={{record.file_jpg.file_name|replace({' ': '_'})}}" title="Brand Kit" class="btn btn-primary"><i class="pr p-download"></i>  JPG</a> &nbsp;
-                    {% endif %}
-                    {% if record.file_png %}
-                    <a href="{{ ''| page }}?{{queries}}&download={{record.file_png.id}}&file_name={{record.file_png.file_name|replace({' ': '_'})}}" title="Brand Kit" class="btn btn-primary"><i class="pr p-download"></i>  PNG</a> &nbsp;
-                    {% endif %}
-                    {% if record.file_eps %}
-                    <a href="{{ ''| page }}?{{queries}}&download={{record.file_eps.id}}&file_name={{record.file_eps.file_name|replace({' ': '_'})}}" title="Brand Kit" class="btn btn-primary"><i class="pr p-download"></i>  SVG</a>
-                    {% endif %}
-                    {% if record.file_pdf %}
-                    <a href="{{record.file_pdf.path}}" target="_blank" title="Brand Kit" class="btn btn-primary"><i class="pr p-download"></i>  PDF</a>
-                    {% endif %}
+                    <h2>Download {{record.name}}</h2>
+                    <nav aria-label="Download {{record.name}} in different formats">
+                        {% if record.file_jpg %}
+                        <a href="{{ ''| page }}?{{queries}}&download={{record.file_jpg.id}}&file_name={{record.file_jpg.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}} as JPG">
+                            <i class="pr p-download" aria-hidden="true"></i> JPG
+                        </a> &nbsp;
+                        {% endif %}
+                        {% if record.file_png %}
+                        <a href="{{ ''| page }}?{{queries}}&download={{record.file_png.id}}&file_name={{record.file_png.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}} as PNG">
+                            <i class="pr p-download" aria-hidden="true"></i> PNG
+                        </a> &nbsp;
+                        {% endif %}
+                        {% if record.file_eps %}
+                        <a href="{{ ''| page }}?{{queries}}&download={{record.file_eps.id}}&file_name={{record.file_eps.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}} as SVG">
+                            <i class="pr p-download" aria-hidden="true"></i> SVG
+                        </a>
+                        {% endif %}
+                        {% if record.file_pdf %}
+                        <a href="{{record.file_pdf.path}}" target="_blank" class="btn btn-primary" rel="noopener" download aria-label="Download {{record.name}} as PDF (opens in new tab)">
+                            <i class="pr p-download" aria-hidden="true"></i> PDF
+                        </a>
+                        {% endif %}
+                    </nav>
                 </div>
             </div>
-        </div>
+        </article>
         {% endif %}
 
         {% endspaceless %}
         {% else %}
-        {{ noRecordsMessage }}
+        <p>{{ noRecordsMessage }}</p>
         {% endfor %}
     </div>
-</div>
+</section>

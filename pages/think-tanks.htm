@@ -77,7 +77,8 @@ description_limit = 0
 {% component 'siteSearchInclude' %}
 <div class="container think_tanks_container">
     <div class="row">
-        <div class="tabs">
+        <nav class="tabs" aria-label="Think tanks topics navigation">
+            <h2 class="sr-only">Jump to Topic</h2>
             <a href="#Reduce-Desertification">Reduce Desertification</a>
             <a href="#Soil-organic-carbon-stocks">Soil organic carbon stocks</a>
             <a href="#Soil-sealing-and-urban-soils">Soil sealing and urban soils</a>
@@ -88,54 +89,64 @@ description_limit = 0
             <a href="#Soil-literacy">Soil literacy</a>
             <a href="#Nature-conservation-of-soil-biodiversity">Nature conservation of soil biodiversity</a>
             <a href="#Climate-smart-sustainable-agricultural-soil-management">Climate-smart sustainable agricultural soil management</a>
-        </div>
+        </nav>
     </div>
 
-    <div class="row" id="Reduce-Desertification">
-    {% component 'jumbotron' %}
-    </div>
+    <section class="row" id="Reduce-Desertification" aria-labelledby="heading-reduce-desertification">
+        <h2 id="heading-reduce-desertification" class="sr-only">Reduce Desertification</h2>
+        {% component 'jumbotron' %}
+    </section>
 
 
-    <div class="row" id="Soil-organic-carbon-stocks">
-    {% component 'jumbotron2' %}
-    </div>
+    <section class="row" id="Soil-organic-carbon-stocks" aria-labelledby="heading-soil-organic-carbon">
+        <h2 id="heading-soil-organic-carbon" class="sr-only">Soil organic carbon stocks</h2>
+        {% component 'jumbotron2' %}
+    </section>
 
 
-    <div class="row" id="Soil-sealing-and-urban-soils">
-    {% component 'jumbotron3' %}
-    </div>
+    <section class="row" id="Soil-sealing-and-urban-soils" aria-labelledby="heading-soil-sealing">
+        <h2 id="heading-soil-sealing" class="sr-only">Soil sealing and urban soils</h2>
+        {% component 'jumbotron3' %}
+    </section>
 
 
-    <div class="row" id="Pollution-and-restoration">
-    {% component 'jumbotron7' %}
-    </div>
+    <section class="row" id="Pollution-and-restoration" aria-labelledby="heading-pollution-restoration">
+        <h2 id="heading-pollution-restoration" class="sr-only">Pollution and restoration</h2>
+        {% component 'jumbotron7' %}
+    </section>
 
 
-    <div class="row" id="Erosion-prevention">
-    {% component 'jumbotron4' %}
-    </div>
+    <section class="row" id="Erosion-prevention" aria-labelledby="heading-erosion-prevention">
+        <h2 id="heading-erosion-prevention" class="sr-only">Erosion prevention</h2>
+        {% component 'jumbotron4' %}
+    </section>
 
-    <div class="row" id="Footprint-on-soils">
-    {% component 'footprint' %}
-    </div>
-
-
-    <div class="row" id="Soil-structure">
-    {% component 'structure' %}
-    </div>
+    <section class="row" id="Footprint-on-soils" aria-labelledby="heading-footprint-soils">
+        <h2 id="heading-footprint-soils" class="sr-only">Footprint on soils</h2>
+        {% component 'footprint' %}
+    </section>
 
 
-    <div class="row" id="Soil-literacy">
-    {% component 'literacy' %}
-    </div>
+    <section class="row" id="Soil-structure" aria-labelledby="heading-soil-structure">
+        <h2 id="heading-soil-structure" class="sr-only">Soil structure</h2>
+        {% component 'structure' %}
+    </section>
 
 
-    <div class="row" id="Nature-conservation-of-soil-biodiversity">
-    {% component 'jumbotron5' %}
-    </div>
+    <section class="row" id="Soil-literacy" aria-labelledby="heading-soil-literacy">
+        <h2 id="heading-soil-literacy" class="sr-only">Soil literacy</h2>
+        {% component 'literacy' %}
+    </section>
 
 
-    <div class="row" id="Climate-smart-sustainable-agricultural-soil-management">
-    {% component 'jumbotron6' %}
-    </div>
+    <section class="row" id="Nature-conservation-of-soil-biodiversity" aria-labelledby="heading-nature-conservation">
+        <h2 id="heading-nature-conservation" class="sr-only">Nature conservation of soil biodiversity</h2>
+        {% component 'jumbotron5' %}
+    </section>
+
+
+    <section class="row" id="Climate-smart-sustainable-agricultural-soil-management" aria-labelledby="heading-climate-smart">
+        <h2 id="heading-climate-smart" class="sr-only">Climate-smart sustainable agricultural soil management</h2>
+        {% component 'jumbotron6' %}
+    </section>
 </div>
