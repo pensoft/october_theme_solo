@@ -291,6 +291,12 @@ ul.pagination{
             flex-direction: column;
             margin-top: -250px;
             //height: 100vh;
+
+            .home-btn-container{
+               display: flex;
+               flex-direction: column;
+            }
+
             .logo_main{
                 background: url("../../assets/images/SOLO-Brand-rgb.svg") left no-repeat;
                 background-size: contain;
@@ -349,6 +355,8 @@ ul.pagination{
                 border-radius: 60px;
                 z-index: 999999;
                 text-align: center;
+                width: fit-content;
+                margin-bottom: 20px;
 
                 &:hover{
                     background-color: #571300;
@@ -360,6 +368,7 @@ ul.pagination{
                     align-items: center;
                     flex-direction: column;
                     margin-bottom: 15px;
+                     width: calc(~'100% - 90px');
                 });
             }
 
@@ -379,6 +388,7 @@ ul.pagination{
                     display: flex;
                     align-items: center;
                     padding: 5px 10px 5px 20px;
+                    
                     &:hover{
                         color: @white-color!important;
                         background: @link-color;
