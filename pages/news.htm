@@ -191,7 +191,7 @@ $this['related'] = $related;
                             <div class="news-title">
                                 <h2 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h2>
                             </div>
-                            <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|slice(0, 200) ~ '...' : highlight.content|raw  }}</div>
+                            <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|replace({'&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>'})|slice(0, 200) ~ '...' : highlight.content|striptags|replace({'&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>'})  }}</div>
                         </div>
                         <span class="read_more">Read more</span>
                     </div>
