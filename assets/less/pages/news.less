@@ -25,7 +25,7 @@ nav:not(.navbar){
         text-transform: unset;
         font-size: 24px;
         text-align: left;
-        min-height: 105px;
+        // min-height: 105px;
         //.breakpoint-laptop-down({
         //    height: 180px;
         //});
@@ -60,11 +60,22 @@ nav:not(.navbar){
 
     }
 
+    ol{
+        list-style: decimal;
+        margin-bottom: 20px;
+        padding-left: 40px;
+    }
+
+    ul{
+        list-style: disc;
+        margin-bottom: 20px;
+        padding-left: 40px;
+    }
+
     .text-place{
         font-weight: bold;
         color: @link-color;
         background: url("../../assets/images/location.svg") left no-repeat;
-        background-size: contain;
         padding-left: 40px;
 
         .breakpoint-large-down({
