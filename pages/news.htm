@@ -13,29 +13,22 @@ function urlencode($string){
     return trim(urlencode($string));
 }
 
-function onFilterArticles()
-{
-    $categoryId = input('categoryId');
-
-    if ($categoryId === 'all') {
-        $this['records'] = Article::news()->where('published_at', '<=', 'now()')
-                                          ->where('published', 'true')
-                                          ->orderBy('published_at', 'DESC')
-                                          ->paginate(15);
-    } else {
-        $this['records'] = Article::news()->whereHas('categories', function ($query) use ($categoryId) {
-            $query->where('id', $categoryId);
-        })->where('published_at', '<=', 'now()')
-          ->where('published', 'true')
-          ->orderBy('published_at', 'DESC')
-          ->paginate(15);
-    }
-}
-
-
 function onStart()
 {
-$this['records'] = Article::news()->where('published_at', '<=', 'now()')->where('published', 'true')->orderBy('published_at', 'DESC')->paginate(15, ['*'], 'p');
+$categoryId = input('category', 'all');
+
+$query = Article::news()->where('published_at', '<=', 'now()')
+                        ->where('published', 'true')
+                        ->orderBy('published_at', 'DESC');
+
+if ($categoryId !== 'all') {
+    $query->whereHas('categories', function ($q) use ($categoryId) {
+        $q->where('id', $categoryId);
+    });
+}
+
+$this['records'] = $query->paginate(15, ['*'], 'p')->appends(['category' => $categoryId]);
+$this['activeCategory'] = $categoryId;
 $this['categories'] = Category::orderBy('sort_order')->get();
 
     $this['article'] = Pensoft\Articles\Models\Article::where('slug', $this->param('id'))->where('published', 'true')->first();
@@ -157,19 +150,15 @@ $this['related'] = $related;
 <section class="container category-tabs-container" aria-label="News categories">
     {% if categories.count > 0 %}
     <nav class="row category-tabs" aria-label="Filter news by category">
-        <a type="button"
-                class="active"
-                data-request="onFilterArticles"
-                data-request-data="categoryId: 'all'"
-                data-request-update="'components/newslist-records': '#newslist-records'"
-                aria-current="page">
+        <a href="{{ 'news'|page }}?category=all"
+                class="{% if activeCategory == 'all' %}active{% endif %}"
+                {% if activeCategory == 'all' %}aria-current="page"{% endif %}>
             All News
         </a>
         {% for category in categories %}
-        <a type="button"
-                data-request="onFilterArticles"
-                data-request-data="categoryId: {{ category.id }}"
-                data-request-update="'components/newslist-records': '#newslist-records'">
+        <a href="{{ 'news'|page }}?category={{ category.id }}"
+                class="{% if activeCategory == category.id %}active{% endif %}"
+                {% if activeCategory == category.id %}aria-current="page"{% endif %}>
             {{ category.name }}
         </a>
         {% endfor %}
