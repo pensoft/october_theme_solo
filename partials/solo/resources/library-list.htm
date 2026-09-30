@@ -20,13 +20,20 @@ function onStart()
     $mode = $this['mode'] ?: 'library';
     $perPage = (int) ($this['perPage'] ?: 12);
 
-    $nonPublication = [
-        Library::TYPE_DELIVERABLE,
-        Library::TYPE_MILESTONE,
-        Library::TYPE_FEATURE,
-        Library::TYPE_TECHNICAL_BRIEF,
-        Library::TYPE_GRAPHICAL_SUMMARIES,
+    // Record type / derived values as stored in pensoft_library_records (same as the
+    // TYPE_* / DERIVED_* constants of the Library model). Literal values keep this partial working with
+    // older plugin versions that do not define every constant (e.g. before 1.1.20).
+    $T = [
+        'deliverable' => 5,
+        'milestone' => 11,
+        'feature' => 12,
+        'brief' => 13,
+        'graphical' => 14,
     ];
+    $DERIVED_YES = 1;
+    $DERIVED_NO = 2;
+
+    $nonPublication = [$T['deliverable'], $T['milestone'], $T['feature'], $T['brief'], $T['graphical']];
 
     $typeOptions = ['0' => 'All Documents'];
     if ($mode == 'mission') {
@@ -89,25 +96,25 @@ function onStart()
 
     switch ($type) {
         case '1':
-            $query->where('type', Library::TYPE_DELIVERABLE);
+            $query->where('type', $T['deliverable']);
             break;
         case '4':
-            $query->whereIn('type', [Library::TYPE_DELIVERABLE, Library::TYPE_MILESTONE]);
+            $query->whereIn('type', [$T['deliverable'], $T['milestone']]);
             break;
         case '2':
-            $query->whereNotIn('type', $nonPublication)->where('derived', Library::DERIVED_NO);
+            $query->whereNotIn('type', $nonPublication)->where('derived', $DERIVED_NO);
             break;
         case '3':
-            $query->whereNotIn('type', $nonPublication)->where('derived', Library::DERIVED_YES);
+            $query->whereNotIn('type', $nonPublication)->where('derived', $DERIVED_YES);
             break;
         case '5':
-            $query->where('type', Library::TYPE_FEATURE);
+            $query->where('type', $T['feature']);
             break;
         case '6':
-            $query->where('type', Library::TYPE_TECHNICAL_BRIEF);
+            $query->where('type', $T['brief']);
             break;
         case '7':
-            $query->where('type', Library::TYPE_GRAPHICAL_SUMMARIES);
+            $query->where('type', $T['graphical']);
             break;
         case 'mr':
             $query->where(function ($q) {
@@ -118,7 +125,7 @@ function onStart()
         default:
             if ($mode != 'library') {
                 // Policy briefs and infographics have their own tabs on Resources
-                $query->whereNotIn('type', [Library::TYPE_TECHNICAL_BRIEF, Library::TYPE_GRAPHICAL_SUMMARIES]);
+                $query->whereNotIn('type', [$T['brief'], $T['graphical']]);
             }
     }
 
