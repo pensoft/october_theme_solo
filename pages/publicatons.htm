@@ -4,47 +4,17 @@ title = "Resources"
 is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
-
-[LibraryPage]
-templates = "template3"
-has_search = 1
-no_records_message = "No records found"
 ==
-<div class="container">
-	<h1 class="display-1">Publications</h1>
-	<div class="tabs" id="mylibraryForm">
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/resources.css'|theme }}">{% endput %}
 
+<div class="resources-page">
+{% partial 'site/subhero' title='Publications' crumbs=[{title:'Resources', url:'/resources'}] %}
 
-		{{ form_ajax( 'LibraryPage::onFilterRecords',
-		{update: { '@libraries': '#partialLibraries' }}) }}
-		<input type="hidden" name="Filter[type]" value="0">
-		<a>All documents</a>
-		{{ form_close() }}
-
-
-		{{ form_ajax( 'LibraryPage::onFilterRecords',
-		{update: { '@libraries': '#partialLibraries' }}) }}
-		<input type="hidden" name="Filter[type]" value="1">
-		<a>Deliverables</a>
-		{{ form_close() }}
-
-
-		{{ form_ajax( 'LibraryPage::onFilterRecords',
-		{update: { '@libraries': '#partialLibraries' }}) }}
-		<input type="hidden" name="Filter[type]" value="2">
-		<a>{{this.theme.site_name}} publications</a>
-		{{ form_close() }}
-
-
-		{{ form_ajax( 'LibraryPage::onFilterRecords',
-		{update: { '@libraries': '#partialLibraries' }}) }}
-		<input type="hidden" name="Filter[type]" value="3">
-		<a>Relevant publications</a>
-		{{ form_close() }}
-
-
-
-	</div>
-	{% component 'LibraryPage' %}
-
+<section>
+  <div class="container">
+    {% partial 'solo/resources/library-list' mode='resources' action='/resources/publications' perPage=12 emptyTitle='No records found' %}
+  </div>
+</section>
 </div>
+
+{% put bodyScripts %}<script src="{{ 'assets/solo/pages/resources.js'|theme }}"></script>{% endput %}

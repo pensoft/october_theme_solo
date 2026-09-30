@@ -1,0 +1,28 @@
+{#
+  Think Tank tile grid (new design, used by /think-tanks and /think-tanks-page).
+  Params:
+    items – list of {anchor, title, logo, logo_alt, is_photo}
+    link  – true: tiles are links to /think-tanks#anchor; false: buttons that open the detail view (think-tanks.js)
+#}
+<div class="tt-grid" data-reveal data-reveal-delay="1">
+  {% for tt in items %}
+  {% if link %}
+  <a class="tt-tile" href="{{ 'think-tanks'|page }}#{{ tt.anchor }}">
+  {% else %}
+  <button class="tt-tile" type="button" data-tt-open="{{ tt.anchor }}" aria-controls="{{ tt.anchor }}" aria-expanded="false">
+  {% endif %}
+    <span class="tt-logo{% if tt.is_photo %} is-photo{% endif %}"{% if not tt.logo %} aria-hidden="true"{% endif %}>
+      {% if tt.logo %}
+      <img src="{{ tt.logo }}" alt="" loading="lazy" decoding="async">
+      {% else %}
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22V11"/><path d="M12 11c0-4 3-7 8-7 0 4-3 7-8 7z"/><path d="M12 14c0-3-2.5-5.5-7-5.5 0 3 2.5 5.5 7 5.5z"/><path d="M4 22h16"/></svg>
+      {% endif %}
+    </span>
+    <span class="tt-name">{{ tt.title }}</span>
+  {% if link %}
+  </a>
+  {% else %}
+  </button>
+  {% endif %}
+  {% endfor %}
+</div>

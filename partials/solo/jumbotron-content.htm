@@ -1,0 +1,25 @@
+{#
+  Renders a Pensoft.Jumbotron record in the new design (instead of the plugin's own template).
+  Params:
+    j          - the record (e.g. jumbotron.getJumbotron())
+    comp       - the jumbotron component (the "Edit in backend" link needs a frontend login AND a backend login)
+    show_title - render the record title as an H2
+    image      - false to skip the image
+#}
+{% if j %}
+  {% if show_title and j.title %}<h2 class="jt-title">{{ j.title }}</h2>{% endif %}
+  {% if j.body %}<div class="cms-content">{{ j.body|ensure_img_alt|raw }}</div>{% endif %}
+  {% if image is not same as(false) and j.image.path %}
+  <figure class="jt-figure"><img src="{{ j.image.path }}" alt="{{ j.title }}" loading="lazy"></figure>
+  {% endif %}
+  {% if j.url %}
+  <p class="jt-cta">
+    <a class="btn btn-primary" href="{{ j.url }}"{% if j.url_target %} target="{{ j.url_target }}"{% endif %}{% if j.url_target == '_blank' %} rel="noopener"{% endif %}>
+      {{ j.button_name ?: trans('pensoft.jumbotron::lang.button') }}
+    </a>
+  </p>
+  {% endif %}
+  {% if user and comp.loggedIn %}
+  <p class="jt-edit"><a href="/admin/pensoft/jumbotron/jumbotron/update/{{ j.id }}" target="_blank" rel="noopener">Edit in backend</a></p>
+  {% endif %}
+{% endif %}

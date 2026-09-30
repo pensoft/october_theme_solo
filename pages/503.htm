@@ -1,77 +1,52 @@
+{#
+  Maintenance page. Rendered by Pensoft.Maintenance (MaintenanceResponder) as a plain
+  view - not a CMS page - so no layout, partials or |theme filter are available here.
+  Asset paths are therefore absolute.
+#}
 {% apply spaceless %}
 <!DOCTYPE html>
 <html lang="{{ locale }}">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="utf-8">
     <meta http-equiv="language" content="{{ locale }}">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
     <title>{{ 'pensoft.maintenance::lang.responses.view.title'|trans }} | {{ app_name }}</title>
-    <link href="https://fonts.googleapis.com/css?family=Exo+2:400,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/themes/pensoft-solo/assets/solo/site.css">
     <style>
-        html, body {
-            background-color: #fff;
-            color: #3a3a3a;
-            font-family: 'Exo 2', sans-serif;
-            font-weight: 400;
-            height: 100vh;
-            margin: 0;
+        html, body { height: 100%; }
+        body.layout-maintenance {
+            margin: 0; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 32px 16px;
+            color: #FFFFFF;
+            background-color: #2E0A00;
+            background-image:
+                linear-gradient(180deg, rgba(28,8,2,.78) 0%, rgba(28,8,2,.66) 55%, rgba(28,8,2,.84) 100%),
+                url('/themes/pensoft-solo/assets/solo/img/header-soil.jpg');
+            background-size: cover;
+            background-position: center 38%;
         }
-
-        .wrapper {
-            height: 100vh;
-            align-items: center;
-            display: flex;
-            justify-content: center;
-            position: relative;
-        }
-
-        .content {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .title {
-            margin: 0 auto;
-            line-height: 1.1;
-            font-weight: 700;
-            color: #a1a1a1;
-            font-size: 18px;
-        }
-
-        .message {
-            margin: 20px auto 0;
-            line-height: 1.5;
-            font-size: 12px;
-        }
-
-        @media screen and (min-width: 768px) {
-            .title {
-                width: 75%;
-                font-size: 3vw;
-            }
-
-            .message {
-                width: 75%;
-                font-size: 1.5vw;
-            }
-        }
+        .maint { max-width: 640px; text-align: center; }
+        .maint .logo { width: 96px; height: auto; margin: 0 auto 36px; }
+        .maint .eyebrow { color: #FFD9C2; }
+        .maint .eyebrow .dot { background: #FFD9C2; }
+        .maint h1 { color: #FFFFFF; font-size: clamp(32px, 5vw, 56px); margin-top: 18px; }
+        .maint p { color: rgba(255,255,255,.82); font-size: clamp(16px, 1.6vw, 19px); line-height: 1.6; margin: 20px auto 0; max-width: 52ch; }
     </style>
 </head>
 <body ontouchstart="" class="layout-maintenance">
-    <div class="wrapper">
-        <div class="content">
-            <div class="title">
-                {{- 'pensoft.maintenance::lang.responses.view.title'|trans -}}
-            </div>
-            <div class="message">
-                {{- 'pensoft.maintenance::lang.responses.view.message'|trans -}}
-            </div>
-        </div>
-    </div>
+    <main class="maint">
+        <img class="logo" src="/themes/pensoft-solo/assets/solo/media/mqf5crax-SOLO-Brand-1c-negative-_1_.svg" alt="SOLO">
+        <span class="eyebrow"><span class="dot"></span>Maintenance</span>
+        <h1>{{- 'pensoft.maintenance::lang.responses.view.title'|trans -}}</h1>
+        <p>{{- 'pensoft.maintenance::lang.responses.view.message'|trans -}}</p>
+    </main>
 </body>
 </html>
 {% endapply %}

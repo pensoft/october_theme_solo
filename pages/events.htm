@@ -12,210 +12,400 @@ limit = "null"
 category = "null"
 language = "en"
 redirect_to_detailed_page = "false"
+
+[eventGallery]
 ==
 <?php
+use Carbon\Carbon;
 use Pensoft\Calendar\Models\Entry;
 use Pensoft\EventReporting\Models\EventsreportingData as Data;
 use Pensoft\EventReporting\Models\EventsreportingAttendants as Attendant;
+use RainLab\User\Facades\Auth;
 
-function onStart(){
-
-    if($this->param('slug')){
-        $this['entry'] =  Entry::select(
-                    '*',
-                    'title',
-                    'place',
-                    'description',
-                    'url',
-
-                    DB::raw("to_char(\"start\", 'DD') as start_day"),
-                    DB::raw("to_char(\"start\", 'YYYY') as start_year"),
-                    DB::raw("to_char(\"end\", 'DD') as end_day"),
-                    DB::raw("to_char(\"end\", 'YYYY') as end_year"),
-                    DB::raw("to_char(\"start\", 'month') as start_month"),
-                    DB::raw("to_char(\"end\", 'month') as end_month"),
-                    DB::raw("
-                    \"end\" is not null as has_end
-                    ")
-
-
-                    )->where('slug', $this->param('slug'))->first();
-
-
-
-                    \BennoThommo\Meta\Meta::set('twitter:card', 'summary_large_image');
-                    \BennoThommo\Meta\Meta::set('twitter:title', $this['entry']['title']);
-                    \BennoThommo\Meta\Meta::set('twitter:description', str_limit(Html::strip($this['entry']['description']), 255));
-                    \BennoThommo\Meta\Meta::set('og:title', $this['entry']['title']);
-                    \BennoThommo\Meta\Meta::set('og:description', str_limit(Html::strip($this['entry']['description']), 255) );
-                    \BennoThommo\Meta\Meta::set('og:type', 'article');
-                    \BennoThommo\Meta\Meta::set('og:url', $this->pageUrl(''));
-                    if($this['entry']['cover_image']){
-                        \BennoThommo\Meta\Meta::set('twitter:image', $this['entry']['cover_image']->getThumb(600, null, ['mode' => 'auto']));
-
-                        \BennoThommo\Meta\Meta::set('og:image', $this['entry']['cover_image']->getThumb(600, 314, ['mode' => 'crop']));
-                        \BennoThommo\Meta\Meta::set('og:image:width', 600);
-                        \BennoThommo\Meta\Meta::set('og:image:height', 314);
-                    }
-
-                    $this['attendees'] = new class {
-                        public function getIM($id) {
-                        return Attendant::where('event_id', $id)
-                        ->join('users', 'users.id', '=', 'pensoft_eventreporting_attendants.user_id')
-                        ->get();
-                        }
-                    };
-
-                    $this['internalData'] = new class {
-                        public function getIM($id) {
-                        return Data::where('slug', $id)->first();
-                        }
-                    };
-
-
+/* Human readable date range, e.g. "17 June 2026", "3 - 5 June 2026", "30 June - 2 July 2026". */
+function eventDateLabel($entry)
+{
+    if (!$entry->start) {
+        return '';
+    }
+    $s = new Carbon($entry->start);
+    $e = $entry->end ? new Carbon($entry->end) : null;
+    if (!$e || $s->isSameDay($e) || $e->lt($s)) {
+        return $s->format('j F Y');
+    }
+    if ($s->format('Y-m') === $e->format('Y-m')) {
+        return $s->format('j') . ' - ' . $e->format('j F Y');
+    }
+    if ($s->year === $e->year) {
+        return $s->format('j F') . ' - ' . $e->format('j F Y');
+    }
+    return $s->format('j F Y') . ' - ' . $e->format('j F Y');
 }
-$this['page_url'] = $this->pageUrl('');
-$this['entries'] = Entry::orderBy('start', 'desc')->paginate(20);
 
-$this['slug'] = $this->param('slug');
+function eventTimeLabel($entry)
+{
+    if ($entry->all_day || !$entry->start) {
+        return '';
+    }
+    $s = new Carbon($entry->start);
+    $e = $entry->end ? new Carbon($entry->end) : null;
+    if ($s->format('H:i') === '00:00' && (!$e || $e->format('H:i') === '00:00')) {
+        return '';
+    }
+    if ($e && $e->format('H:i') !== $s->format('H:i') && $s->isSameDay($e)) {
+        return $s->format('H:i') . ' - ' . $e->format('H:i');
+    }
+    return $s->format('H:i');
+}
+
+/* An event is upcoming while its end (or start) date has not passed yet. */
+function eventIsUpcoming($entry)
+{
+    $ref = $entry->end ?: $entry->start;
+    return $ref ? (new Carbon($ref))->endOfDay()->gte(Carbon::now()) : false;
+}
+
+function decorate($entry)
+{
+    $entry->date_label = $this->eventDateLabel($entry);
+    $entry->time_label = $this->eventTimeLabel($entry);
+    $entry->is_upcoming = $this->eventIsUpcoming($entry);
+    $entry->detail_url = $this->pageUrl('events', ['slug' => $entry->slug]);
+    return $entry;
+}
+
+function onStart()
+{
+    // Internal events are only visible to logged-in members (same rule as the calendar feed).
+    $loggedIn = Auth::check();
+    $publicOnly = function ($q) use ($loggedIn) {
+        if (!$loggedIn) {
+            $q->where('is_internal', false);
+        }
+        return $q;
+    };
+
+    $this['page_url'] = $this->pageUrl('');
+    $this['slug'] = $this->param('slug');
+
+    if ($this->param('slug')) {
+        $entry = $publicOnly(Entry::where('slug', $this->param('slug')))->with(['cover_image', 'categories'])->first();
+        $this['entry'] = $entry ? $this->decorate($entry) : null;
+
+        if ($entry) {
+            $desc = str_limit(trim(Html::strip($entry->description)), 255);
+            \BennoThommo\Meta\Meta::set('twitter:card', 'summary_large_image');
+            \BennoThommo\Meta\Meta::set('twitter:title', $entry->title);
+            \BennoThommo\Meta\Meta::set('twitter:description', $desc);
+            \BennoThommo\Meta\Meta::set('og:title', $entry->title);
+            \BennoThommo\Meta\Meta::set('og:description', $desc);
+            \BennoThommo\Meta\Meta::set('og:type', 'article');
+            \BennoThommo\Meta\Meta::set('og:url', $this->pageUrl(''));
+            if ($entry->cover_image) {
+                \BennoThommo\Meta\Meta::set('twitter:image', $entry->cover_image->getThumb(600, null, ['mode' => 'auto']));
+                \BennoThommo\Meta\Meta::set('og:image', $entry->cover_image->getThumb(600, 314, ['mode' => 'crop']));
+                \BennoThommo\Meta\Meta::set('og:image:width', 600);
+                \BennoThommo\Meta\Meta::set('og:image:height', 314);
+            }
+        }
+
+        $this['attendees'] = new class {
+            public function getIM($id) {
+                return Attendant::where('event_id', $id)
+                    ->join('users', 'users.id', '=', 'pensoft_eventreporting_attendants.user_id')
+                    ->get();
+            }
+        };
+
+        $this['internalData'] = new class {
+            public function getIM($id) {
+                return Data::where('slug', $id)->first();
+            }
+        };
+        return;
+    }
+
+    // Listing: all visible events; sorting and the year filter run client-side (site.js [data-event-filter]).
+    $entries = $publicOnly(Entry::whereNotNull('start'))->orderBy('start', 'desc')->get();
+    $entries->each(function ($e) { $this->decorate($e); });
+    $this['entries'] = $entries;
+
+    $years = [];
+    foreach ($entries as $e) {
+        $years[] = (new Carbon($e->start))->format('Y');
+    }
+    $years = array_values(array_unique($years));
+    rsort($years);
+    $this['years'] = $years;
+
+    // Featured banner: the next upcoming event, otherwise the most recent past one.
+    $upcoming = $entries->filter(function ($e) { return $e->is_upcoming; })->sortBy('start');
+    $this['featured'] = $upcoming->first() ?: $entries->first();
 }
 ?>
 ==
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/solo/event-details.page.css'|theme }}">
+<link rel="stylesheet" href="{{ 'assets/solo/news-details.page.css'|theme }}">
+<link rel="stylesheet" href="{{ 'assets/solo/pages/events.css'|theme }}">
+{% endput %}
+
+{% set icon_pin %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>{% endset %}
+{% set icon_cal %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{% endset %}
+{% set icon_clock %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{% endset %}
+{% set icon_user %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>{% endset %}
+{% set icon_ext %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>{% endset %}
+{% set icon_arrow %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endset %}
+
 {% if not slug %}
-<section class="container" aria-label="Events view options">
-    <nav class="tabs" role="tablist" aria-label="Event view options">
-        <a class="" href="#listView" role="tab" aria-controls="listView" aria-selected="true">List view</a>
-        <a class="" href="#calendarView" role="tab" aria-controls="calendarView" aria-selected="false">Calendar view</a>
-    </nav>
+{# ======================= LIST ======================= #}
+<section class="subhero">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ 'home'|page }}">Home</a> <span>/</span> <span>Events</span></nav>
+    <h1>Events</h1>
+    <div class="subnav" role="tablist" aria-label="Event view options">
+      <button type="button" role="tab" id="tab-list" aria-controls="panel-list" aria-selected="true" class="active">List view</button>
+      <button type="button" role="tab" id="tab-calendar" aria-controls="panel-calendar" aria-selected="false">Calendar view</button>
+    </div>
+  </div>
 </section>
-<!--tabs content	-->
-<div class="container-fluid">
-    <div class="container">
 
-        <section class="row" id="listView" role="tabpanel" aria-labelledby="listView" aria-label="Events list">
-            <div class="events_list_container">
-                {% for entry in entries %}
-                {% set url = entry.url ?  entry.url : '/events/' ~ entry.slug %}
+{% if featured %}
+<section style="padding-top: clamp(40px,5vw,64px); padding-bottom: 0;">
+  <div class="container">
+    <div class="featured-banner" data-reveal>
+      <span class="ring r1" aria-hidden="true"></span>
+      <span class="ring r2" aria-hidden="true"></span>
+      <div class="fb-content">
+        <span class="fb-tag">{{ featured.is_upcoming ? 'Upcoming event' : 'Latest event' }}</span>
+        <h2>{{ featured.title|raw }}</h2>
+        <p>{{ featured.date_label }}{% if featured.place %} &middot; {{ featured.place }}{% endif %}</p>
+      </div>
+      <div class="fb-cta">
+        <a class="btn btn-primary" href="{{ featured.detail_url }}">View Event {{ icon_ext|raw }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 
-                <article class="row entry_item middle-xs">
-                    <div class="col-md-1 col-xs-12">
-                        <time datetime="{{entry.start|date('Y-m-d')}}">
-                            <span class="date_day">{{entry.start|date("d")}}</span>
-                            <span class="date_month">{{entry.start|date("M")}}</span>
-                            <span class="date_year">{{entry.start|date("Y")}}</span>
-                        </time>
-                    </div>
-                    <div class="col-md-8 col-xs-12">
-                        <span class="date_month mb-1">{{entry.start|date("l")}}</span>
-                        <h2>{{entry.title|raw}}</h2>
-                    </div>
-                    <div class="col-md-3 col-xs-12 end-md center-xs">
-                        <a href="{{'events'|page}}/{{entry.slug}}" class="read_more" aria-label="Read more about {{entry.title|striptags}}">Read more</a>
-                    </div>
-                </article>
-
-                {% endfor %}
-            </div>
-            {% if entries.count > 20 %}
-            <nav class="row container" aria-label="Pagination">
-                {{ entries.fragment('listView').render|raw }}
-            </nav>
-            {% endif %}
-
-        </section>
-        <section class="row" id="calendarView" role="tabpanel" aria-labelledby="calendarView" aria-label="Events calendar">
-            {% component 'calendar' %}
-        </section>
+<section class="tab-panel" id="panel-list" role="tabpanel" aria-labelledby="tab-list">
+  <div class="container" data-event-filter>
+    <div class="section-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;">
+      <h2 style="margin:0;">All events</h2>
+      {% if entries|length %}
+      <div class="filter-bar" style="margin:0;">
+        <div class="field-group">
+          <label for="e-sort">Sort by date</label>
+          <div class="select-wrap">
+            <select id="e-sort" data-ev="sort">
+              <option value="desc">Newest first</option>
+              <option value="asc">Oldest first</option>
+            </select>
+            <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="e-year">Filter by year</label>
+          <div class="select-wrap">
+            <select id="e-year" data-ev="year">
+              <option value="all">All years</option>
+              {% for y in years %}<option value="{{ y }}">{{ y }}</option>{% endfor %}
+            </select>
+            <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
 
-</div>
+    <div class="event-list" data-ev-list>
+      {% for entry in entries %}
+      <article class="event-row{% if entry.is_upcoming %} is-upcoming{% endif %}" data-ev-row data-year="{{ entry.start|date('Y') }}" data-ts="{{ entry.start|date('YmdHi') }}">
+        <div class="date-block"><time datetime="{{ entry.start|date('Y-m-d') }}"><div class="d">{{ entry.start|date('d') }}</div><div class="m">{{ entry.start|date('M') }}</div><div class="y">{{ entry.start|date('Y') }}</div></time></div>
+        <div class="ev-body">
+          <h3><a href="{{ entry.detail_url }}">{{ entry.title|raw }}</a></h3>
+          <div class="ev-meta">
+            {% if entry.is_upcoming %}<span class="ev-badge">Upcoming</span>{% endif %}
+            <span>{{ icon_cal|raw }}{{ entry.date_label }}</span>
+            {% if entry.place %}<span>{{ icon_pin|raw }}{{ entry.place }}</span>{% endif %}
+          </div>
+        </div>
+        <div class="ev-action"><a class="btn btn-ghost" href="{{ entry.detail_url }}" aria-label="Read more about {{ entry.title|striptags }}">Read More</a></div>
+      </article>
+      {% endfor %}
+    </div>
 
+    <div class="empty-state" data-empty {% if entries|length %}hidden{% endif %} style="margin-top:24px;">
+      {{ icon_cal|raw }}
+      {% if entries|length %}
+      <h3>No events for this year</h3>
+      <p>Try selecting a different year to see more events.</p>
+      {% else %}
+      <h3>No events yet</h3>
+      <p>Upcoming SOLO events will be listed here.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="tab-panel" id="panel-calendar" role="tabpanel" aria-labelledby="tab-calendar" hidden>
+  <div class="container">
+    <div class="ev-calendar">
+      {% component 'calendar' %}
+    </div>
+  </div>
+</section>
+
+{% put bodyScripts %}
+<script>
+  /* FullCalendar cannot measure itself while its tab is hidden: re-measure when the tab is shown. */
+  (function () {
+    var tab = document.getElementById('tab-calendar');
+    if (!tab) return;
+    function refresh() {
+      setTimeout(function () {
+        var el = document.getElementById('calendar');
+        if (el && el._calendar) el._calendar.updateSize();
+      }, 30);
+    }
+    tab.addEventListener('click', refresh);
+    window.addEventListener('hashchange', refresh);
+    window.addEventListener('load', function () { if (location.hash === '#tab-calendar') refresh(); });
+  })();
+</script>
+{% endput %}
 
 {% else %}
-
+{# ======================= DETAIL ======================= #}
 {% if entry %}
-<div class="container" style="max-width: 950px;">
-    <div class="some_news_background2" role="presentation"></div>
-    <div class="some_news_background" role="presentation"></div>
+{% set ev_cat = entry.categories|length ? entry.categories.first.title : 'Event' %}
+{% set organiser = internalData.getIM(entry.slug).organiser %}
+<div class="ev-hero-band">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb" style="font-size:13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <a href="{{ 'home'|page }}">Home</a> <span>/</span>
+      <a href="{{ 'events'|page({ slug: null }) }}">Events</a> <span>/</span> <span>{{ ev_cat }}</span>
+    </nav>
+    <h1 style="margin-top:18px;">{{ entry.title|raw }}</h1>
+    <div class="quick-meta">
+      <span>{{ icon_cal|raw }}{{ entry.date_label }}</span>
+      {% if entry.place %}<span>{{ icon_pin|raw }}{{ entry.place }}</span>{% endif %}
+    </div>
+  </div>
+</div>
 
-    <article class="row single-news-item">
-        {% if entry.image %}
-        <div class="col-md-6 col-xs-12">
-            <img class="content left" src="{{ entry.image|crop_image|resize(555, auto, { mode: 'crop' }) }}" alt="{{entry.title|striptags}}" />
-        </div>
+<section class="ev-detail">
+  <div class="container">
+    <div class="layout">
+      <article class="ev-article">
+        {% if entry.cover_image %}
+        <figure class="news-figure">
+          <img src="{{ entry.cover_image.getThumb(1100, 'auto', {mode: 'auto'}) }}" alt="{{ entry.cover_image.description ?: entry.title|striptags }}" />
+        </figure>
         {% endif %}
 
-        <div class="col-md-6 col-xs-12">
-            <header class="news-title">
-                <h1 class="single-new-title">{{entry.title}}</h1>
-            </header>
-            <time class="text-published" datetime="{{entry.start|date('Y-m-d')}}/{{entry.end|date('Y-m-d')}}">
-                {{entry.start|date("d M Y")}} - {{entry.end|date("d M Y")}}
-            </time>
-            <p class="text-place" aria-label="Event location">{{entry.place}}</p>
-        </div>
+        {% if entry.description %}
+        <div class="cms-content">{{ entry.description|raw }}</div>
+        {% endif %}
 
-        <div class="col-xs-12">
-            <section class="content" aria-label="Event description">
-                {{entry.description|raw}}
-            </section>
-        </div>
-
-        {% if internalData.getIM(entry.slug).organiser %}
-        <div class="col-xs-12">
-            <div class="content">
-                <span class="text-bold">Organiser:</span>
-                <span class="text-ligth">{{internalData.getIM(entry.slug).organiser}}</span>
-            </div>
-        </div>
+        {% if user and attendees.getIM(entry.id).count %}
+        <section class="ev-attendees" aria-label="Event attendees">
+          <h2>Attendees</h2>
+          <p>
+            {% for profile in attendees.getIM(entry.id) %}{{ profile.name }} {{ profile.surname }}{% if not loop.last %}, {% endif %}{% endfor %}
+          </p>
+        </section>
         {% endif %}
 
         {% if user %}
-        {% if attendees.getIM(entry.id).count %}
-        <div class="col-xs-12">
-            <section class="content" aria-label="Event attendees">
-                <span class="text-bold">Attendees:</span>
-                {% for profile in attendees.getIM(entry.id) %}
-                <span class="text-ligth">{{profile.name}} {{profile.surname}}</span>
-                {% if not loop.last %},&nbsp;{% endif %}
-                {% endfor %}
-            </section>
+        <div class="ev-member-actions">
+          <a href="{{ 'event-attendance-form'|page }}/{{ entry.id }}" class="btn btn-primary">Add attendance</a>
+          {% if internalData.getIM(entry.slug).id %}
+          <a href="{{ 'event-attendance-report'|page }}" class="btn btn-ghost">Edit</a>
+          {% endif %}
         </div>
         {% endif %}
+      </article>
 
-        {% endif %}
-
-        <div class="col-xs-12">
-
-            {% if entry.url %}
-            <br><br><a href="{{entry.url}}" class="read_more" target="_blank" rel="noopener" aria-label="Go to event website (opens in new tab)">Go to event website</a>
-            {% endif %}
-
-            <aside class="row share_container middle-xs" aria-label="Share event">
-                <div class="col-lg-1 col-xs-2 start-xs"><span class="share-label">Share</span></div>
-                <nav class="col-xs-10" aria-label="Share on social media">
-                    <a href="http://twitter.com/share?text={{entry.title}}&url={{page_url}}" target="_blank" class="btn p-primary pr p-twitter medium" rel="noopener" aria-label="Share on Twitter"></a>
-
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{page_url}}&amp;src=sdkpreparse" target="_blank" class="btn pr p-primary p-facebook medium" rel="noopener" aria-label="Share on Facebook"></a>
-
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{page_url}}" target="_blank" class="btn pr p-primary p-linkedin medium" rel="noopener" aria-label="Share on LinkedIn"></a>
-                </nav>
-            </aside>
-
+      <aside class="ev-aside">
+        <div class="ev-info-card">
+          <div class="info-row">
+            {{ icon_cal|raw }}
+            <div><div class="k">Date</div><div class="v"><time datetime="{{ entry.start|date('Y-m-d') }}{% if entry.end %}/{{ entry.end|date('Y-m-d') }}{% endif %}">{{ entry.date_label }}</time></div></div>
+          </div>
+          {% if entry.time_label %}
+          <div class="info-row">
+            {{ icon_clock|raw }}
+            <div><div class="k">Time</div><div class="v">{{ entry.time_label }}</div></div>
+          </div>
+          {% endif %}
+          {% if entry.place %}
+          <div class="info-row">
+            {{ icon_pin|raw }}
+            <div><div class="k">Location</div><div class="v">{{ entry.place }}</div></div>
+          </div>
+          {% endif %}
+          {% if organiser %}
+          <div class="info-row">
+            {{ icon_user|raw }}
+            <div><div class="k">Organiser</div><div class="v">{{ organiser }}</div></div>
+          </div>
+          {% endif %}
+          {% if entry.url %}
+          <a class="btn btn-primary" href="{{ entry.url }}" target="_blank" rel="noopener" aria-label="Go to event website (opens in new tab)">Go to event website {{ icon_ext|raw }}</a>
+          {% endif %}
+          <a class="btn btn-ghost" href="{{ 'events'|page({ slug: null }) }}" style="width:100%; justify-content:center; margin-top:12px; padding:15px;">Back to all events</a>
         </div>
 
-        {% if user  %}
-        <div class="col-xs-12 col-md-7">
-            <a href="{{'event-attendance-form'|page}}/{{entry.id}}" class="btn btn-primary mb-1 mt-1" style="width: 230px;  font-size: unset;">Add attendance</a>
-            {% if internalData.getIM(entry.slug).id %}
-            <a href="{{'event-attendance-report'|page}}" class="btn btn-primary mb-1 mt-1">Edit</a>
-            {% endif %}
+        <div class="share-card" style="background:#ffffff;">
+          <h5>Share this event</h5>
+          <div class="share-row">
+            <button type="button" data-share="x" aria-label="Share on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.53 3H20.5l-6.49 7.43L21.5 21h-5.97l-4.68-6.13L5.5 21h-2.97l6.95-7.95L3 3h6.09l4.23 5.6L17.53 3zm-1.05 16.2h1.64L7.6 4.7H5.84l10.64 14.5z"/></svg></button>
+            <button type="button" data-share="facebook" aria-label="Share on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg></button>
+            <button type="button" data-share="linkedin" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8.34 17.34H5.67V9.83H8.34v7.51zM7 8.67a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm11.34 8.67h-2.67v-3.67c0-.88-.02-2-1.22-2-1.22 0-1.41.95-1.41 1.94v3.73h-2.67V9.83h2.56v1.03h.04a2.82 2.82 0 0 1 2.54-1.39c2.71 0 3.21 1.78 3.21 4.1v3.77z"/></svg></button>
+          </div>
         </div>
-        {% endif %}
+      </aside>
+    </div>
 
-    </article>
-</div>
+    {% for gallery in galleries %}{% if gallery.images|length %}
+    <section class="ev-gallery" aria-labelledby="gallery-{{ gallery.id }}">
+      <div class="ev-gallery-head">
+        <h2 id="gallery-{{ gallery.id }}">{{ gallery.name ?: 'Gallery' }}</h2>
+        <form method="post" action="{{ page_url }}">
+          {{ form_token() }}
+          <input type="hidden" name="_handler" value="eventGallery::onDownload">
+          <input type="hidden" name="gallery_id" value="{{ gallery.id }}">
+          <button type="submit" class="btn btn-ghost">Download all images</button>
+        </form>
+      </div>
+      <div class="ev-gallery-grid">
+        {% for image in gallery.images %}
+        <figure>
+          <a href="{{ image.path }}" target="_blank" rel="noopener" aria-label="Open image{% if image.title %}: {{ image.title }}{% endif %} (opens in new tab)">
+            <img src="{{ image.thumb(480, 320, {'mode':'crop'}) }}" alt="{{ image.title|default('') }}" loading="lazy">
+          </a>
+          {% if image.description %}<figcaption>{{ image.description }}</figcaption>{% endif %}
+        </figure>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}{% endfor %}
+  </div>
+</section>
 
+{% else %}
+{% partial 'site/subhero' title='Event not found' crumbs=[{title:'Events', url: 'events'|page({ slug: null })}] %}
+<section>
+  <div class="container">
+    <div class="empty-state">
+      {{ icon_cal|raw }}
+      <h3>This event is not available</h3>
+      <p>It may have been removed or is only visible to logged-in members.</p>
+      <p style="margin-top:20px;"><a class="btn btn-primary" href="{{ 'events'|page({ slug: null }) }}">Back to all events</a></p>
+    </div>
+  </div>
+</section>
 {% endif %}
-
 {% endif %}

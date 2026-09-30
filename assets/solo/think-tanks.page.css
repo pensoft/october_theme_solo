@@ -1,0 +1,242 @@
+/* ============================================================
+   SOLO — Think Tanks
+   Intro (left-aligned with the page title), logo tiles, expandable detail view.
+   ============================================================ */
+
+/* ---------- Intro ---------- */
+.tt-intro {
+  max-width: 82ch;
+  margin: 0;
+  text-align: left;
+}
+.tt-intro p {
+  margin: 0;
+  font-size: clamp(16.5px, 1.6vw, 19px);
+  line-height: 1.78;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.tt-intro p + p {
+  margin-top: 26px;
+  font-weight: 600;
+  color: var(--fg-soft);
+}
+
+/* ---------- Logo grid ---------- */
+.tt-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: clamp(46px, 5vw, 66px);
+}
+.tt-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 26px 20px;
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .25s var(--t), box-shadow .25s var(--t), border-color .25s var(--t);
+}
+.tt-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-line);
+}
+.tt-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.tt-logo {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--tone-paper);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  overflow: hidden;
+}
+.tt-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.tt-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* ---------- Detail view ---------- */
+.tt-detail { display: none; }
+.tt-detail.active { display: block; }
+.tt-list-view.hidden { display: none; }
+
+.tt-back {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 0; background: none; border: 0;
+  font: inherit; font-size: 14px; font-weight: 600;
+  color: var(--accent); cursor: pointer;
+}
+.tt-back svg { width: 15px; height: 15px; }
+.tt-back:hover { text-decoration: underline; }
+.tt-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+.tt-detail-head {
+  margin: 26px 0 clamp(34px, 3.6vw, 48px);
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.tt-detail-head h2 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: pretty;
+}
+.tt-leader {
+  margin: 16px 0 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+.tt-leader strong { color: var(--fg-soft); font-weight: 600; }
+.tt-detail-head p.tt-desc {
+  margin: 20px 0 0;
+  max-width: 76ch;
+  font-size: 16.5px;
+  line-height: 1.78;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.tt-detail-head .btn { margin-top: 26px; }
+
+/* Section 2 — objectives */
+.tt-objectives h3 {
+  margin: 0 0 28px;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.16;
+  letter-spacing: -0.025em;
+  max-width: 28ch;
+  text-wrap: pretty;
+}
+.tt-obj-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-soft);
+}
+.tt-obj {
+  display: grid;
+  grid-template-columns: 41px minmax(0, 1fr);
+  align-items: center;
+  gap: 22px;
+  padding: 22px 4px;
+  border-bottom: 1px solid var(--border-soft);
+  transition: background .25s var(--t);
+}
+.tt-obj:hover { background: var(--surface); }
+.tt-obj img { width: 41px; height: 41px; transition: transform .25s var(--t); }
+.tt-obj:hover img { transform: translateX(4px); }
+.tt-obj p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* Section 3 — vertical photo + copy */
+.tt-feature {
+  display: grid;
+  grid-template-columns: minmax(0, .68fr) minmax(0, 1fr);
+  gap: clamp(36px, 4.5vw, 64px);
+  align-items: start;
+  margin-top: clamp(56px, 5vw, 80px);
+  padding-top: clamp(46px, 4.5vw, 64px);
+  border-top: 1px solid var(--border-soft);
+}
+.tt-photo {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--tone-paper);
+}
+.tt-photo img { width: 100%; height: auto; display: block; }
+.tt-feature-copy p {
+  margin: 0 0 20px;
+  font-size: 16px;
+  line-height: 1.78;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.tt-feature-copy p:last-child { margin-bottom: 0; }
+
+/* Contact banner */
+.tt-banner {
+  margin-top: clamp(52px, 5vw, 72px);
+  padding: clamp(28px, 3.4vw, 42px) clamp(26px, 3.4vw, 46px);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(140deg, var(--accent-ink), var(--accent) 76%);
+  color: #FBF7F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.tt-banner p {
+  margin: 0;
+  font-size: clamp(16px, 1.7vw, 19px);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  max-width: 62ch;
+}
+.tt-banner a {
+  color: #FFFFFF;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.tt-banner a:hover { color: #FFE6D8; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1080px) {
+  .tt-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .tt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .tt-feature { grid-template-columns: 1fr; }
+  .tt-photo { max-width: 420px; margin: 0 auto; }
+}
+@media (max-width: 560px) {
+  .tt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tt-tile { padding: 20px 14px; gap: 13px; }
+  .tt-name { font-size: 13.5px; }
+  .tt-obj { grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 18px 2px; }
+  .tt-obj img { width: 32px; height: 32px; }
+}
+
+/* ---------- CMS integration ---------- */
+.tt-section { padding: clamp(56px, 7vw, 96px) 0; }
+a.tt-tile { text-decoration: none; }
+.tt-logo svg { width: 34px; height: 34px; }
+.tt-logo.is-photo img { object-fit: cover; }
+/* Think tank logos (wide SVG/PNG): white plate, contained, with padding */
+.tt-logo:not(.is-photo):has(img) { background: #fff; padding: 14px 18px; }
+.tt-logo:not(.is-photo) img { object-fit: contain; }
+/* Target call-out (".brown_bg" in the CMS body) sits right under the head */
+.tt-banner.tt-target { margin: 0 0 clamp(40px, 4vw, 56px); }
+.tt-banner.tt-target p { color: #FBF7F0; }
+.tt-objectives h3 { max-width: 40ch; }
+.tt-feature--text { grid-template-columns: 1fr; }
+.tt-feature--text .tt-feature-copy { max-width: 78ch; }
+.tt-feature-copy.cms-content h3 { font-size: clamp(20px, 2vw, 24px); margin: 0 0 14px; }
+.tt-feature-copy.cms-content ul { margin: 0 0 20px; }
+.tt-detail:focus { outline: none; }
+.tt-banner.tt-target > div > p + p { margin-top: 10px; }

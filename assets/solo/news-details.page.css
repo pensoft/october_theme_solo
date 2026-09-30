@@ -1,0 +1,21 @@
+/* SOLO — News detail: full article photo */
+
+.news-figure {
+  margin: 0 0 32px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--tone-paper);
+  box-shadow: var(--shadow);
+}
+.news-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Pagination controls (shared list behaviour) */
+.pagination[hidden] { display: none !important; }
+
+/* Cover caption (news detail) */
+.news-figure .news-caption { padding: 12px 18px 14px; font-size: 13px; color: var(--muted); background: var(--surface-elev); }
+.news-figure .news-caption > * { margin: 0; }

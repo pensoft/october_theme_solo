@@ -1,0 +1,108 @@
+description = "SOLO — new design shell for internal / member tools (keeps the previous theme styles and scripts)"
+
+[SeoCmsPage]
+
+[session]
+security = "all"
+
+[metaList]
+includePageMeta = 1
+escape = 1
+
+[googleTracker]
+
+[cookieBanner]
+include_css = 1
+update_selector = "#gdpr-reload"
+==
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% component 'SeoCmsPage' %}
+    {% if this.theme.site_icon %}
+    <link rel="icon" type="{{ this.theme.site_icon.getContentType() }}" href="{{ this.theme.site_icon.getPath() }}">
+    {% endif %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
+
+    <link href="{{ ['assets/less/theme.less']|theme }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ 'assets/css/aos.css'|theme }}">
+    <link rel="stylesheet" href="{{ 'assets/solo/site.css'|theme }}">
+    <link rel="stylesheet" href="{{ 'assets/solo/theme.css'|theme }}">
+
+    <script src="{{ 'assets/js/jquery.js'|theme }}"></script>
+    <script src="{{ 'assets/js/popper.min.js'|theme }}"></script>
+    <script src="{{ 'assets/js/tippy-bundle.umd.min.js'|theme }}"></script>
+    <script src="{{ 'assets/js/app.js'|theme }}"></script>
+    <script src="{{ 'assets/js/jquery-ui.js'|theme }}"></script>
+    <script src="{{ 'assets/vendor/bootstrap/js/modal.js'|theme }}"></script>
+    <script src="{{ 'assets/js/slick.min.js'|theme }}"></script>
+    <script src="{{ 'assets/js/aos.js'|theme }}"></script>
+    <script src="{{ 'assets/js/ckeditor/ckeditor.js'|theme }}"></script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PWW5NKQ');</script>
+<!-- End Google Tag Manager -->
+
+    {% if this.page.id == 'news' and is_detail_page %}
+        {% component 'metaList' includePageMeta=false %}
+    {% else %}
+        {% component 'metaList' %}
+    {% endif %}
+
+    {% framework extras %}
+    {% styles %}
+    {% scripts %}
+    <!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//matomo.pensoft.net/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '7']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
+</head>
+
+<body class="page-{{ this.page.id }} layout-internal">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PWW5NKQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+{% partial 'site/header' page_id=this.page.id over_hero=(this.page.id == 'home') %}
+
+<main id="layout-content" class="site-main legacy-main {{ this.page.id }}">
+    {% partial 'site/subhero' title=this.page.title %}
+    <div class="legacy-content container">
+        {% page %}
+    </div>
+    {% component 'googleTracker' %}
+</main>
+
+{% partial 'site/footer' %}
+
+<div id="gdpr-reload">
+    {% partial 'gdpr' %}
+</div>
+
+<script src="{{ 'assets/solo/site.js'|theme }}"></script>
+{% placeholder bodyScripts %}
+<script>$(function () { if (window.AOS) AOS.init(); });</script>
+</body>
+{% component 'cookieBanner' %}
+</html>

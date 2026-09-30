@@ -6,18 +6,6 @@ robot_index = "index"
 robot_follow = "follow"
 
 [siteSearchInclude]
-
-[jumbotron intro]
-jumbotron = "solos-impact-assessment-framework"
-background = "transperant"
-templates = "template3"
-description_limit = 0
-
-[jumbotron description]
-jumbotron = "kpi-items-description"
-background = "transperant"
-templates = "template3"
-description_limit = 0
 ==
 <?php
 use Pensoft\Impact\Models\Sheet;
@@ -26,21 +14,23 @@ use System\Models\File;
 
 function onStart()
 {
-    $this['groups'] = Group::get();
-    $group = Group::where('slug', $this->param('id'))->first();
+    $group = Group::with('cover')->where('slug', $this->param('id'))->first();
     $this['is_detail_page'] = $group ? true : false;
 
     if($this['is_detail_page']){
-        $this['group'] = Group::where('slug', $this->param('id'))->first();
+        $this['group'] = $group;
         $groupId = $group['id'];
 
-        $this['sheets'] = Sheet::whereHas('group', function ($query) use ($groupId) {
-            $query->where('group_id', $groupId);
-        })->get();
-
+        $this['sheets'] = Sheet::with(['cover', 'file'])
+            ->where('group_id', $groupId)
+            ->orderBy('sort_order')
+            ->get();
 
         if(get('download')){
             $file = File::find((int)get('download'));
+            if (!$file) {
+                return Redirect::to('/solos-impact-assessment-framework');
+            }
             $file_name = $file->getLocalPath();
 
             $ext= $file->getExtension();
@@ -63,91 +53,62 @@ function onStart()
             }
             return Redirect::to('/solos-impact-assessment-framework');
         }
-
-
     }
-
-
-
-
-
-
 }
 ?>
 ==
 {% component 'siteSearchInclude' %}
 
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/solo/resources.page.css'|theme }}?v=2">
+<link rel="stylesheet" href="{{ 'assets/solo/pages/resources.css'|theme }}">
+{% endput %}
+
+<div class="resources-page">
 {% if is_detail_page %}
 
-<div class="container">
-    <nav class="row" aria-label="Breadcrumb">
-        <div class="col-xs-12 go-back-link">
-            <a href="/solos-impact-assessment-framework" class="back">Back</a>
-        </div>
-    </nav>
-    <section class="row" aria-label="KPI details">
+{% partial 'site/subhero' title=group.title crumbs=[{title:'Resources', url:'/resources'}, {title:'Impact Assessment Framework', url:'/solos-impact-assessment-framework'}] %}
 
-        <h1 class="kpi_group_title">{{group.title}}</h1>
-        {% for record in sheets %}
-        <article class="col-md-6 col-xs-12">
-            <div class="kpi_record">
-                <div class="row">
-                    <div class="col-xs-12"><span class="kpi_record_label">{{record.label}}</span></div>
-                    <div class="col-xs-12"><h2 class="kpi_record_title">{{record.title}}</h2></div>
-                    <div class="col-md-4 col-xs-12">
-                        <img src="{{record.cover.path}}" class="kpi_record_image" alt="{{record.title}}">
-                        <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" class="download" target="_blank" rel="noopener" download aria-label="Download {{record.title}} PDF">
-                            Download pdf
-                            <i class="pr normal p-download" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                    <div class="col-md-8 col-xs-12"><div class="kpi_record_desc">{{record.description|raw}}</div></div>
-                </div>
-            </div>
-        </article>
+<section>
+  <div class="container">
+    <div class="iaf-detail active">
+      <a class="iaf-back" href="/solos-impact-assessment-framework">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg>
+        All categories
+      </a>
+      <div class="iaf-detail-head">
+        <span class="iaf-detail-ico" aria-hidden="true">
+          {% if group.cover %}<img src="{{ group.cover.path }}" alt="">{% else %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 5-6"></path></svg>{% endif %}
+        </span>
+        <h2 class="h3">KPI sheets</h2>
+      </div>
+      {% if group.description %}<div class="cms-content" style="margin:-12px 0 32px;">{{ group.description|raw }}</div>{% endif %}
+
+      {% if sheets|length %}
+      <div class="kpi-grid">
+        {% for sheet in sheets %}
+        {% partial 'solo/resources/kpi-card' sheet=sheet groupSlug=group.slug %}
         {% endfor %}
-    </section>
-</div>
+      </div>
+      {% else %}
+      <div class="empty-state iaf-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+        <h3>KPI sheets for this category are coming soon</h3>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
 
 {% else %}
 
-<div class="container">
-    <section class="kpi_intro" aria-label="Introduction">
-        {% component 'intro' %}
-    </section>
-</div>
+{% partial 'site/subhero' title='Impact Assessment Framework' crumbs=[{title:'Resources', url:'/resources'}] %}
 
-<section class="container kpi_items" aria-label="Impact assessment framework">
-    <div class="row">
-        <div class="col-xs-12 kpi_items_intro">
-            <p>The assessment framework allows for the evaluation of 5 types of impact of Mission Soil Research and Innovation (R&I) activities. Each type of impact is assessed by a number of KPIs.</p>
-            <p>Detailed KPI sheets can be found in the categories below.</p>
-        </div>
-    </div>
-    <div class="row">
-        {% for group in groups %}
-        <article class="col-md col-xs-12">
-            <a class="kpi_item" href="/solos-impact-assessment-framework/{{group.slug}}" aria-label="View {{group.title}} KPIs">
-                <div class="group_title_and_icon">
-                    <div class="group_icon" style="background: #D6CBC8 url({{group.cover.path}}) center no-repeat; background-size: 70% 60%;" role="img" aria-label="{{group.title}} icon">&nbsp;</div>
-                    <h2>{{group.title}}</h2>
-                </div>
-                <div class="group_desc">
-                    {{group.description|raw}}
-                </div>
-            </a>
-        </article>
-        {% endfor %}
-    </div>
-</section>
-
-<section class="container kpi_description" aria-label="Additional information">
-    <div class="row">
-        <div class="col-md-4 col-xs-12">
-            <img src="{{ 'image.jpg' | media}}" alt="Impact assessment framework illustration">
-        </div>
-        <div class="col-md-8 col-xs-12">{% component 'description' %}</div>
-    </div>
+<section>
+  <div class="container">
+    {% partial 'solo/resources/iaf' interactive=false %}
+  </div>
 </section>
 
 {% endif %}
+</div>

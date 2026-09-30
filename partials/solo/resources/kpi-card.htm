@@ -1,0 +1,66 @@
+description = "SOLO redesign: one KPI sheet (pensoft/impact Sheet) as a .kpi-card. Params: sheet, groupSlug"
+==
+<?php
+function onStart()
+{
+    $sheet = $this['sheet'];
+    $this['kpi_fields'] = $sheet ? $this->parseKpiFields((string) $sheet->description) : [];
+}
+
+/*
+ * KPI sheet descriptions are rich text like
+ *   <p><strong>DEFINITION:</strong> …</p><p><strong>LEVEL:</strong> …</p>
+ * Turn them into label/value pairs for the design's <dl>; return [] when the
+ * text does not follow that pattern (the raw HTML is rendered instead).
+ */
+function parseKpiFields($html)
+{
+    if (trim(strip_tags($html)) === '') {
+        return [];
+    }
+    if (!preg_match_all('#<p[^>]*>(.*?)</p>#si', $html, $m)) {
+        return [];
+    }
+    $out = [];
+    foreach ($m[1] as $p) {
+        $text = html_entity_decode(strip_tags($p), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $text));
+        if ($text === '') {
+            continue;
+        }
+        // A paragraph may hold several "LABEL: value" pairs
+        $parts = preg_split('/(?<![A-Z])\s+(?=[A-Z][A-Z\/&\- ]{2,30}:\s)/u', $text);
+        foreach ($parts as $part) {
+            if (!preg_match('/^([A-Z][A-Z\/&\- ]{1,40}):\s*(.*)$/su', $part, $mm)) {
+                return [];
+            }
+            $out[] = ['label' => ucfirst(strtolower(trim($mm[1]))), 'value' => trim($mm[2])];
+        }
+    }
+    return $out;
+}
+?>
+==
+<article class="kpi-card">
+  <div class="kpi-body">
+    {% if sheet.label %}<span class="kpi-badge">{{ sheet.label }}</span>{% endif %}
+    <h4>{{ sheet.title }}</h4>
+    {% if sheet.cover %}
+    <div class="kpi-media">
+      <img src="{{ sheet.cover.path }}" alt="" loading="lazy" decoding="async">
+    </div>
+    {% endif %}
+    {% if kpi_fields|length %}
+    <dl class="kpi-fields">
+      {% for f in kpi_fields %}
+      <div class="kpi-field"><dt>{{ f.label }}</dt><dd>{{ f.value }}</dd></div>
+      {% endfor %}
+    </dl>
+    {% elseif sheet.description %}
+    <div class="kpi-desc cms-content">{{ sheet.description|raw }}</div>
+    {% endif %}
+    {% if sheet.file %}
+    <a class="btn btn-secondary" href="/solos-impact-assessment-framework/{{ groupSlug }}?download={{ sheet.file.id }}&amp;file_name={{ sheet.file.file_name|replace({' ': '_'})|url_encode }}" aria-label="Download PDF: {{ sheet.title }}">Download PDF <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"></path></svg></a>
+    {% endif %}
+  </div>
+</article>

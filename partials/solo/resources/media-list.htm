@@ -1,0 +1,58 @@
+description = "SOLO redesign: library records of one type as .media-card tiles. Params: libType (13 policy brief | 14 graphical summary), noun, infographic (bool), emptyTitle"
+==
+<?php
+use Pensoft\Library\Models\Library;
+
+function onStart()
+{
+    $this['media_records'] = Library::isVisible()
+        ->with(['file', 'preview'])
+        ->where('type', (int) $this['libType'])
+        ->orderBy('year', 'desc')
+        ->orderBy('id', 'desc')
+        ->get();
+}
+?>
+==
+{% set dl_icon %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"></path></svg>{% endset %}
+{% set n = media_records|length %}
+{% if n %}
+<p class="result-count"><span>{{ n }} {{ noun }}{{ n == 1 ? '' : 's' }}</span></p>
+<div class="grid-3">
+  {% for record in media_records %}
+  {% set doiUrl = '' %}
+  {% if record.doi %}
+    {% set doiUrl = record.doi|trim %}
+    {% if not (doiUrl starts with 'http') %}{% set doiUrl = 'https://doi.org/' ~ doiUrl|replace({'doi:': '', 'DOI:': ''})|trim %}{% endif %}
+  {% endif %}
+  <article class="media-card{{ infographic ? ' infographic' }}">
+    <div class="cover">
+      <span class="ring"></span>
+      {% if infographic %}
+      <svg class="doc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><rect x="7" y="10" width="3" height="7"></rect><rect x="12" y="6" width="3" height="11"></rect><rect x="17" y="13" width="3" height="4"></rect></svg>
+      {% else %}
+      <svg class="doc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+      {% endif %}
+      {% if record.preview %}<img src="{{ record.preview.path }}" alt="" loading="lazy" decoding="async">{% endif %}
+    </div>
+    <div class="body">
+      <h3>{{ record.title }}</h3>
+      {% if record.authors or record.year_attr %}<p class="res-meta">{% if record.authors %}{{ record.authors|replace({',': ', '}) }} · {% endif %}{{ record.year_attr }}</p>{% endif %}
+      <div class="res-actions">
+        {% if record.file %}
+        <a class="btn-download" href="{{ record.file.path }}" target="_blank" rel="noopener" aria-label="Download {{ record.title }}">Download{{ infographic ? '' : ' PDF' }} {{ dl_icon|raw }}</a>
+        {% endif %}
+        {% if doiUrl %}
+        <a class="btn-download ghost" href="{{ doiUrl }}" target="_blank" rel="noopener" aria-label="Open {{ record.title }}">Open link</a>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+  <h3>{{ emptyTitle }}</h3>
+</div>
+{% endif %}

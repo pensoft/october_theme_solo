@@ -1,0 +1,53 @@
+{#
+  SOLO redesign: Resources-style page (subhero with tabs + 4 panels).
+  Params: title, crumbs (list of {title,url}), active ('framework' | 'publications'),
+          mode ('resources' | 'mission'), action (publications form URL), pubEmptyTitle,
+          perPage (publications per page, default 12)
+#}
+{% set tabs = [
+  {id: 'framework', label: 'Impact Assessment Framework'},
+  {id: 'publications', label: 'Publications'},
+  {id: 'briefs', label: 'Policy Briefs'},
+  {id: 'infographics', label: 'Infographics'}
+] %}
+<div class="resources-page">
+<section class="subhero">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="{{ 'home'|page }}">Home</a>
+      {% for c in crumbs %}<span>/</span> <a href="{{ c.url }}">{{ c.title }}</a> {% endfor %}
+      <span>/</span> <span>{{ title }}</span>
+    </nav>
+    <h1>{{ title }}</h1>
+    <div class="subnav" role="tablist" aria-label="Resource categories">
+      {% for t in tabs %}
+      <button class="tab{{ t.id == active ? ' active' }}" type="button" role="tab" id="tab-{{ t.id }}" aria-controls="panel-{{ t.id }}" aria-selected="{{ t.id == active ? 'true' : 'false' }}"{{ t.id == active ? '' : ' tabindex="-1"' }}>{{ t.label }}</button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+
+    <div class="tab-panel" role="tabpanel" id="panel-framework" aria-labelledby="tab-framework"{{ active == 'framework' ? '' : ' hidden' }}>
+      {% partial 'solo/resources/iaf' interactive=true %}
+    </div>
+
+    <div class="tab-panel" role="tabpanel" id="panel-publications" aria-labelledby="tab-publications"{{ active == 'publications' ? '' : ' hidden' }}>
+      {% partial 'solo/resources/library-list' mode=mode action=action anchor='tab-publications' perPage=(perPage ?: 12) emptyTitle=pubEmptyTitle %}
+    </div>
+
+    <div class="tab-panel" role="tabpanel" id="panel-briefs" aria-labelledby="tab-briefs" hidden>
+      <div class="section-head"><h2>Policy briefs</h2></div>
+      {% partial 'solo/resources/media-list' libType=13 noun='brief' infographic=false emptyTitle='There are currently no policy briefs available' %}
+    </div>
+
+    <div class="tab-panel" role="tabpanel" id="panel-infographics" aria-labelledby="tab-infographics" hidden>
+      <div class="section-head"><h2>Infographics</h2></div>
+      {% partial 'solo/resources/media-list' libType=14 noun='infographic' infographic=true emptyTitle='There are currently no infographics available' %}
+    </div>
+
+  </div>
+</section>
+</div>

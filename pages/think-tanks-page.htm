@@ -10,22 +10,88 @@ background = "transperant"
 templates = "template3"
 description_limit = 0
 ==
+<?php
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
+
+function onStart(){
+    // Same list/anchors as pages/think-tanks.htm — tiles link to /think-tanks#<anchor>
+    $order = [
+        'Reduce-Desertification' => 'reduce-land-degradation',
+        'Soil-organic-carbon-stocks' => 'conserve-and-increase-soil-organic-carbon-stocks',
+        'Soil-sealing-and-urban-soils' => 'no-net-soil-sealing-and-increase-reuse-urban-soils',
+        'Pollution-and-restoration' => 'reduce-soil-pesticide-pollution-and-enhance-restoration',
+        'Erosion-prevention' => 'prevent-erosion',
+        'Footprint-on-soils' => 'reduce-eu-global-footprint-soils',
+        'Soil-structure' => 'improve-soil-structure',
+        'Soil-literacy' => 'increase-soil-literacy-member-states',
+        'Nature-conservation-of-soil-biodiversity' => 'nature-conservation-soil-biodiversity',
+        'Climate-smart-sustainable-agricultural-soil-management' => 'climate-smart-sustainable-agricultural-soil-management',
+    ];
+    // Think tank logos (same files the previous theme used), keyed by jumbotron slug.
+    // A logo uploaded in the jumbotron's Image field overrides these.
+    $ttLogos = [
+        'reduce-land-degradation' => 'assets/images/SOLO_Reduce-desertification-logo.png',
+        'conserve-and-increase-soil-organic-carbon-stocks' => 'assets/images/SOLO-Carbon-rgb.svg',
+        'no-net-soil-sealing-and-increase-reuse-urban-soils' => 'assets/images/SOLO-Urban-rgb.svg',
+        'reduce-soil-pesticide-pollution-and-enhance-restoration' => 'assets/images/SOLO-Pesticide-rgb_v2.svg',
+        'prevent-erosion' => 'assets/images/SOLO-Erosion-rgb.svg',
+        'reduce-eu-global-footprint-soils' => 'assets/images/SOLO-Footprint-rgb.svg',
+        'improve-soil-structure' => 'assets/images/SOLO-Structure-rgb.svg',
+        'increase-soil-literacy-member-states' => 'assets/images/SOLO-Literacy-rgb.svg',
+        'nature-conservation-soil-biodiversity' => 'assets/images/SOLO-Conservation-rgb.svg',
+        'climate-smart-sustainable-agricultural-soil-management' => 'https://soils4europe.eu/storage/app/media/SOLO-Climate-smart-agriculture-rgb.svg',
+    ];
+
+    $records = JumbotronModel::whereIn('slug', array_values($order))->get()->keyBy('slug');
+    $items = [];
+    foreach ($order as $anchor => $slug) {
+        $j = $records->get($slug);
+        if (!$j || !trim(strip_tags((string) $j->body, '<img>'))) continue;
+        $logo = ($j->image && $j->image->path) ? $j->image->path : null;
+        if (!$logo && isset($ttLogos[$slug])) {
+            $logo = preg_match('#^https?://#', $ttLogos[$slug]) ? $ttLogos[$slug] : $this->controller->themeUrl($ttLogos[$slug]);
+        }
+        $photo = null;
+        if (preg_match('/<img[^>]+src="([^"]+)"/i', (string) $j->body, $m)) $photo = html_entity_decode($m[1]);
+        $items[] = [
+            'anchor' => $anchor,
+            'title' => $j->title,
+            'logo' => $logo ?: $photo,
+            'is_photo' => !$logo && $photo,
+        ];
+    }
+    $this['think_tanks'] = $items;
+    $this['tt_intro'] = JumbotronModel::where('slug', 'think-tanks-intro')->first();
+}
+?>
+==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/think-tanks.page.css'|theme }}">{% endput %}
+
 {% component 'siteSearchInclude' %}
-{% component 'jumbotron' %}
-<section class="container think_tanks_container" aria-label="Think tanks navigation">
-    <div class="row">
-        <nav class="tabs" aria-label="Think tanks topics">
-            <h2 class="sr-only">Think Tanks Topics</h2>
-                <a href="{{'think-tanks'|page}}#Reduce-Desertification">Reduce Desertification</a>
-                <a href="{{'think-tanks'|page}}#Soil-organic-carbon-stocks">Soil organic carbon stocks</a>
-                <a href="{{'think-tanks'|page}}#Soil-sealing-and-urban-soils">Soil sealing and urban soils</a>
-                <a href="{{'think-tanks'|page}}#Pollution-and-restoration">Pollution and restoration</a>
-                <a href="{{'think-tanks'|page}}#Erosion-prevention">Erosion prevention</a>
-                <a href="{{'think-tanks'|page}}#Footprint-on-soils">Footprint on soils</a>
-                <a href="{{'think-tanks'|page}}#Soil-structure">Soil structure</a>
-                <a href="{{'think-tanks'|page}}#Soil-literacy">Soil literacy</a>
-                <a href="{{'think-tanks'|page}}#Nature-conservation-of-soil-biodiversity">Nature conservation of soil biodiversity</a>
-                <a href="{{'think-tanks'|page}}#Climate-smart-sustainable-agricultural-soil-management">Climate-smart sustainable agricultural soil management</a>
-        </nav>
+
+<div class="think-tanks-page">
+
+{% partial 'site/subhero' title='Think Tanks' %}
+
+<section class="tt-section" aria-label="Think Tanks topics">
+  <div class="container">
+    <div class="tt-list-view">
+      <div class="tt-intro" data-reveal>
+        {% if tt_intro and tt_intro.body|striptags|trim %}
+        {{ tt_intro.body|raw }}
+        {% else %}
+        <p>The Think Tanks are an essential part of the Soils for Europe project that will co-develop the European Union Mission: A Soil Deal for Europe roadmaps, facilitate knowledge exchange and establish a solid connection to current and future EU and international soil health projects. Each Think Tank, led by different SOLO partners, will correspond to a Soil Mission objective and will support its mission and goals. All Outlook chapters will be integrated into one overarching roadmap tailored towards policy implementation</p>
+        <p>Find out more information on the Think Tanks and their leaders below:</p>
+        {% endif %}
+      </div>
+
+      {% if think_tanks|length %}
+      {% partial 'solo/think-tank-tiles' items=think_tanks link=true %}
+      {% else %}
+      <div class="solo-empty" style="margin-top: 48px;">Think Tank details will be published soon.</div>
+      {% endif %}
     </div>
+  </div>
 </section>
+
+</div>

@@ -1,0 +1,244 @@
+description = "SOLO redesign: server-side filtered publication list (pensoft/library records). Params: mode (library|resources|mission), action (form URL), anchor (optional URL fragment), perPage"
+==
+<?php
+use Pensoft\Library\Models\Library;
+use Pensoft\Library\Models\Target;
+use Pensoft\Library\Models\Settings as LibrarySettings;
+use Carbon\Carbon;
+
+/*
+ * Type filter values (kept compatible with the old LibraryPage ?type= links):
+ *   0 all | 1 deliverables | 4 deliverables & milestones | 2 relevant publications
+ *   3 SOLO publications | 5 features | 6 policy briefs | 7 graphical summaries
+ *   mr Mission Objective Roadmaps (records titled "Outlook on the knowledge gaps…"
+ *      or with the keyword "Mission Objective Roadmap")
+ * Target audience filter: ?audience=<Target slug> (options: Library > Target audiences in the backend).
+ *   Optional, off by default: Backend > Settings > Library > "Show Target audience filter".
+ */
+function onStart()
+{
+    $mode = $this['mode'] ?: 'library';
+    $perPage = (int) ($this['perPage'] ?: 12);
+
+    $nonPublication = [
+        Library::TYPE_DELIVERABLE,
+        Library::TYPE_MILESTONE,
+        Library::TYPE_FEATURE,
+        Library::TYPE_TECHNICAL_BRIEF,
+        Library::TYPE_GRAPHICAL_SUMMARIES,
+    ];
+
+    $typeOptions = ['0' => 'All Documents'];
+    if ($mode == 'mission') {
+        $typeOptions['mr'] = 'Mission Objective Roadmaps';
+    }
+    $typeOptions['4'] = 'Deliverables & Milestones';
+    $typeOptions['2'] = 'Relevant Publications';
+    $typeOptions['3'] = 'SOLO Publications';
+    if ($mode == 'library') {
+        $typeOptions['6'] = 'Policy briefs';
+        $typeOptions['7'] = 'Graphical summaries';
+    }
+
+    $defaultType = $mode == 'mission' ? 'mr' : '0';
+    $type = (string) request()->get('type', $defaultType);
+    if ($type === '1') {
+        // Legacy "Deliverables" links
+        $typeOptions = ['0' => 'All Documents', '1' => 'Deliverables'] + array_diff_key($typeOptions, ['0' => 1]);
+    }
+    if ($type === '5') {
+        $typeOptions['5'] = 'Features';
+    }
+    if (!array_key_exists($type, $typeOptions)) {
+        $type = $defaultType;
+    }
+
+    // Target audiences (belongsTo). Only when the Library plugin has the feature (>= 1.1.23),
+    // it is enabled in the Library settings, and the migration has created the table/column.
+    $targetOptions = [];
+    $audience = '';
+    if (class_exists(LibrarySettings::class) && class_exists(Target::class)
+        && LibrarySettings::showTargetFilter()
+        && Schema::hasTable('pensoft_library_targets')
+        && Schema::hasColumn('pensoft_library_records', 'target_id')) {
+        $targetOptions = Target::orderBy('sort_order')->orderBy('name')->pluck('name', 'slug')->all();
+        $audience = (string) request()->get('audience', '');
+        if (!array_key_exists($audience, $targetOptions)) {
+            $audience = '';
+        }
+    }
+
+    $search = trim((string) request()->get('search', ''));
+    $year = (string) request()->get('year', 'all');
+
+    $sortOptions = Library::$allowSortingOptions;
+    $sort = request()->get('sort', request()->input('Filter.sort'));
+    if (!$sort || !array_key_exists($sort, $sortOptions)) {
+        $sort = in_array($type, ['1', '4']) ? 'title asc' : 'year desc';
+    }
+
+    $query = Library::isVisible()->with(['file', 'preview']);
+
+    if ($search !== '') {
+        $query->search($search);
+    }
+
+    if ($audience !== '') {
+        $query->forTarget($audience);
+    }
+
+    switch ($type) {
+        case '1':
+            $query->where('type', Library::TYPE_DELIVERABLE);
+            break;
+        case '4':
+            $query->whereIn('type', [Library::TYPE_DELIVERABLE, Library::TYPE_MILESTONE]);
+            break;
+        case '2':
+            $query->whereNotIn('type', $nonPublication)->where('derived', Library::DERIVED_NO);
+            break;
+        case '3':
+            $query->whereNotIn('type', $nonPublication)->where('derived', Library::DERIVED_YES);
+            break;
+        case '5':
+            $query->where('type', Library::TYPE_FEATURE);
+            break;
+        case '6':
+            $query->where('type', Library::TYPE_TECHNICAL_BRIEF);
+            break;
+        case '7':
+            $query->where('type', Library::TYPE_GRAPHICAL_SUMMARIES);
+            break;
+        case 'mr':
+            $query->where(function ($q) {
+                $q->where('title', 'iLIKE', 'Outlook on the knowledge gap%')
+                  ->orWhere('keywords', 'iLIKE', '%mission objective roadmap%');
+            });
+            break;
+        default:
+            if ($mode != 'library') {
+                // Policy briefs and infographics have their own tabs on Resources
+                $query->whereNotIn('type', [Library::TYPE_TECHNICAL_BRIEF, Library::TYPE_GRAPHICAL_SUMMARIES]);
+            }
+    }
+
+    // Year options from all visible records
+    $years = Library::isVisible()->pluck('year')->map(function ($y) {
+        return $y ? (new Carbon($y))->year : null;
+    })->filter()->unique()->sort()->reverse()->values()->all();
+
+    if ($year !== 'all' && ctype_digit($year)) {
+        $query->whereYear('year', (int) $year);
+    } else {
+        $year = 'all';
+    }
+
+    [$sortField, $sortDirection] = explode(' ', $sort, 2);
+    $query = $query->sortBy($sortField, $sortDirection)->orderBy('id', 'asc');
+
+    $page = max(1, (int) request()->get('page', 1));
+    $records = $query->paginate($perPage, $page)->appends(request()->except('page'));
+    if ($this['anchor']) {
+        $records->fragment($this['anchor']);
+    }
+
+    $this['lib_records'] = $records;
+    $this['lib_types'] = $typeOptions;
+    $this['lib_type'] = $type;
+    $this['lib_years'] = $years;
+    $this['lib_year'] = $year;
+    $this['lib_sorts'] = $sortOptions;
+    $this['lib_sort'] = $sort;
+    $this['lib_search'] = $search;
+    $this['lib_targets'] = $targetOptions;
+    $this['lib_audience'] = $audience;
+    $this['lib_filtered'] = $search !== '' || $year !== 'all' || $type !== $defaultType || $audience !== '';
+}
+?>
+==
+{% set chev %}<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>{% endset %}
+<div class="lib-list" data-lib-list>
+  <form class="filter-bar" method="get" action="{{ action }}" data-lib-form aria-label="Filter documents">
+    <div class="field-group">
+      <label for="f-type">Document type</label>
+      <div class="select-wrap">
+        <select id="f-type" name="type" data-lib-auto>
+          {% for code, label in lib_types %}
+          <option value="{{ code }}"{{ (code ~ '') == lib_type ? ' selected' }}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        {{ chev|raw }}
+      </div>
+    </div>
+    {% if lib_targets %}
+    <div class="field-group">
+      <label for="f-audience">Target audience</label>
+      <div class="select-wrap">
+        <select id="f-audience" name="audience" data-lib-auto>
+          <option value="">All audiences</option>
+          {% for slug, name in lib_targets %}
+          <option value="{{ slug }}"{{ slug == lib_audience ? ' selected' }}>{{ name }}</option>
+          {% endfor %}
+        </select>
+        {{ chev|raw }}
+      </div>
+    </div>
+    {% endif %}
+    <div class="field-group">
+      <label for="f-year">Year</label>
+      <div class="select-wrap">
+        <select id="f-year" name="year" data-lib-auto>
+          <option value="all">All years</option>
+          {% for y in lib_years %}
+          <option value="{{ y }}"{{ y == lib_year ? ' selected' }}>{{ y }}</option>
+          {% endfor %}
+        </select>
+        {{ chev|raw }}
+      </div>
+    </div>
+    <div class="field-group">
+      <label for="f-sort">Sort by</label>
+      <div class="select-wrap">
+        <select id="f-sort" name="sort" data-lib-auto>
+          {% for code, label in lib_sorts %}
+          <option value="{{ code }}"{{ code == lib_sort ? ' selected' }}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        {{ chev|raw }}
+      </div>
+    </div>
+    <div class="field-group align-end" style="flex:1;">
+      <label for="f-search">Search</label>
+      <div class="search-wrap">
+        <svg class="s-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+        <input id="f-search" type="search" name="search" value="{{ lib_search }}" placeholder="Search in documents...">
+        <button type="submit" class="res-sr-only">Search</button>
+      </div>
+    </div>
+  </form>
+
+  <p class="result-count">
+    <span>{{ lib_records.total }} {{ lib_records.total == 1 ? 'document' : 'documents' }}</span>
+    {% if lib_filtered %}<a class="res-reset" href="{{ action }}">Clear filters</a>{% endif %}
+  </p>
+
+  {% if lib_records.total %}
+  <div class="grid-3">
+    {% for record in lib_records %}
+      {% partial 'solo/resources/pub-card' record=record %}
+    {% endfor %}
+  </div>
+  {% partial 'solo/resources/pagination' paginator=lib_records %}
+  {% else %}
+  <div class="empty-state" style="margin-top:8px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+    {% if lib_filtered %}
+    <h3>No documents found</h3>
+    <p>Try adjusting the document type, target audience, year, or search terms.</p>
+    {% else %}
+    <h3>{{ emptyTitle ?: 'No documents available yet' }}</h3>
+    {% if emptyText %}<p>{{ emptyText }}</p>{% endif %}
+    {% endif %}
+  </div>
+  {% endif %}
+</div>

@@ -5,8 +5,16 @@ is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
 ==
-<div class="container">
-    <h1>Error</h1>
-    
-    <p>Were sorry, but something went wrong and the page cannot be displayed.</p>
-</div>
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
+
+<section class="error-page" aria-labelledby="error-title">
+  <div class="container narrow">
+    <p class="code" aria-hidden="true">Oops</p>
+    <h1 id="error-title">Something went wrong</h1>
+    <p class="lead">We&rsquo;re sorry, but something went wrong and the page cannot be displayed. Please try again in a moment.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/">Back to home</a>
+      <a class="btn btn-ghost" href="/contact">Contact us</a>
+    </div>
+  </div>
+</section>

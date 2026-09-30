@@ -10,7 +10,21 @@ background = "#ffffff"
 templates = "template1"
 description_limit = 0
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
 {% component 'siteSearchInclude' %}
-<div class="container">
-    {% component 'jumbotron' %}
-</div>
+
+{% set j = jumbotron.getJumbotron() %}
+{% partial 'site/subhero' title=(j and j.title ? j.title : 'Digital platform') %}
+
+<section class="page-body">
+  <div class="container">
+    {% if j and (j.body or j.image.path or j.url) %}
+      {% partial 'solo/jumbotron-content' j=j comp=jumbotron show_title=false %}
+    {% else %}
+      <div class="empty-state">
+        <h3>Content coming soon</h3>
+        <p>Information about the SOLO digital platform will be published here.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>

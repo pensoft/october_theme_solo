@@ -19,6 +19,7 @@ $categoryId = input('category', 'all');
 
 $query = Article::news()->where('published_at', '<=', 'now()')
                         ->where('published', 'true')
+                        ->with(['cover', 'categories'])
                         ->orderBy('published_at', 'DESC');
 
 if ($categoryId !== 'all') {
@@ -27,7 +28,7 @@ if ($categoryId !== 'all') {
     });
 }
 
-$this['records'] = $query->paginate(15, ['*'], 'p')->appends(['category' => $categoryId]);
+$this['records'] = $query->paginate(12, ['*'], 'p')->appends(['category' => $categoryId]);
 $this['activeCategory'] = $categoryId;
 $this['categories'] = Category::orderBy('sort_order')->get();
 
@@ -70,128 +71,215 @@ if($this['article']['cover']){
 }
 
 if($this['is_detail_page']){
-$related = array();
-if($this['article']['slug']){
-$article = Article::where('slug', $this['article']['slug'])->first();
-$arrayOfTags = explode(",", $article->keywords);
+    // Related news: other published news sharing at least one tag, topped up with the latest news.
+    $current = $this['article'];
+    $base = function () use ($current) {
+        return Article::news()
+            ->where('published', 'true')
+            ->where('published_at', '<=', 'now()')
+            ->where('id', '!=', $current->id)
+            ->with('cover')
+            ->orderBy('published_at', 'DESC');
+    };
 
-$related = Article::where('slug', '!=', $this['article']['slug']);
-
-$orWhere = '( ';
-$c = 1;
-
-foreach($arrayOfTags as $tag){
-$orWhere .= ' keywords ILIKE \'%'.trim($tag).'%\' ';
-if($c < count($arrayOfTags)){
-$orWhere .= ' or ';
-}
-$c++;
-}
-$orWhere .= ')';
-$related = $related
-->whereRaw($orWhere)
-->limit(2)
-->get();
-
-$this['related'] = $related;
-}
+    $tags = array_values(array_filter(array_map('trim', explode(',', (string) $current->keywords))));
+    $related = collect();
+    if (count($tags)) {
+        $related = $base()->where(function ($q) use ($tags) {
+            foreach ($tags as $tag) {
+                $q->orWhere('keywords', 'ILIKE', '%' . addcslashes($tag, '%_\\') . '%');
+            }
+        })->limit(3)->get();
+    }
+    if ($related->count() < 3) {
+        $more = $base()->whereNotIn('id', $related->pluck('id')->all())->limit(3 - $related->count())->get();
+        $related = $related->concat($more);
+    }
+    $this['related'] = $related;
 }
 }
 ?>
 ==
+{% put styles %}
+{% if is_detail_page %}<link rel="stylesheet" href="{{ 'assets/solo/event-details.page.css'|theme }}">{% endif %}
+<link rel="stylesheet" href="{{ 'assets/solo/news-details.page.css'|theme }}">
+{% endput %}
+
+{% set icon_cal %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{% endset %}
+{% set icon_lines %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>{% endset %}
+{% set icon_arrow %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endset %}
+{% set entities = {'&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>'} %}
+
+{# News card, shared by the list and the "More news" block #}
+{% macro card(item, entities, icon_arrow, delay) %}
+{% set excerpt = item.content|striptags|replace(entities)|trim %}
+<article class="news-list-card" data-reveal{% if delay %} data-reveal-delay="{{ delay }}"{% endif %}>
+  <div class="visual">
+    {% if item.cover %}<img src="{{ item.cover|crop_image|resize(720, 450, {'mode': 'crop'}) }}" alt="{{ item.title|striptags }}" loading="lazy">{% endif %}
+  </div>
+  <div class="body">
+    <h3>{{ item.title|striptags }}</h3>
+    {% if excerpt %}<p>{{ excerpt|length > 160 ? excerpt|slice(0, 160)|trim ~ '…' : excerpt }}</p>{% endif %}
+    <time class="date" datetime="{{ item.published_at|date('Y-m-d') }}">{{ item.published_at|date('j F Y') }}</time>
+    <a class="read-more" href="{{ 'news'|page({ id: item.slug }) }}" aria-label="Read more: {{ item.title|striptags }}">Read more {{ icon_arrow|raw }}</a>
+  </div>
+</article>
+{% endmacro %}
+{% import _self as news %}
+
 {% if is_detail_page %}
-<div class="container" style="max-width: 950px;">
-    <div class="some_news_background2" role="presentation"></div>
-    <div class="some_news_background" role="presentation"></div>
-
-    <article class="row single-news-item">
-        {% if article.cover %}
-        <div class="col-md-6 col-xs-12">
-            {% if article.caption %}
-            <figure>
-                <img class="content left" src="{{ article.cover|crop_image|resize(555, auto, { mode: 'crop' }) }}" alt="{{article.title}}" />
-                <figcaption>{{article.caption|raw}}</figcaption>
-            </figure>
-            {% else %}
-            <img class="content left" src="{{ article.cover|crop_image|resize(555, auto, { mode: 'crop' }) }}" alt="{{article.title}}" />
-            {% endif %}
-        </div>
-        {% endif %}
-
-        <div class="col-md-6 col-xs-12">
-            <header class="news-title">
-                <h1 class="single-new-title">{{article.title}}</h1>
-            </header>
-            <time class="text-published" datetime="{{article.published_at|date('Y-m-d')}}">{{article.published_at|date("d M Y")}}</time>
-        </div>
-
-        <div class="col-xs-12">
-            <section class="content" aria-label="Article content">
-                {{article.content|raw}}
-            </section>
-        </div>
-
-        <div class="col-xs-12">
-            <aside class="row share_container middle-xs" aria-label="Share article">
-                <div class="col-lg-1 col-xs-2 start-xs"><span class="share-label">Share</span></div>
-                <nav class="col-xs-10" aria-label="Share on social media">
-                    <a href="http://twitter.com/share?text={{article.title}}&url={{page_url}}" target="_blank" class="btn p-primary pr p-twitter medium" rel="noopener" aria-label="Share on Twitter"></a>
-
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{page_url}}&amp;src=sdkpreparse" target="_blank" class="btn pr p-primary p-facebook medium" rel="noopener" aria-label="Share on Facebook"></a>
-
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{page_url}}" target="_blank" class="btn pr p-primary p-linkedin medium" rel="noopener" aria-label="Share on LinkedIn"></a>
-                </nav>
-            </aside>
-        </div>
-    </article>
+{# ======================= DETAIL ======================= #}
+{% set cat_name = article.categories|length ? article.categories.first.name : (article.label ?: 'News') %}
+<div class="ev-hero-band">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb" style="font-size:13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <a href="{{ 'home'|page }}">Home</a> <span>/</span>
+      <a href="{{ 'news'|page({ id: null }) }}">News</a> <span>/</span> <span>Article</span>
+    </nav>
+    <h1 style="margin-top:18px;">{{ article.title }}</h1>
+    <div class="quick-meta">
+      <span>{{ icon_cal|raw }}<time datetime="{{ article.published_at|date('Y-m-d') }}">{{ article.published_at|date('j F Y') }}</time></span>
+      <span>{{ icon_lines|raw }}{{ cat_name }}</span>
+    </div>
+  </div>
 </div>
 
-{% else %}
-<section class="container category-tabs-container" aria-label="News categories">
-    {% if categories.count > 0 %}
-    <nav class="row category-tabs" aria-label="Filter news by category">
-        <a href="{{ 'news'|page }}?category=all"
-                class="{% if activeCategory == 'all' %}active{% endif %}"
-                {% if activeCategory == 'all' %}aria-current="page"{% endif %}>
-            All News
-        </a>
-        {% for category in categories %}
-        <a href="{{ 'news'|page }}?category={{ category.id }}"
-                class="{% if activeCategory == category.id %}active{% endif %}"
-                {% if activeCategory == category.id %}aria-current="page"{% endif %}>
-            {{ category.name }}
-        </a>
-        {% endfor %}
-    </nav>
-    {% endif %}
+<section class="ev-detail">
+  <div class="container">
+    <div class="layout">
+      <article class="ev-article">
+        {% if article.cover %}
+        <figure class="news-figure">
+          <img src="{{ article.cover|crop_image|resize(1100, auto) }}" alt="{{ article.title|striptags }}" />
+          {% if article.caption %}<figcaption class="news-caption">{{ article.caption|raw }}</figcaption>{% endif %}
+        </figure>
+        {% endif %}
+
+        <div class="cms-content">{{ article.content|raw }}</div>
+      </article>
+
+      <aside class="ev-aside">
+        <div class="ev-info-card">
+          <div class="info-row">
+            {{ icon_cal|raw }}
+            <div><div class="k">Published</div><div class="v">{{ article.published_at|date('j F Y') }}</div></div>
+          </div>
+          <div class="info-row">
+            {{ icon_lines|raw }}
+            <div><div class="k">Category</div><div class="v">{{ cat_name }}</div></div>
+          </div>
+          <a class="btn btn-ghost" href="{{ 'news'|page({ id: null }) }}" style="width:100%; justify-content:center; margin-top:22px; padding:15px;">Back to all news</a>
+        </div>
+
+        {% if article.allow_share is same as(null) or article.pretty_allow_share == 'yes' %}
+        <div class="share-card" style="background:#ffffff;">
+          <h5>Share this news</h5>
+          <div class="share-row">
+            <button type="button" data-share="x" aria-label="Share on X"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.53 3H20.5l-6.49 7.43L21.5 21h-5.97l-4.68-6.13L5.5 21h-2.97l6.95-7.95L3 3h6.09l4.23 5.6L17.53 3zm-1.05 16.2h1.64L7.6 4.7H5.84l10.64 14.5z"/></svg></button>
+            <button type="button" data-share="facebook" aria-label="Share on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg></button>
+            <button type="button" data-share="linkedin" aria-label="Share on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8.34 17.34H5.67V9.83H8.34v7.51zM7 8.67a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm11.34 8.67h-2.67v-3.67c0-.88-.02-2-1.22-2-1.22 0-1.41.95-1.41 1.94v3.73h-2.67V9.83h2.56v1.03h.04a2.82 2.82 0 0 1 2.54-1.39c2.71 0 3.21 1.78 3.21 4.1v3.77z"/></svg></button>
+          </div>
+        </div>
+        {% endif %}
+      </aside>
+    </div>
+  </div>
 </section>
 
-<section class="container" id="newslist-records" aria-label="News articles list">
-    <div class="row newslist">
-        {% for highlight in records %}
-        <article class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
-            <div class="row news_column">
-                <a href="{{'news'|page}}/{{highlight.slug}}">
-                    <div class="news_image">
-                        <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(360, 223, {'mode': 'crop'}) }}" alt="{{highlight.title|striptags}}" />
-                    </div>
-                    <div class="news-container">
-                        <div class="wrapper">
-                            <div class="news-title">
-                                <h2 class="card-title">{{ highlight.title|length > 200 ? highlight.title|striptags|slice(0, 200) ~ '...' : highlight.title|raw  }}</h2>
-                            </div>
-                            <div class="body mb-2">{{ highlight.content|length > 200 ? highlight.content|striptags|replace({'&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>'})|slice(0, 200) ~ '...' : highlight.content|striptags|replace({'&nbsp;': ' ', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>'})  }}</div>
-                        </div>
-                        <span class="read_more">Read more</span>
-                    </div>
-                </a>
-            </div>
-        </article>
-        {% endfor %}
+{% if related|length %}
+<section class="news-related" aria-labelledby="related-title">
+  <div class="container">
+    <div class="section-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;">
+      <h2 id="related-title" style="margin:0;">More news</h2>
+      <a class="btn btn-ghost" href="{{ 'news'|page({ id: null }) }}">All news</a>
+    </div>
+    <div class="grid-3">
+      {% for item in related %}{{ news.card(item, entities, icon_arrow, loop.index0) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% else %}
+{# ======================= LIST ======================= #}
+<section class="subhero">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ 'home'|page }}">Home</a> <span>/</span> <span>News</span></nav>
+    <h1>News</h1>
+    <div class="subnav">
+      <a href="{{ 'news'|page({ id: null }) }}" class="active" aria-current="page">News</a>
+      <a href="/media-center/newsletters">Newsletter</a>
+      <a href="/media-center/announcements">Press Releases</a>
+      <a href="/media-center">Promo Materials</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container" id="newslist-records">
+    {% if categories.count > 0 %}
+    <form class="filter-bar" method="get" action="{{ 'news'|page({ id: null }) }}" data-news-filter>
+      <div class="field-group">
+        <label for="f-news-topic">Topic</label>
+        <div class="select-wrap">
+          <select id="f-news-topic" name="category" onchange="this.form.submit()">
+            <option value="all"{% if activeCategory == 'all' %} selected{% endif %}>All topics</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}"{% if activeCategory == category.id %} selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+          </select>
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </div>
+      </div>
+      <noscript><button type="submit" class="btn btn-ghost">Apply</button></noscript>
+    </form>
+    {% endif %}
+
+    {% if records.total %}
+    <p class="result-count"><span>{{ records.total }} article{{ records.total == 1 ? '' : 's' }}</span></p>
+    <div class="grid-3">
+      {% for highlight in records %}{{ news.card(highlight, entities, icon_arrow, loop.index0 % 3) }}{% endfor %}
     </div>
 
-    <nav class="row container" aria-label="Pagination">
-        {{ records.render|raw }}
+    {% if records.lastPage > 1 %}
+    <nav class="pagination" aria-label="Pagination">
+      {% if records.onFirstPage %}
+      <span class="nav-btn disabled" aria-disabled="true">Prev</span>
+      {% else %}
+      <a class="nav-btn" href="{{ records.previousPageUrl }}" rel="prev">Prev</a>
+      {% endif %}
+      {% for p in 1..records.lastPage %}
+        {% if p == records.currentPage %}
+        <span class="current" aria-current="page">{{ p }}</span>
+        {% elseif p == 1 or p == records.lastPage or (p >= records.currentPage - 2 and p <= records.currentPage + 2) %}
+        <a href="{{ records.url(p) }}" aria-label="Go to page {{ p }}">{{ p }}</a>
+        {% elseif p == records.currentPage - 3 or p == records.currentPage + 3 %}
+        <span class="gap" aria-hidden="true">&hellip;</span>
+        {% endif %}
+      {% endfor %}
+      {% if records.hasMorePages %}
+      <a class="nav-btn" href="{{ records.nextPageUrl }}" rel="next">Next</a>
+      {% else %}
+      <span class="nav-btn disabled" aria-disabled="true">Next</span>
+      {% endif %}
     </nav>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+      {{ icon_lines|raw }}
+      <h3>No news yet</h3>
+      <p>{% if activeCategory != 'all' %}There are no articles in this topic. Try selecting a different topic.{% else %}News articles will appear here soon.{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="newsletter">
+  <div class="container">
+    <div>
+      <h2>Join our community by subscribing to our newsletter!</h2>
+    </div>
+    <a class="btn btn-primary" href="/media-center/newsletters">Subscribe {{ icon_arrow|raw }}</a>
+  </div>
 </section>
 {% endif %}

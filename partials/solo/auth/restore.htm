@@ -1,0 +1,23 @@
+{# Password reset request - RainLab.User "resetPassword" component, handler onRestorePassword #}
+<form class="auth-form" method="post" novalidate
+      data-request="onRestorePassword"
+      data-request-flash
+      data-request-validate
+      data-request-success="alert('Password reset request has been sent. Please check your email!');"
+      data-request-redirect="/login">
+  <div class="field">
+    <label for="userRestoreEmail">Email address</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='mail' %}</span>
+      <input id="userRestoreEmail" name="email" type="email" autocomplete="email" placeholder="you@institution.eu" required>
+    </div>
+    <span class="field-error" data-validate-for="email"></span>
+  </div>
+
+  <button class="submit" type="submit" data-attach-loading>
+    Send reset link
+    {% partial 'solo/auth/icon' name='arrow' %}
+  </button>
+
+  <p class="alt-link"><a href="/login">Return to sign in</a></p>
+</form>

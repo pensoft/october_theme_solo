@@ -1,0 +1,28 @@
+{#
+  Shared body for the promo-material category pages (brochure, brand kit,
+  stickers, presentations, videos) — same design as /media-center.
+  Params: records, type (see solo/promo-item), title, noun (plural label for the count)
+#}
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/media.css'|theme }}">{% endput %}
+
+{% partial 'solo/media-subhero' title=title active='promo' crumbs=[{title: 'Promo Materials', url: '/media-center'}] current=title %}
+
+<section>
+  <div class="container">
+    {% if records|length %}
+    <p class="result-count">{{ records|length }} {{ records|length == 1 ? noun_one : noun }}</p>
+    <div class="{{ type == 'videos' ? 'grid-2 promo-videos' : 'grid-3' }}">
+      {% for record in records %}
+      {% partial 'solo/promo-item' record=record type=type embed=(type == 'videos') %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <h3>Nothing here yet</h3>
+      <p>New {{ noun }} will appear here as soon as they are published.</p>
+    </div>
+    {% endif %}
+    <p class="promo-back"><a href="/media-center">&larr; All promo materials</a></p>
+  </div>
+</section>

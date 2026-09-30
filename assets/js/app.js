@@ -1146,14 +1146,12 @@ function initMailingTooltip(){
     $('.group-holder').eq(0).find('.inputWithTooltip span').each(function(i, obj) {
         searchStr = $.trim($(obj).text());
         $(this).parent().css('display', 'inline-grid');
-        $('<img src="/storage/app/media/CMS_icons_groups.svg" style="max-width: 16px; margin-left: 5px;" class="icon mailing_list_tooltip_'+i+'" onclick="fetchMails('+i+', \'' + searchStr + '\')" />').insertAfter($(this).parent());
         $('<div class="group_mailing_list group_mailing_list_' + i + '" style="display: none;"></div>').insertAfter($(this).parent());
 
 
     });
     $('.group-holder').eq(1).find('.inputWithTooltip span').each(function(i, obj) {
         searchStr = $.trim($(obj).text());
-        $('<img src="/storage/app/media/CMS_icons_individuals.svg" style="max-width: 16px; margin-left: 5px;" class="icon mailing_list_tooltip_individuals_'+i+'" onclick="fetchSingleMail('+i+', \'' + searchStr + '\')" />').insertAfter($(this).parent());
         $(this).parent().css('display', 'inline-grid');
         $('<div class="single_mailing_list single_mailing_list_' + i + '" style="display: none;"></div>').insertAfter($(this).parent());
     });

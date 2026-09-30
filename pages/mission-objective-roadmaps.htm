@@ -1,0 +1,23 @@
+url = "/mission-objective-roadmaps"
+layout = "default"
+title = "Mission Objective Roadmaps"
+is_hidden = 0
+robot_index = "index"
+robot_follow = "follow"
+==
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/solo/resources.page.css'|theme }}?v=2">
+<link rel="stylesheet" href="{{ 'assets/solo/pages/resources.css'|theme }}">
+{% endput %}
+
+{#
+  Roadmap documents are pensoft/library records whose title starts with
+  "Outlook on the knowledge gaps" or whose keywords contain "Mission Objective Roadmap"
+  (see partials/solo/resources/library-list.htm, type "mr").
+#}
+{% partial 'solo/resources/tabbed' title='Mission Objective Roadmaps' crumbs=[{title: 'R&I Roadmaps', url: '/mission-objective-roadmaps'}] active='publications' mode='mission' action='/mission-objective-roadmaps#tab-publications' pubEmptyTitle='The Mission Objective Roadmaps will be published here soon' perPage=9 %}
+
+{% put bodyScripts %}
+<script src="{{ 'assets/solo/resources.iaf.js'|theme }}"></script>
+<script src="{{ 'assets/solo/pages/resources.js'|theme }}"></script>
+{% endput %}

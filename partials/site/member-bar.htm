@@ -1,0 +1,37 @@
+[menu members_menu]
+start = "id-9"
+activeNode = 0
+listItemClasses = "item"
+primaryClasses = "nav nav-pills"
+secondaryClasses = "dropdown-menu"
+numberOfLevels = 1
+==
+{#
+  Member bar — shown above the main header when a frontend user is logged in.
+  Links come from BenFreke.MenuManager (menu id 9), edited in the backend.
+  Params: page_id (current CMS page id), is_external (user is in the "external-users" group).
+  External users don't get the member menu, only their profile and log out (as on the previous site).
+#}
+<div class="member-bar" role="navigation" aria-label="Member area">
+  <div class="container member-inner">
+    <div class="member-nav">
+      
+      {% component 'members_menu' %}
+   
+    </div>
+    <div class="member-user">
+      <a href="/profile" class="member-profile{{ page_id == 'profile' ? ' active' : '' }}"{% if page_id == 'profile' %} aria-current="page"{% endif %}>
+        {% if user.avatar %}
+        <img class="member-avatar" src="{{ user.avatar.getThumb(24, 24, {'mode': 'crop'}) }}" alt="" width="24" height="24">
+        {% else %}
+        <svg class="member-avatar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+        {% endif %}
+        <span>{{ user.name }} {{ user.surname }}</span>
+      </a>
+      <button type="button" class="member-logout" data-request="onLogout" data-request-data="redirect: '/'">
+        Log out
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </div>
+</div>

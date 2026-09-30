@@ -14,9 +14,26 @@ background = "#ffffff"
 templates = "template1"
 description_limit = 0
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
 {% component 'siteSearchInclude' %}
-   <div class="container">
-    {% component 'jumbotron' %}
-   </div>
 
-   <script src="https://matomo.pensoft.net/index.php?module=CoreAdminHome&action=optOutJS&divId=matomo-opt-out&language=auto&showIntro=1"></script>
+{% partial 'site/subhero' title='Privacy policy' %}
+
+{% set j = jumbotron.getJumbotron() %}
+<section class="page-body">
+  <div class="container">
+    {% if j and j.body %}
+      {% partial 'solo/jumbotron-content' j=j comp=jumbotron show_title=false %}
+    {% else %}
+      <div class="empty-state">
+        <h3>Privacy policy coming soon</h3>
+        <p>This page has no content yet.</p>
+      </div>
+    {% endif %}
+
+    {# Matomo opt-out widget (filled by the script below) #}
+    <div id="matomo-opt-out" class="cms-content" style="margin-top:48px"></div>
+  </div>
+</section>
+
+<script src="https://matomo.pensoft.net/index.php?module=CoreAdminHome&action=optOutJS&divId=matomo-opt-out&language=auto&showIntro=1"></script>

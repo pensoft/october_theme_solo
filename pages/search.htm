@@ -11,13 +11,102 @@ showProviderBadge = 1
 noResultsMessage = "Your search returned no results."
 visitPageMessage = "Visit page"
 ==
-<div class="container about">
-    <div class="row">
-        <div class="col-xs">
+<?php
+public function onStart()
+{
+    $this['q'] = trim((string) input('q', ''));
+    $this['search_unavailable'] = false;
 
-            <h1 class="base_heading inner-page">Search results for {{ searchResults.query }}</h1>
+    // The OFFLINE.SiteSearch plugin needs PHP 8 (union types in classes/Result.php).
+    // On an older PHP the search throws a fatal error, so check that the class
+    // loads first and, if it does not, stop the component from searching.
+    if ($this['q'] !== '') {
+        try {
+            class_exists('OFFLINE\SiteSearch\Classes\Result');
+        } catch (\Throwable $e) {
+            \Log::warning('Site search unavailable: ' . $e->getMessage());
+            $this['search_unavailable'] = true;
+            if ($component = $this->controller->findComponentByName('searchResults')) {
+                $component->forceQuery('');
+            }
+        }
+    }
+}
+?>
+==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
 
-            {% component 'searchResults' %}
+<section class="subhero">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="{{ 'home'|page }}">Home</a>
+      <span>/</span> <span>Search</span>
+    </nav>
+    <h1>{% if q %}Search results{% else %}Search{% endif %}</h1>
+    {% partial 'solo/search-form' q=q id='search-page-q' %}
+  </div>
+</section>
+
+<section class="page-body" aria-live="polite">
+  <div class="container">
+    {% if not q %}
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <h3>What are you looking for?</h3>
+        <p>Type a word or phrase above to search news, events, resources and pages on the SOLO website.</p>
+      </div>
+
+    {% elseif search_unavailable %}
+      <div class="empty-state">
+        <h3>Search is temporarily unavailable</h3>
+        <p>Please try again later, or browse the <a class="btn-link" href="/news">news</a>, <a class="btn-link" href="/events">events</a> and <a class="btn-link" href="/resources">resources</a> pages.</p>
+      </div>
+
+    {% else %}
+      {% set results = searchResults.results %}
+      {% if results.total > 0 %}
+        <p class="search-meta">
+          {{ results.total }} result{{ results.total == 1 ? '' : 's' }} for <strong>&ldquo;{{ q }}&rdquo;</strong>
+          {% if results.lastPage > 1 %} &middot; page {{ results.currentPage }} of {{ results.lastPage }}{% endif %}
+        </p>
+
+        <ul class="search-results" role="list">
+          {% for result in results %}
+          {% set r_url = result.url|app %}
+          <li class="search-result{{ result.thumb ? ' has-thumb' : '' }}">
+            {% if result.thumb %}
+            <div class="thumb" aria-hidden="true">
+              {% if result.thumb.attributes is not defined %}
+                <img src="{{ result.thumb|media|resize(192, auto) }}" alt="" loading="lazy">
+              {% else %}
+                <img src="{{ result.thumb.getThumb(192, auto) }}" alt="" loading="lazy">
+              {% endif %}
+            </div>
+            {% endif %}
+            <div>
+              {% if searchResults.showProviderBadge and result.provider %}<span class="eyebrow">{{ result.provider }}</span>{% endif %}
+              <h2><a href="{{ r_url }}">{{ result.title|raw }}</a></h2>
+              {% if result.excerpt %}<p class="excerpt">{{ result.excerpt|raw }}</p>{% endif %}
+            </div>
+            <a class="go" href="{{ r_url }}" aria-hidden="true" tabindex="-1">{{ searchResults.visitPageMessage|trans }} <span class="arr">&rarr;</span></a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        {% if results.lastPage > 1 %}
+        <nav class="search-pager" aria-label="Search results pages">
+          {% if results.currentPage > 1 %}<a class="btn btn-ghost" href="{{ results.previousPageUrl }}">&larr; Previous</a>{% else %}<span></span>{% endif %}
+          <span>Page {{ results.currentPage }} of {{ results.lastPage }}</span>
+          {% if results.hasMorePages %}<a class="btn btn-ghost" href="{{ results.nextPageUrl }}">Next &rarr;</a>{% else %}<span></span>{% endif %}
+        </nav>
+        {% endif %}
+      {% else %}
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/><path d="M8 11h6"/></svg>
+          <h3>No results for &ldquo;{{ q }}&rdquo;</h3>
+          <p>{{ searchResults.noResultsMessage|trans }} Try a different or more general term.</p>
         </div>
-    </div>
-</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>

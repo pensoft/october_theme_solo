@@ -12,57 +12,52 @@ function onStart(){
 }
 ?>
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
 {% component 'siteSearchInclude' %}
 
-<div class="container" align="center" aria-label="Conference  button link to website">
-        <a href="https://soils4europe2026.eu/" class="btn btn-primary" target="_blank" rel="noopener" aria-label="Visit Soils for Europe conference 2026 official website">
-                        Visit conference website
-         </a>
+{% partial 'site/subhero' title='Soils for Europe conference 2026' crumbs=[{title: 'Events', url: '/events'}] current='Soils for Europe 2026' lead='Coimbra, Portugal &middot; 7&ndash;11 September 2026' %}
+
+<section class="page-body" aria-label="Conference details">
+  <div class="container">
+    <div class="conf-layout">
+      <article class="cms-content">
+        <h2>About the conference</h2>
+        <p>The event will be co-organised by several Mission Soil projects and will cover sessions on all Mission Objectives, including cross-cutting sessions, aiming to showcase the latest research being developed across Europe. While the event will allow for showcasing the innovations being produced by the various European-funded projects, the conference will be open to all researchers and practitioners in an effort to bring together the best and the most innovative initiatives in the European space. This also includes a day dedicated to the Living Labs initiatives. Stay tuned for more information.</p>
+      </article>
+
+      <aside class="conf-aside">
+        <div class="info-card">
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <div><div class="k">Date</div><div class="v"><time datetime="2026-09-07/2026-09-11">7&ndash;11 September 2026</time></div></div>
+          </div>
+          <div class="info-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <div><div class="k">Location</div><div class="v">Coimbra, Portugal</div></div>
+          </div>
+          <a href="https://soils4europe2026.eu/" class="btn btn-primary" target="_blank" rel="noopener" aria-label="Visit Soils for Europe conference 2026 official website (opens in a new tab)">
+            Visit conference website
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg>
+          </a>
         </div>
-
-<section class="container" aria-label="Conference timeline">
-    <div class="timeline" role="list">
-        <div class="timeline_container left first" role="listitem">
-            <div class="content" aria-hidden="true"></div>
-        </div>
-
-
-        
-
-        <article class="timeline_container right" role="listitem">
-            <div class="content location">
-                <h2 class="sr-only">Location</h2>
-                <i class="pr p-location" aria-hidden="true"></i>
-                <span>Coimbra, Portugal</span>
-            </div>
-        </article>
-
-        <article class="timeline_container left" role="listitem">
-            <div class="content calendar">
-                <h2 class="sr-only">Date</h2>
-                <i class="pr p-calendar" aria-hidden="true"></i>
-                <time datetime="2026-09-07/2026-09-11">7–11 September 2026</time>
-            </div>
-        </article>
-
-        <article class="timeline_container right" role="listitem">
-            <div class="content">
-                <h2 class="sr-only">Event description</h2>
-                <p>The event will be co-organised by several Mission Soil projects and will cover sessions on all Mission Objectives, including cross-cutting sessions, aiming to showcase the latest research being developed across Europe. While the event will allow for showcasing the innovations being produced by the various European-funded projects, the conference will be open to all researchers and practitioners in an effort to bring together the best and the most innovative initiatives in the European space. This also includes a day dedicated to the Living Labs initiatives. Stay tuned for more information.</p>
-            </div>
-        </article>
-
-        <article class="timeline_container left" role="listitem">
-            <div class="content logos">
-                <h2 class="sr-only">Co-organising partners</h2>
-                <nav aria-label="Partner organizations">
-                    {% for partner in partners %}
-                    <a href="{{partner.instituion_url}}" target="_blank" rel="noopener" aria-label="Visit {{partner.instituion}} website">
-                        <img alt="{{partner.instituion}} logo" src="{{partner.cover.thumb(auto,57,{'mode':'crop'})}}">
-                    </a>
-                    {% endfor %}
-                </nav>
-            </div>
-        </article>
+      </aside>
     </div>
+
+    {% if partners|length %}
+    <h2 class="logo-wall-title">Co-organising partners</h2>
+    <ul class="logo-wall" aria-label="Partner organisations">
+      {% for partner in partners %}
+      <li>
+        <a href="{{ partner.instituion_url ?: '#' }}"{% if partner.instituion_url %} target="_blank" rel="noopener"{% endif %} aria-label="Visit {{ partner.instituion }} website">
+          {% if partner.cover %}
+          <img alt="{{ partner.instituion }} logo" src="{{ partner.cover.thumb(auto, 57, {'mode': 'crop'}) }}" loading="lazy">
+          {% else %}
+          <span>{{ partner.instituion }}</span>
+          {% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
 </section>

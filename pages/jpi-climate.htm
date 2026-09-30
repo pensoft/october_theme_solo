@@ -30,40 +30,51 @@ background = "unset"
 templates = "template1"
 description_limit = 0
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
 {% component 'siteSearchInclude' %}
-<div class="container-fluid timeline_container left">
-    <div class="blue_line"></div>
-    <div class="container jpi">
-        <div class="row top-xs mt-4">
-            <div class="col-md-6 col-xs-12">
-                <div class="jpi-what">
 
-                    {% component 'what' %}
-                </div>
-            </div>
-            <div class="col-md-6 col-xs-12">
-                <div class="jpi-what-image">
-                    {% component 'jpi_what_image' %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container-fluid timeline_container right">
-    <div class="blue_line"></div>
-    <div class="container jpi">
-        <div class="row top-xs">
-            <div class="col-md-6 col-xs-12">
-                <div class="jpi-with-image">
-                    {% component 'jpi_with_image' %}
-                </div>
-            </div>
-            <div class="col-md-6 col-xs-12">
-                <div class="jpi-with">
+{% partial 'site/subhero' title='JPI Climate' %}
 
-                    {% component 'with' %}
-                </div>
-            </div>
+{% set j_what = what.getJumbotron() %}
+{% set j_what_img = jpi_what_image.getJumbotron() %}
+{% set j_with = with.getJumbotron() %}
+{% set j_with_img = jpi_with_image.getJumbotron() %}
+{% set has_what = j_what and (j_what.body or j_what.image.path) %}
+{% set has_with = j_with and (j_with.body or j_with.image.path) %}
+
+<section class="page-body">
+  <div class="container">
+    {% if has_what or has_with %}
+      {% if has_what %}
+      <div class="split">
+        <div class="split-text">
+          {% partial 'solo/jumbotron-content' j=j_what comp=what show_title=true %}
         </div>
-    </div>
-</div>
+        {% if j_what_img and (j_what_img.image.path or j_what_img.body) %}
+        <div class="split-media">
+          {% partial 'solo/jumbotron-content' j=j_what_img comp=jpi_what_image show_title=false %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if has_with %}
+      <div class="split reverse">
+        <div class="split-text">
+          {% partial 'solo/jumbotron-content' j=j_with comp=with show_title=true %}
+        </div>
+        {% if j_with_img and (j_with_img.image.path or j_with_img.body) %}
+        <div class="split-media">
+          {% partial 'solo/jumbotron-content' j=j_with_img comp=jpi_with_image show_title=false %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="empty-state">
+        <h3>Content coming soon</h3>
+        <p>Information about SOLO and JPI Climate will be published here.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>

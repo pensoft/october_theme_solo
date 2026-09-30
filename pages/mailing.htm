@@ -1,5 +1,5 @@
 url = "/mails"
-layout = "default"
+layout = "internal"
 title = "Mails"
 is_hidden = 0
 robot_index = "index"
@@ -47,6 +47,7 @@ function onFetchSingleMail(){
 }
 ?>
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/mailing.css'|theme }}">{% endput %}
 <div class="container">
     &nbsp; &nbsp; &nbsp;<a class="btn btn-primary" href="{{'my-sent-messages'|page}}">My sent messages</a>
     <p>&nbsp;</p>

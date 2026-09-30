@@ -1,0 +1,33 @@
+{# Set a new password - RainLab.User "resetPassword" component, handler onResetPassword #}
+<form class="auth-form" method="post" novalidate
+      data-request="onResetPassword"
+      data-request-flash
+      data-request-validate
+      data-request-success="alert('You have successfully changed your password. Please login to the Internal Repository.');"
+      data-request-redirect="/login">
+  <div class="field">
+    <label for="resetCode">Reset code</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='key' %}</span>
+      <input id="resetCode" name="code" type="text" autocomplete="one-time-code" placeholder="Enter the code from your email" value="{{ resetPassword.code }}" required>
+    </div>
+    <span class="field-error" data-validate-for="code"></span>
+  </div>
+
+  <div class="field">
+    <label for="resetPasswordNew">New password</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='lock' %}</span>
+      <input id="resetPasswordNew" class="has-toggle" name="password" type="password" autocomplete="new-password" placeholder="Choose a new password" required>
+      <button type="button" class="toggle-pwd" data-target="resetPasswordNew" aria-label="Show password" aria-pressed="false">{% partial 'solo/auth/icon' name='eye' %}</button>
+    </div>
+    <span class="field-error" data-validate-for="password"></span>
+  </div>
+
+  <button class="submit" type="submit" data-attach-loading>
+    Reset password
+    {% partial 'solo/auth/icon' name='arrow' %}
+  </button>
+
+  <p class="alt-link"><a href="/login">Return to sign in</a></p>
+</form>

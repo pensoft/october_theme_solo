@@ -26,41 +26,76 @@ description_limit = 0
 use Pensoft\Media\Models\Pressreleases;
 
 function onStart(){
-	$this['mediaPressreleasesList'] =  Pressreleases::orderBy('date', 'desc')->get();
+	$this['mediaPressreleasesList'] =  Pressreleases::with('category')->orderBy('date', 'desc')->get();
 }
 ?>
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/media.css'|theme }}">{% endput %}
 {% set records = mediaPressreleasesList %}
+{% set jt = jumbotron.getJumbotron() %}
+{% set ext_icon %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>{% endset %}
 
-{% if records.count %}
-<section class="container" aria-label="Press releases list">
+{# Topic filter options = press-release categories actually in use #}
+{% set cats = {} %}
+{% for r in records if r.category %}
+  {% set cats = cats|merge({('c' ~ r.category.id): r.category.title}) %}
+{% endfor %}
 
-    <div class="row press-relieses-container">
+{% partial 'solo/media-subhero' title='Press Releases' active='press' %}
 
+<section>
+  <div class="container">
+    {% if records|length %}
+    <div data-filters data-f-noun="release">
+      {% if cats|length > 1 %}
+      <div class="filter-bar">
+        <div class="field-group">
+          <label for="f-pr-topic">Topic</label>
+          <div class="select-wrap">
+            <select id="f-pr-topic" data-f="topic">
+              <option value="all">All topics</option>
+              {% for key, title in cats %}
+              <option value="{{ key }}">{{ title }}</option>
+              {% endfor %}
+            </select>
+            <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      <p class="result-count"><span data-fcount>{{ records|length }} release{{ records|length == 1 ? '' : 's' }}</span></p>
+      <div class="event-list">
         {% for record in records %}
-        {# Use spaceless tag to remove spaces inside the A tag. #}
-        {% spaceless %}
-        <article class="col-xs-12">
-            <div class="press-relies-item">
-                <p class="date">
-                    <time datetime="{{record.date|date('Y-m-d')}}">{{record.date |date('d F Y')}}</time>
-                </p>
-                <h2 class="card_title">{{record.name}}</h2>
-                <div class="body">{{record.description | raw}}</div>
-                <nav class="row link" aria-label="Press release links">
-                    {% for link in record.link %}
-                    <a href="{{link.url}}" target="_blank" class="btn btn-primary" rel="noopener" aria-label="{{link.text}} (opens in new tab)">{{link.text}}</a>
-                    {% endfor %}
-                </nav>
-            </div>
+        <article class="event-row press-row" data-fitem data-topic="{{ record.category ? 'c' ~ record.category.id : '' }}" style="grid-template-columns:120px 1fr auto;">
+          {% if record.date %}
+          <time class="date-block" datetime="{{ record.date|date('Y-m-d') }}"><span class="d">{{ record.date|date('d') }}</span><span class="m">{{ record.date|date('M') }}</span><span class="y">{{ record.date|date('Y') }}</span></time>
+          {% else %}<div class="date-block" aria-hidden="true"></div>{% endif %}
+          <div class="ev-body">
+            <h3>{{ record.name }}</h3>
+            {% if record.category %}<div class="ev-meta"><span>{{ record.category.title }}</span></div>{% endif %}
+            {% if record.description %}<div class="cms-content">{{ record.description|raw }}</div>{% endif %}
+          </div>
+          <div class="ev-action">
+            {% for link in record.link if link.url %}
+            <a class="btn-download{% if not loop.first %} ghost{% endif %}" href="{{ link.url }}" target="_blank" rel="noopener" aria-label="{{ link.text ?: 'Read more' }} – {{ record.name }} (opens in new tab)">{{ link.text ?: 'Read more' }} {{ ext_icon|raw }}</a>
+            {% endfor %}
+          </div>
         </article>
-
-        {% endspaceless %}
         {% endfor %}
+      </div>
+      <div class="empty-state" data-fempty hidden>
+        <h3>No press releases match this topic</h3>
+        <p>Try another topic.</p>
+      </div>
     </div>
+    {% else %}
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <h3>{{ jt.title ?: 'No press releases yet' }}</h3>
+      {% if jt.body %}<div class="cms-content">{{ jt.body|raw }}</div>{% else %}<p>Press releases will be published here.</p>{% endif %}
+    </div>
+    {% endif %}
+  </div>
 </section>
-{% else %}
-<section class="container-fluid bg-secondary coming_soon" aria-label="Coming soon">
-    {% component 'jumbotron' %}
-</section>
-{% endif %}
+
+{% put bodyScripts %}<script src="{{ 'assets/solo/filters.js'|theme }}"></script>{% endput %}

@@ -1,0 +1,100 @@
+description = "SOLO redesign: Impact Assessment Framework overview (pensoft/impact groups + sheets, jumbotrons). Param: interactive (true = in-page KPI drill-down, false = links to /solos-impact-assessment-framework/:slug)"
+==
+<?php
+use Pensoft\Impact\Models\Group;
+use Pensoft\Impact\Models\Sheet;
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
+
+function onStart()
+{
+    $groups = Group::with('cover')->orderBy('sort_order')->get();
+    $this['iaf_groups'] = $groups;
+    $this['iaf_intro'] = JumbotronModel::where('slug', 'solos-impact-assessment-framework')->first();
+    $this['iaf_description'] = JumbotronModel::where('slug', 'kpi-items-description')->first();
+
+    if ($this['interactive']) {
+        $sheets = Sheet::with(['cover', 'file', 'group'])->orderBy('sort_order')->get();
+        $byGroup = [];
+        foreach ($sheets as $sheet) {
+            $byGroup[$sheet->group_id][] = $sheet;
+        }
+        $this['iaf_sheets'] = $byGroup;
+    }
+}
+?>
+==
+{% set fallbackIcon %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 5-6"></path></svg>{% endset %}
+<div data-iaf>
+  <div class="iaf-cats-view">
+    <div class="iaf-intro">
+      <h2>Impact Assessment Framework</h2>
+      {% if iaf_intro and iaf_intro.body %}
+      <div class="cms-content">{{ iaf_intro.body|raw }}</div>
+      {% endif %}
+    </div>
+
+    <div class="iaf-cats-head">
+      <p>The assessment framework allows for the evaluation of {{ iaf_groups|length }} types of impact of Mission Soil Research and Innovation (R&amp;I) activities. Each type of impact is assessed by a number of KPIs. Detailed KPI sheets can be found in the categories below.</p>
+    </div>
+
+    {% if iaf_groups|length %}
+    <div class="iaf-cats">
+      {% for g in iaf_groups %}
+      {% set ico %}{% if g.cover %}<img src="{{ g.cover.path }}" alt="" loading="lazy" decoding="async">{% else %}{{ fallbackIcon|raw }}{% endif %}{% endset %}
+      {% if interactive %}
+      <button class="iaf-cat" type="button" data-title="{{ g.title }}" data-iaf-group="{{ g.slug }}" aria-controls="iaf-detail">
+      {% else %}
+      <a class="iaf-cat" href="/solos-impact-assessment-framework/{{ g.slug }}">
+      {% endif %}
+        <span class="iaf-cat-plate">
+          <span class="iaf-cat-ico">{{ ico|raw }}</span>
+          <span class="iaf-cat-title">{{ g.title }}</span>
+        </span>
+        {% if g.description %}<span class="iaf-cat-desc">{{ g.description|striptags|trim|raw }}</span>{% endif %}
+      {% if interactive %}</button>{% else %}</a>{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if iaf_description and iaf_description.body %}
+    <div class="iaf-narrative">
+      <div class="iaf-figure">
+        <img src="{{ iaf_description.image ? iaf_description.image.path : 'image.jpg'|media }}" alt="Impact assessment framework illustration" loading="lazy" decoding="async">
+      </div>
+      <div class="iaf-narrative-copy">
+        <div class="cms-content">{{ iaf_description.body|raw }}</div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if interactive %}
+  <div class="iaf-detail" id="iaf-detail">
+    <button class="iaf-back" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg>
+      All categories
+    </button>
+    <div class="iaf-detail-head">
+      <span class="iaf-detail-ico" data-iaf-ico aria-hidden="true"></span>
+      <h3 data-iaf-title></h3>
+    </div>
+    {% for g in iaf_groups %}
+    <div data-iaf-grid="{{ g.slug }}" hidden>
+      {% set gsheets = iaf_sheets[g.id] ?? [] %}
+      {% if gsheets|length %}
+      <div class="kpi-grid">
+        {% for sheet in gsheets %}
+        {% partial 'solo/resources/kpi-card' sheet=sheet groupSlug=g.slug %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state iaf-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+        <h3>KPI sheets for this category are coming soon</h3>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,35 @@
+{#
+  Auth page frame (design: login.dc.html). Use with layout "auth" (full screen, no site header/footer).
+  Params:
+    heading - H1 text
+    desc    - intro sentence (raw HTML allowed)
+    form    - partial to render as the form (e.g. 'solo/auth/signin')
+#}
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/auth.css'|theme }}?v=2">{% endput %}
+<div class="auth-page">
+    <div class="login-wrap">
+      <aside class="login-visual" aria-hidden="true"></aside>
+
+      <main class="login-form-side">
+        <div class="top-row">
+          <a href="/">&larr; Back to home</a>
+        </div>
+
+        <div class="form-wrap">
+          <h1>{{ heading }}</h1>
+          {% if desc %}<p class="desc">{{ desc|raw }}</p>{% endif %}
+
+          {% flash %}
+          <div class="auth-flash alert alert-{{ type == 'error' ? 'danger' : type }}" role="alert">{{ message }}</div>
+          {% endflash %}
+
+          {% partial form %}
+        </div>
+
+        <div class="login-foot">
+          <span>&copy; {{ 'now'|date('Y') }} SOLO Consortium</span>
+        </div>
+      </main>
+    </div>
+</div>
+{% put bodyScripts %}<script src="{{ 'assets/solo/pages/auth.js'|theme }}"></script>{% endput %}

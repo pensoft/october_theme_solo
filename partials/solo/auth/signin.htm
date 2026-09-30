@@ -1,0 +1,36 @@
+{# Sign-in form - RainLab.User "account" component, handler onSignin #}
+{{ form_ajax('onSignin', { 'id': 'login-form', 'class': 'auth-form', 'novalidate': 'novalidate', 'data-request-flash': '', 'data-request-validate': '' }) }}
+  <div class="field">
+    <label for="userSigninLogin">{{ loginAttribute == 'username' ? 'Username' : 'Email address' }}</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name=(loginAttribute == 'username' ? 'user' : 'mail') %}</span>
+      <input id="userSigninLogin" name="login" type="{{ loginAttribute == 'username' ? 'text' : 'email' }}" autocomplete="username" placeholder="{{ loginAttribute == 'username' ? 'Your username' : 'you@institution.eu' }}" required>
+    </div>
+    <span class="field-error" data-validate-for="login"></span>
+  </div>
+
+  <div class="field">
+    <label for="userSigninPassword">Password</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='lock' %}</span>
+      <input id="userSigninPassword" class="has-toggle" name="password" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+      <button type="button" class="toggle-pwd" data-target="userSigninPassword" aria-label="Show password" aria-pressed="false">{% partial 'solo/auth/icon' name='eye' %}</button>
+    </div>
+    <span class="field-error" data-validate-for="password"></span>
+  </div>
+
+  <div class="row-opts">
+    {% if rememberLoginMode == 'ask' %}
+    <label class="check">
+      <input id="remember" type="checkbox" name="remember" value="1">
+      <span>Remember me</span>
+    </label>
+    {% else %}<span></span>{% endif %}
+    <a href="/forgot" class="forgot">Forgot password?</a>
+  </div>
+
+  <button class="submit" type="submit" data-attach-loading>
+    Sign In
+    {% partial 'solo/auth/icon' name='arrow' %}
+  </button>
+{{ form_close() }}

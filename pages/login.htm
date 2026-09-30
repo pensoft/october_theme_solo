@@ -1,5 +1,5 @@
 url = "/login"
-layout = "default"
+layout = "auth"
 title = "Login"
 is_hidden = 0
 robot_index = "index"
@@ -12,16 +12,7 @@ forceSecure = 0
 requirePassword = 0
 ==
 {% if not user %}
-<div class="container" style="padding-right: 10%;">
-    <div class="login_info row start-xs">
-        <div class="login_image aos-init aos-animate" data-aos="fade-up">
-            <img src="{{'login.jpg'|media}}"></div>
-        <div class="logn_form">
-            <p>This is an internal password protected environment for consortium members only.</p>
-            {% partial 'components/account/signin' %}
-        </div>
-    </div>
-</div>
-
-
+{% partial 'solo/auth/shell' heading='Sign in to your account' desc='This is an <span class="ink">internal, password-protected environment</span> for consortium members only.' form='solo/auth/signin' %}
+{% else %}
+{% partial 'solo/auth/shell' heading='You are already signed in' form='solo/auth/signed-in' %}
 {% endif %}

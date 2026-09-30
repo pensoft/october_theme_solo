@@ -24,119 +24,252 @@ description_limit = 0
 <?php
 use Pensoft\Calendar\Models\Entry;
 use Pensoft\Articles\Models\Article;
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
 use Carbon\Carbon;
 function onStart(){
     $this['entries'] = Entry::where('start', '>', Carbon::now())->where('show_on_timeline', true)->where('is_internal', false)->orderBy('start', 'asc')->take(3)->get();
     $this['news'] = Article::news()->where('published_at', '<=', 'now()')->where('published', 'true')->take(3)->orderBy('published_at', 'DESC')->get();
+
+    // Featured event: first upcoming public event, otherwise the most recent past one
+    $featured = $this['entries']->first();
+    $this['featured_is_past'] = false;
+    if (!$featured) {
+        $featured = Entry::where('start', '<=', Carbon::now())->where('show_on_timeline', true)->where('is_internal', false)->orderBy('start', 'desc')->first();
+        $this['featured_is_past'] = (bool) $featured;
+    }
+    $this['featured_event'] = $featured;
+
+    // Intro text (managed in Backend > Jumbotron > "intro-homepage")
+    $this['intro_jumbotron'] = JumbotronModel::where('slug', 'intro-homepage')->first();
 }
 ?>
 ==
-<section class="container" aria-label="Introduction">
-    <div class="row between-md around-xs middle-xs">
-        <div class="col-lg-6 col-xs-12 intro">
-            {% component 'intro' %}
-        </div>
-        <div class="col-lg-6 col-xs-12 intro_image">
-            {% component 'intro_image' %}
-        </div>
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/index.page.css'|theme }}?v=3">{% endput %}
+
+{% set arrow %}<svg class="arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endset %}
+
+<section class="hero">
+  <div class="container">
+    <h1 data-reveal>Shaping the Future of European Soil Health</h1>
+    <div class="cta-row" data-reveal data-reveal-delay="1">
+      <a class="btn btn-primary" href="{{ 'about'|page }}">Learn More {{ arrow|raw }}</a>
     </div>
+  </div>
 </section>
 
 
-<!-- latest from news -->
-<section class="container highlights-news" aria-label="Latest news">
-    <div class="row">
-        <div class="col-xs-12">
-            <h2 class="base_heading highlight_new_template_3">Latest News</h2>
-        </div>
+<section class="highlights">
+  <div class="container">
+    <div class="head">
+      <div data-reveal>
+        <h2>A coordinated answer to a continental challenge.</h2>
+      </div>
+      <p class="lead muted" data-reveal data-reveal-delay="1">SOLO connects researchers, policy makers and practitioners across Europe to build a single, evidence-based roadmap for healthy soils.</p>
     </div>
-    <div class="row newslist">
-        <div class="col-xs-12">
-            {% for highlight in news %}
-            <article class="col-xs-12 col-md-4 news-item item-{{highlight.slug}}">
-                <div class="row news_column">
-                    <a href="{{'news'|page}}/{{highlight.slug}}">
-                        <div class="news_image">
-                            <img class="news-img-top" src="{{ highlight.cover|crop_image|resize(368, 223, {'mode': 'crop'}) }}" alt="{{highlight.title}}" />
-                        </div>
-                        <div class="news-container">
-                            <div class="news-title">
-                                <h3 class="card-title">{{highlight.title}}</h3>
-                            </div>
-                            <span class="read_more">Read more</span>
-                        </div>
-                    </a>
-                </div>
-            </article>
-            {% endfor %}
+    <div class="grid-2">
+      <article class="highlight-card" data-reveal>
+        <h3>Objectives</h3>
+        {% if intro_jumbotron and intro_jumbotron.body %}
+        <div class="cms-content">{{ intro_jumbotron.body|raw }}</div>
+        {% else %}
+        <p>SOLO brings together European partners to identify knowledge gaps, drivers, and barriers to soil health and to shape the path forward for the Soil Mission.</p>
+        {% endif %}
+        <div style="margin-top: 28px;">
+          <a class="btn-link" href="{{ 'about'|page }}">Learn More {{ arrow|raw }}</a>
         </div>
+      </article>
+      <article class="highlight-card" data-reveal data-reveal-delay="1">
+        <h3>Think Tanks</h3>
+        <p>The project's Think Tanks connect experts and projects across Europe to exchange knowledge and co-develop a unified roadmap for policy implementation.</p>
+        <div style="margin-top: 28px;">
+          <a class="btn-link" href="/think-tanks">Learn More {{ arrow|raw }}</a>
+        </div>
+      </article>
     </div>
+  </div>
 </section>
 
 
+<section class="resources section-tone-paper">
+  <div class="blob"></div>
+  <div class="container">
+    <div class="head" data-reveal>
+      <h2>Public review &amp; impact assessment.</h2>
+      <p class="lead muted" style="margin-top: 18px;">Two flagship outputs from the SOLO consortium, open for the wider Soil Mission community.</p>
+    </div>
+    <div class="grid-2">
+      <a class="resource-card" href="/roadmaps" data-reveal aria-label="Roadmaps Review">
+        <div>
+          <h3>Roadmaps Review</h3>
+          <p>The SOLO Think Tanks have developed key research and innovation roadmaps addressing critical soil knowledge gaps, and they are now ready for public review.</p>
+        </div>
+        <span class="arrow-btn" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+        <div class="ring"></div>
+        <div class="ring inner"></div>
+      </a>
+      <a class="resource-card alt" href="/resources#tab-framework" data-reveal data-reveal-delay="1" aria-label="Impact Assessment Framework">
+        <div>
+          <h3>Impact Assessment</h3>
+          <p>This comprehensive framework offers adaptable tools, metrics, and narratives to evaluate the actual impact of Mission Soil projects across policy, economy, and society.</p>
+        </div>
+        <span class="arrow-btn" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+        <div class="ring"></div>
+        <div class="ring inner"></div>
+      </a>
+    </div>
+  </div>
+</section>
 
-<div class="container mt-4 mb-4">
-    <div class="row between-xs">
-        <section class="col-lg-7 col-xs-12 upcoming_events_container" aria-label="Upcoming events">
-            <h2 class="base_heading"><a href="{{'events'|page}}">Upcoming Events</a></h2>
-            {% for event in entries %}
-            <article class="row entry_item">
-                <div class="col-md-2 col-xs-12 start-md center-xs">
-                    <time datetime="{{event.start|date('Y-m-d')}}">
-                        <span class="date_day">{{event.start|date("d")}}</span>
-                        <span class="date_month">{{event.start|date("M")}}</span>
-                        <span class="date_year">{{event.start|date("Y")}}</span>
-                    </time>
-                </div>
-                <div class="col-md-10 col-xs-12 start-md center-xs mt-md-0 mt-1">
-                    <h3>{{event.title|raw}}</h3>
-                    <p>{{event.place}}</p>
-                </div>
-                <div class="col-md-12 col-xs-12 end-md center-xs mt-md-0 mt-1">
-                    <a href="{{'events'|page}}/{{event.slug}}" class="read_more" aria-label="Read more about {{event.title|striptags}}">Read more</a>
-                </div>
-            </article>
-            {% endfor %}
-        </section>
 
-        <section class="col-lg-5 col-xs-12 social_media_conainer" aria-label="Social media">
-            <h2 class="base_heading">Follow SOLO</h2>
-            <nav class="row subscribe-items start-md center-xs" aria-label="Social media links">
-                {% if this.theme.twitter %}
-                <a href="{{this.theme.twitter_url}}" target="_blank" class="btn p-primary pr p-twitter middle" rel="noopener" aria-label="Follow us on Twitter"></a>
-                {% endif %}
-                {% if this.theme.facebook %}
-                <a href="{{this.theme.facebook_url}}" target="_blank" class="btn pr p-primary p-facebook medium" rel="noopener" aria-label="Follow us on Facebook"></a>
-                {% endif %}
-                {% if this.theme.linkedin %}
-                <a href="{{this.theme.linkedin_url}}" target="_blank" class="btn pr p-primary p-linkedin medium" rel="noopener" aria-label="Follow us on LinkedIn"></a>
-                {% endif %}
-                {% if this.theme.youtube %}
-                <a href="{{this.theme.youtube_url}}" target="_blank" class="btn pr p-primary p-youtube medium" rel="noopener" aria-label="Follow us on YouTube"></a>
-                {% endif %}
-                {% if this.theme.instagram %}
-                <a href="{{this.theme.instagram_url}}" target="_blank" class="btn pr p-primary p-instagram medium" rel="noopener" aria-label="Follow us on Instagram"></a>
-                {% endif %}
-                {% if this.theme.researchgate %}
-                <a href="{{this.theme.researchgate_url}}" target="_blank" class="btn pr p-primary p-researchgate medium" rel="noopener" aria-label="Follow us on ResearchGate"></a>
-                {% endif %}
-            </nav>
-        </section>
+<section class="reg-intro">
+  <span class="rg-blob rg-blob-a" aria-hidden="true"></span>
+  <span class="rg-blob rg-blob-b" aria-hidden="true"></span>
+  <div class="container">
+    <div class="rg-grid">
+      <div class="rg-copy">
+        <h2 data-reveal data-reveal-delay="1">Regionalisation</h2>
+        <p data-reveal data-reveal-delay="2">Regionalisation bridges the gap between the broader EU goals and the different local cases by translating the Soil Mission objectives into context-specific solutions for the individual regions. By drawing on the insights gathered from our Soil Weeks and Regional Nodes, we ensure that research and policy effectively address the diverse environmental and agricultural needs of local communities.</p>
+        <div class="rg-cta" data-reveal data-reveal-delay="3">
+          <a class="btn btn-primary" href="/regionalisation-of-ri-priorities">Learn more {{ arrow|raw }}</a>
+        </div>
+      </div>
+      <div class="rg-visual" data-reveal data-reveal-delay="2">
+        <div class="rg-map" data-home-map></div>
+      </div>
+    </div>
+  </div>
+</section>
 
+
+{% if featured_event %}
+{% set ev = featured_event %}
+<section class="event" aria-labelledby="featured-event-heading">
+  <div class="container">
+    <div class="section-head" data-reveal>
+<!--      <h2 id="featured-event-heading">{{ featured_is_past ? 'Recent Event' : 'Featured Event' }}</h2>-->
+      <h2 id="featured-event-heading">Latest Events.</h2>
+    </div>
+    <article class="event-card" data-reveal data-reveal-delay="1">
+      <div class="event-visual">
+        <svg class="terrain" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <radialGradient id="g1" cx="30%" cy="30%" r="80%">
+              <stop offset="0%" stop-color="#C77A35" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#2C160A" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="180" cy="200" r="240" fill="url(#g1)"/>
+          <g fill="none" stroke="rgba(247,221,178,0.18)" stroke-width="1">
+            <path d="M0,420 Q150,360 300,400 T600,380"/>
+            <path d="M0,460 Q150,400 300,440 T600,420"/>
+            <path d="M0,500 Q150,440 300,480 T600,460"/>
+            <path d="M0,540 Q150,480 300,520 T600,500"/>
+          </g>
+          <g fill="none" stroke="rgba(255,255,255,0.12)">
+            <circle cx="460" cy="160" r="30"/>
+            <circle cx="460" cy="160" r="60"/>
+            <circle cx="460" cy="160" r="100"/>
+          </g>
+          <g fill="rgba(247,221,178,0.55)">
+            <circle cx="120" cy="120" r="3"/>
+            <circle cx="180" cy="80" r="3"/>
+            <circle cx="240" cy="140" r="3"/>
+            <circle cx="320" cy="100" r="3"/>
+            <circle cx="380" cy="60" r="3"/>
+          </g>
+        </svg>
+        {% if ev.start %}
+        <time class="date-chip" datetime="{{ ev.start|date('Y-m-d') }}">
+          <span class="day">{{ ev.start|date('d') }}</span>
+          <span class="my">{{ ev.start|date('M Y') }}</span>
+        </time>
+        {% endif %}
+        <div class="corner-ring"></div>
+      </div>
+      <div class="event-body">
+        <h3>{{ ev.title|striptags }}</h3>
+        {% if ev.place %}
+        <div class="meta-row">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s-7-7.58-7-12a7 7 0 1 1 14 0c0 4.42-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            {{ ev.place }}
+          </span>
+        </div>
+        {% endif %}
+        {% if ev.description %}
+        <p>{{ ev.description|striptags|str_limit(260) }}</p>
+        {% endif %}
+        <div class="cta-row">
+          <a class="btn btn-primary" href="/events/{{ ev.slug }}" aria-label="Read more about {{ ev.title|striptags }}">Read more {{ arrow|raw }}</a>
+          <a class="btn btn-ghost" href="/events">All events {{ arrow|raw }}</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+{% endif %}
+
+
+<section class="news" aria-labelledby="latest-news-heading">
+  <div class="container">
+    <div class="head" data-reveal>
+      <h2 id="latest-news-heading">Latest News</h2>
     </div>
 
-</div>
+    {% if news|length %}
+    <div class="news-grid">
+      {% for item in news %}
+      <article class="news-card" data-reveal{% if loop.index0 %} data-reveal-delay="{{ loop.index0 }}"{% endif %}>
+        <div class="visual">
+          {% if item.cover %}
+          <img src="{{ item.cover|crop_image|resize(736, 446, {'mode': 'crop'}) }}" alt="" loading="lazy" />
+          {% endif %}
+        </div>
+        <div class="body">
+          <h4>{{ item.title }}</h4>
+          {% if item.published_at %}
+          <span class="date">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+            <time datetime="{{ item.published_at|date('Y-m-d') }}">{{ item.published_at|date('d M Y')|upper }}</time>
+          </span>
+          {% endif %}
+          <a class="read-more" href="/news/{{ item.slug }}" aria-label="Read more: {{ item.title }}">Read more
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="solo-empty">No news yet — check back soon.</div>
+    {% endif %}
+
+    <div style="margin-top: 48px; display: flex; justify-content: center;" data-reveal>
+      <a class="btn btn-ghost" href="/news">Browse all news {{ arrow|raw }}</a>
+    </div>
+  </div>
+</section>
 
 
 {% if this.theme.subscribe %}
-<section class="container" aria-label="Newsletter subscription">
-    <div class="subscriber row between-md">
-        <div class="sub-text">
-            Join our community by subscribing to our newsletter!
-        </div>
-        <div class="btn-subscribe">
-            <a href="{{this.theme.subscribe}}" target="_blank" rel="noopener">Subscribe</a>
-        </div>
+<section class="newsletter" aria-label="Newsletter subscription">
+  <div class="container">
+    <div data-reveal>
+      <h2>Join our community by subscribing to our newsletter!</h2>
     </div>
+    <div data-reveal data-reveal-delay="1">
+      <a class="btn btn-primary" href="{{ this.theme.subscribe }}" target="_blank" rel="noopener">Subscribe {{ arrow|raw }}</a>
+    </div>
+  </div>
 </section>
 {% endif %}
+
+{% put bodyScripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="{{ 'assets/solo/home-map.js'|theme }}"></script>
+{% endput %}

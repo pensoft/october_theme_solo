@@ -1,0 +1,96 @@
+{#
+  One promo-material card (design: promo-materials .media-card.promo).
+  Used by /media-center (all categories) and by each category sub-page.
+  Params:
+    record – a Pensoft\Media model record
+    type   – 'brand-kit' (MediaLogos) | 'brochure' (Flyers) | 'stickers' (Graphic)
+             | 'presentations' (Presentations) | 'videos' (Videos)
+    embed  – videos only: true renders the player inside the card (videos page)
+  Downloads go through the ?download=<file id> handler in the category's own page.
+#}
+{% set dl_icon %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"></path></svg>{% endset %}
+{% set ext_icon %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg>{% endset %}
+{% set pages = {'brand-kit': 'logo', 'brochure': 'flyer', 'stickers': 'stickers', 'presentations': 'presentation', 'videos': 'videos'} %}
+{% set base = pages[type]|page %}
+{% set name = record.name ?: record.title %}
+
+{# ---- collect cover image + downloads per model type ---- #}
+{% set cover = null %}
+{% set links = [] %}
+{% if type == 'brand-kit' %}
+  {% set cover = record.logo_image %}
+  {% for fmt, f in {'JPG': record.file_jpg, 'PNG': record.file_png, 'SVG': record.file_eps, 'PDF': record.file_pdf, 'ZIP': record.file_zip} %}{% if f %}
+    {% set links = links|merge([{label: fmt, url: base ~ '?download=' ~ f.id ~ '&file_name=' ~ (f.file_name|replace({' ': '_'})|url_encode), aria: 'Download ' ~ name ~ ' as ' ~ fmt}]) %}
+  {% endif %}{% endfor %}
+{% elseif type == 'brochure' or type == 'presentations' %}
+  {% set cover = type == 'brochure' ? record.flyer_image : record.presentation_image %}
+  {% if record.url %}
+    {% set links = links|merge([{label: 'Download', url: record.url, ext: true, aria: 'Download ' ~ name ~ ' (opens in new tab)'}]) %}
+  {% elseif record.file_lang_versions|length %}
+    {% for f in record.file_lang_versions %}
+      {% set lbl = f.description ?: f.title ?: ('Version ' ~ loop.index) %}
+      {% set links = links|merge([{label: lbl, url: base ~ '?download=' ~ f.id ~ '&file_name=' ~ (f.file_name|replace({' ': '_'})|url_encode), aria: 'Download ' ~ name ~ ' – ' ~ lbl}]) %}
+    {% endfor %}
+  {% elseif record.file %}
+    {% set links = links|merge([{label: 'Download', url: base ~ '?download=' ~ record.file.id ~ '&file_name=' ~ (record.file.file_name|replace({' ': '_'})|url_encode), aria: 'Download ' ~ name}]) %}
+  {% endif %}
+  {% if type == 'brochure' and record.file_print %}
+    {% set links = links|merge([{label: 'Print version', url: base ~ '?download=' ~ record.file_print.id ~ '&file_name=' ~ (record.file_print.file_name|replace({' ': '_'})|url_encode), aria: 'Download ' ~ name ~ ' print version'}]) %}
+  {% endif %}
+{% elseif type == 'stickers' %}
+  {% set cover = record.image %}
+  {% if record.file %}
+    {% set links = links|merge([{label: 'Download', url: base ~ '?download=' ~ record.file.id ~ '&file_name=' ~ (record.file.file_name|replace({' ': '_'})|url_encode), aria: 'Download ' ~ name}]) %}
+  {% endif %}
+{% elseif type == 'videos' and not embed %}
+  {% set links = links|merge([{label: 'Watch', url: base ~ '#video-' ~ record.id, play: true, aria: 'Watch ' ~ name}]) %}
+{% endif %}
+
+<article class="media-card promo{% if type == 'brand-kit' %} promo-logo{% endif %}{% if type == 'videos' and embed %} promo-video{% endif %}" data-cat="{{ type }}"{% if type == 'videos' %} id="video-{{ record.id }}"{% endif %}>
+  {% if type == 'videos' and embed %}
+  <div class="cover video-frame">
+    {% if record.file %}
+    <video controls preload="metadata" aria-label="{{ name }}">
+      <source src="{{ record.file.path }}" type="{{ record.file.content_type ?: 'video/mp4' }}">
+      {% if record.captions %}<track kind="captions" src="{{ record.captions.path }}" srclang="en" label="English" default>{% endif %}
+    </video>
+    {% elseif record.youtube_url %}
+    <iframe src="{{ record.youtube_url }}" title="{{ name }}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    {% elseif record.vimeo_url %}
+    <iframe src="{{ record.vimeo_url }}" title="{{ name }}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+    {% else %}
+    <span class="ring"></span>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="cover">
+    {% if cover and cover.path %}
+    <img src="{{ cover.path }}" alt="{{ name }}" loading="lazy" decoding="async">
+    {% elseif type == 'videos' %}
+    <span class="ring"></span><svg class="doc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/></svg>
+    {% else %}
+    <span class="ring"></span><svg class="doc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    {% endif %}
+  </div>
+  {% endif %}
+  <div class="body">
+    <h3>{{ name }}</h3>
+    {% if type == 'videos' and embed %}
+      {% if record.description %}<div class="cms-content">{{ record.description|raw }}</div>{% endif %}
+      {% if record.file %}
+      <div class="dl-row">
+        <a class="btn-download" href="{{ base }}?download={{ record.file.id }}&amp;file_name={{ name|replace({' ': '_'})|url_encode }}" aria-label="Download {{ name }}">Download {{ dl_icon|raw }}</a>
+      </div>
+      {% endif %}
+      {% if record.transcript %}
+      <details class="transcript"><summary>Transcript</summary><div class="cms-content">{{ record.transcript|raw }}</div></details>
+      {% endif %}
+    {% elseif links|length %}
+    <div class="dl-row">
+      {% for l in links %}
+      <a class="btn-download{% if not loop.first %} ghost{% endif %}" href="{{ l.url }}"{% if l.ext %} target="_blank" rel="noopener"{% elseif not l.play %} download{% endif %} aria-label="{{ l.aria }}">{{ l.label }} {{ (l.ext ? ext_icon : (l.play ? '' : dl_icon))|raw }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</article>

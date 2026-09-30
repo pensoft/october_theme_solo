@@ -1,5 +1,6 @@
 title = "Cookies policy"
 url = "/cookies"
+layout = "default"
 is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
@@ -8,4 +9,21 @@ robot_follow = "follow"
 include_css = 1
 include_js = 1
 ==
-{% component 'cookieManager' %}
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/content.css'|theme }}">{% endput %}
+
+{% partial 'site/subhero' title='Cookies policy' %}
+
+{% set cookie_manager %}{% component 'cookieManager' %}{% endset %}
+<section class="page-body">
+  <div class="container">
+    {% if cookie_manager|trim %}
+      <div class="cms-content solo-form cookie-manager">
+        {{ cookie_manager|raw }}
+      </div>
+    {% else %}
+      <div class="cms-content">
+        <p>This website uses cookies to ensure you get the best experience. Details about the cookies we use, and how to manage them, are given in our <a href="/privacy-policy">Privacy policy</a>.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>

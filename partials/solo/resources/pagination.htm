@@ -1,0 +1,17 @@
+{# SOLO redesign: design-style pagination for a Laravel paginator. Param: paginator #}
+{% if paginator.lastPage > 1 %}
+{% set cur = paginator.currentPage %}
+{% set last = paginator.lastPage %}
+<nav class="pagination" aria-label="Pagination">
+  {% if cur > 1 %}<a href="{{ paginator.url(cur - 1) }}" class="nav-btn" rel="prev">Prev</a>{% else %}<span class="nav-btn disabled">Prev</span>{% endif %}
+  {% set prevShown = 0 %}
+  {% for p in 1..last %}
+    {% if p == 1 or p == last or (p >= cur - 1 and p <= cur + 1) %}
+      {% if prevShown and p > prevShown + 1 %}<span class="gap">…</span>{% endif %}
+      {% if p == cur %}<span class="current" aria-current="page">{{ p }}</span>{% else %}<a href="{{ paginator.url(p) }}">{{ p }}</a>{% endif %}
+      {% set prevShown = p %}
+    {% endif %}
+  {% endfor %}
+  {% if cur < last %}<a href="{{ paginator.url(cur + 1) }}" class="nav-btn" rel="next">Next</a>{% else %}<span class="nav-btn disabled">Next</span>{% endif %}
+</nav>
+{% endif %}

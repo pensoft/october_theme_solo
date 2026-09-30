@@ -1,0 +1,10 @@
+{# Site search form (GET /search?q=...). Params: q (current query), id (input id, default 'site-search-q') #}
+{% set sf_id = id ?: 'site-search-q' %}
+<form class="search-form" action="/search" method="get" role="search">
+  <div class="search-input">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <label for="{{ sf_id }}" class="sr-only">Search the SOLO website</label>
+    <input id="{{ sf_id }}" type="search" name="q" value="{{ q }}" placeholder="Search the SOLO website" autocomplete="off">
+  </div>
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>

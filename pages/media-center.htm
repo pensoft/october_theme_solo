@@ -21,107 +21,49 @@ function onStart(){
 	$this['newsletters'] =  Newsletters::get();
 	$this['presentations'] =  Presentations::get();
 	$this['pressreleases'] =  Pressreleases::get();
-	$this['videos'] =  Videos::get();
+	$this['videos'] =  Videos::where('pensoft_media_videos.parent_id', null)->get();
 	$this['graphics'] =  Graphic::get();
 }
 ?>
 ==
-<section class="container-fluid" aria-label="Media center">
-    <div class="container">
-        <div class="row">
-            {% if logos.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/brand-kit" aria-label="Brand Kit">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'logo.svg'|media}}) center center no-repeat;" role="img" aria-label="Brand Kit icon"></div>
-                        </div>
-                        <span class="media_label">Brand Kit</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/media.css'|theme }}">{% endput %}
 
-            {% if flyers.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/brochure" aria-label="Brochure">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'brochure.svg'|media}}) center center no-repeat;" role="img" aria-label="Brochure icon"></div>
-                        </div>
-                        <span class="media_label">Brochure</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
+{% partial 'solo/media-subhero' title='Promo Materials' active='promo' %}
 
-            <!--stickers-->
-            {% if graphics.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/stickers" aria-label="Stickers">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'stickers.svg'|media}}) center center no-repeat;" role="img" aria-label="Stickers icon"></div>
-                        </div>
-                        <span class="media_label">Stickers</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
+{# Categories = the promo sub-pages; each list comes from the same models as
+   /media-center/brand-kit, /brochure, /stickers, /presentations, /videos. #}
+{% set groups = [
+  {key: 'brand-kit', label: 'Brand Kit', records: logos},
+  {key: 'stickers', label: 'Stickers', records: graphics},
+  {key: 'brochure', label: 'Brochure', records: flyers},
+  {key: 'videos', label: 'Videos', records: videos},
+  {key: 'presentations', label: 'Presentations', records: presentations}
+] %}
+{% set total = logos|length + graphics|length + flyers|length + videos|length + presentations|length %}
 
-            {% if pressreleases.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/announcements" aria-label="Announcements">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'announcements.svg'|media}}) center center no-repeat;" role="img" aria-label="Announcements icon"></div>
-                        </div>
-                        <span class="media_label">Announcements</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-
-            {% if newsletters.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/newsletters" aria-label="Newsletter">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'newsletter.svg'|media}}) center center no-repeat;" role="img" aria-label="Newsletter icon"></div>
-                        </div>
-                        <span class="media_label">Newsletter</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-
-            {% if videos.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/videos" aria-label="Videos">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'videos.svg'|media}}) center center no-repeat;" role="img" aria-label="Videos icon"></div>
-                        </div>
-                        <span class="media_label">Videos</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-
-            <!--Presentations-->
-            {% if presentations.count() %}
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="card-container text-center">
-                    <a href="{{url('media-center')}}/presentations" aria-label="Presentations">
-                        <div class="card_border">
-                            <div class="card_image_container" style="background: url({{'poster.svg'|media}}) center center no-repeat;" role="img" aria-label="Presentations icon"></div>
-                        </div>
-                        <span class="media_label">Presentations</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-
-        </div>
+<section>
+  <div class="container" data-promo="">
+    {% if total %}
+    <div class="promo-filter" role="tablist" aria-label="Filter materials by category">
+      <button type="button" class="active" role="tab" aria-selected="true" data-filter="all">All</button>
+      {% for g in groups if g.records|length %}
+      <button type="button" role="tab" aria-selected="false" data-filter="{{ g.key }}">{{ g.label }}</button>
+      {% endfor %}
     </div>
+
+    <div class="grid-3">
+      {% for g in groups %}
+      {% for record in g.records %}
+      {% partial 'solo/promo-item' record=record type=g.key %}
+      {% endfor %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <h3>No promo materials yet</h3>
+      <p>Logos, brochures, stickers, presentations and videos will appear here once they are published.</p>
+    </div>
+    {% endif %}
+  </div>
 </section>

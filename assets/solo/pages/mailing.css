@@ -1,0 +1,28 @@
+/* ============================================================
+   SOLO — Mails page (/mails, pages/mailing.htm)
+   The form markup comes from the Pensoft.Mailing plugin and is not edited;
+   these rules only restyle it from the theme.
+   ============================================================ */
+
+/* Group / individual icons: shown inline after every group and person name,
+   not as a background next to the "Groups" / "Individuals" headings. */
+#mails .row .group-head {
+  background: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+#mails .inputHolder label > span::after {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 18px;
+  margin-left: 8px;
+  vertical-align: -3px;
+  background: center / contain no-repeat;
+}
+#mails .inputHolder:has(input[name="groups[]"]) label > span::after {
+  background-image: url('/storage/app/media/CMS_icons_groups.svg');
+}
+#mails .inputHolder:has(input[name="users[]"]) label > span::after {
+  background-image: url('/storage/app/media/CMS_icons_individuals.svg');
+}

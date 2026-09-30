@@ -1,0 +1,5 @@
+{# Shown on the auth pages when the visitor is already signed in #}
+<div class="signed-in">
+  <p class="desc" style="margin-bottom:0">You are signed in as <span class="ink">{{ user.name }} {{ user.surname }}</span>{% if user.email %} ({{ user.email }}){% endif %}.</p>
+  <a class="btn btn-primary" href="/profile">Go to your profile {% partial 'solo/auth/icon' name='arrow' %}</a>
+</div>

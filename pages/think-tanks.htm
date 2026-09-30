@@ -74,79 +74,264 @@ background = "transperant"
 templates = "template3"
 description_limit = 0
 ==
+<?php
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
+
+function onStart(){
+    // anchor (kept from the old page so existing /think-tanks#… links still work) => jumbotron slug
+    $order = [
+        'Reduce-Desertification' => 'reduce-land-degradation',
+        'Soil-organic-carbon-stocks' => 'conserve-and-increase-soil-organic-carbon-stocks',
+        'Soil-sealing-and-urban-soils' => 'no-net-soil-sealing-and-increase-reuse-urban-soils',
+        'Pollution-and-restoration' => 'reduce-soil-pesticide-pollution-and-enhance-restoration',
+        'Erosion-prevention' => 'prevent-erosion',
+        'Footprint-on-soils' => 'reduce-eu-global-footprint-soils',
+        'Soil-structure' => 'improve-soil-structure',
+        'Soil-literacy' => 'increase-soil-literacy-member-states',
+        'Nature-conservation-of-soil-biodiversity' => 'nature-conservation-soil-biodiversity',
+        'Climate-smart-sustainable-agricultural-soil-management' => 'climate-smart-sustainable-agricultural-soil-management',
+    ];
+    // Think tank logos (same files the previous theme used), keyed by jumbotron slug.
+    // A logo uploaded in the jumbotron's Image field overrides these.
+    $ttLogos = [
+        'reduce-land-degradation' => 'assets/images/SOLO_Reduce-desertification-logo.png',
+        'conserve-and-increase-soil-organic-carbon-stocks' => 'assets/images/SOLO-Carbon-rgb.svg',
+        'no-net-soil-sealing-and-increase-reuse-urban-soils' => 'assets/images/SOLO-Urban-rgb.svg',
+        'reduce-soil-pesticide-pollution-and-enhance-restoration' => 'assets/images/SOLO-Pesticide-rgb_v2.svg',
+        'prevent-erosion' => 'assets/images/SOLO-Erosion-rgb.svg',
+        'reduce-eu-global-footprint-soils' => 'assets/images/SOLO-Footprint-rgb.svg',
+        'improve-soil-structure' => 'assets/images/SOLO-Structure-rgb.svg',
+        'increase-soil-literacy-member-states' => 'assets/images/SOLO-Literacy-rgb.svg',
+        'nature-conservation-soil-biodiversity' => 'assets/images/SOLO-Conservation-rgb.svg',
+        'climate-smart-sustainable-agricultural-soil-management' => 'https://soils4europe.eu/storage/app/media/SOLO-Climate-smart-agriculture-rgb.svg',
+    ];
+
+    $records = JumbotronModel::whereIn('slug', array_values($order))->get()->keyBy('slug');
+
+    $items = [];
+    foreach ($order as $anchor => $slug) {
+        $j = $records->get($slug);
+        if (!$j || !trim(strip_tags((string) $j->body, '<img>'))) continue;
+        $parsed = $this->soloParseThinkTank((string) $j->body);
+        $logo = ($j->image && $j->image->path) ? $j->image->path : null;
+        if (!$logo && isset($ttLogos[$slug])) {
+            $logo = preg_match('#^https?://#', $ttLogos[$slug]) ? $ttLogos[$slug] : $this->controller->themeUrl($ttLogos[$slug]);
+        }
+        $items[] = [
+            'anchor' => $anchor,
+            'slug' => $slug,
+            'id' => $j->id,
+            'title' => $j->title,
+            'body' => $j->body,
+            'logo' => $logo ?: $parsed['photo'],
+            'is_photo' => !$logo && $parsed['photo'],
+            'tt' => $parsed,
+            'url' => $j->url,
+            'button_name' => $j->button_name,
+        ];
+    }
+    $this['think_tanks'] = $items;
+    $this['tt_intro'] = JumbotronModel::where('slug', 'think-tanks-intro')->first();
+}
+
+/**
+ * Split a Think Tank jumbotron body (free HTML from the editor) into the parts the design shows:
+ * leader, target call-out (.brown_bg), description, list (+ its heading), photo and remaining copy.
+ * Falls back to ok=false (raw body is rendered) if the HTML cannot be parsed.
+ */
+function soloParseThinkTank($html){
+    $out = ['ok' => false, 'leader' => null, 'target' => null, 'desc' => null, 'list_heading' => null,
+            'list' => [], 'photo' => null, 'photo_alt' => null, 'rest' => null];
+    if (!class_exists('DOMDocument') || trim($html) === '') return $out;
+
+    $prev = libxml_use_internal_errors(true);
+    $dom = new \DOMDocument('1.0', 'UTF-8');
+    $ok = $dom->loadHTML('<?xml encoding="utf-8"?' . '><div id="tt-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    libxml_clear_errors();
+    libxml_use_internal_errors($prev);
+    if (!$ok) return $out;
+    $xp = new \DOMXPath($dom);
+    $root = $xp->query('//*[@id="tt-root"]')->item(0);
+    if (!$root) return $out;
+
+    $inner = function ($node) use ($dom) {
+        $h = '';
+        foreach ($node->childNodes as $c) $h .= $dom->saveHTML($c);
+        return trim($h);
+    };
+    $text = function ($node) {
+        return trim(preg_replace('/\s+/u', ' ', str_replace("\xC2\xA0", ' ', $node->textContent)));
+    };
+    $remove = function ($node) { if ($node && $node->parentNode) $node->parentNode->removeChild($node); };
+
+    // Leader
+    foreach ($xp->query('.//p', $root) as $p) {
+        $t = $text($p);
+        if (preg_match('/^Leader\s*:/i', $t)) {
+            $out['leader'] = trim(preg_replace('/^(Leader\s*:\s*)+/i', '', $t));
+            $remove($p);
+            break;
+        }
+    }
+
+    // Target call-out
+    $bb = $xp->query('.//*[contains(concat(" ", normalize-space(@class), " "), " brown_bg ")]', $root)->item(0);
+    if ($bb) { $out['target'] = $inner($bb); $remove($bb); }
+
+    // Photo
+    $img = $xp->query('.//img', $root)->item(0);
+    if ($img) {
+        $out['photo'] = $img->getAttribute('src');
+        $out['photo_alt'] = $img->getAttribute('alt');
+        $holder = $img->parentNode;
+        if ($holder && strtolower($holder->nodeName) === 'p' && $text($holder) === '') $remove($holder); else $remove($img);
+    }
+
+    // First list + the heading/lead-in right before it
+    $ul = $xp->query('.//ul | .//ol', $root)->item(0);
+    if ($ul) {
+        foreach ($xp->query('./li', $ul) as $li) {
+            $li = trim(preg_replace('/(&nbsp;|\s|;)+$/u', '', $inner($li)));
+            if ($li !== '') $out['list'][] = $li;
+        }
+        // nearest preceding element; climb out of layout wrappers when the list is their first child
+        $prevEl = function ($n) { $n = $n->previousSibling; while ($n && $n->nodeType !== XML_ELEMENT_NODE) $n = $n->previousSibling; return $n; };
+        $anchor = $ul;
+        $h = $prevEl($anchor);
+        while (!$h && $anchor->parentNode && $anchor->parentNode !== $root && in_array(strtolower($anchor->parentNode->nodeName), ['div', 'section'])) {
+            $anchor = $anchor->parentNode;
+            $h = $prevEl($anchor);
+        }
+        if ($h && in_array(strtolower($h->nodeName), ['h2', 'h3', 'h4', 'p']) && mb_strlen($text($h)) < 220) {
+            $out['list_heading'] = $text($h);
+            $remove($h);
+        }
+        $remove($ul);
+    }
+
+    // Flatten what is left into a list of blocks (layout <div>s are dropped)
+    $blocks = [];
+    $walk = function ($node) use (&$walk, &$blocks, $dom, $text) {
+        foreach (iterator_to_array($node->childNodes) as $c) {
+            if ($c->nodeType === XML_TEXT_NODE) {
+                if (trim(str_replace("\xC2\xA0", ' ', $c->textContent)) !== '') $blocks[] = '<p>' . htmlspecialchars(trim($c->textContent)) . '</p>';
+                continue;
+            }
+            if ($c->nodeType !== XML_ELEMENT_NODE) continue;
+            $tag = strtolower($c->nodeName);
+            if (in_array($tag, ['div', 'section', 'article'])) { $walk($c); continue; }
+            if ($tag === 'p' && $text($c) === '' && !$c->getElementsByTagName('img')->length && !$c->getElementsByTagName('iframe')->length) continue;
+            if ($tag === 'br') continue;
+            $blocks[] = ['tag' => $tag, 'html' => $dom->saveHTML($c), 'node' => $c];
+        }
+    };
+    $walk($root);
+
+    $descParts = [];
+    $rest = [];
+    foreach ($blocks as $b) {
+        if (is_string($b)) { $rest[] = $b; continue; }
+        if (!$descParts && !$rest && $b['tag'] === 'p') { $descParts[] = $inner($b['node']); continue; }
+        $rest[] = $b['html'];
+    }
+    $out['desc'] = $descParts ? $descParts[0] : null;
+    $out['rest'] = trim(implode("\n", $rest)) ?: null;
+    $out['ok'] = true;
+    return $out;
+}
+?>
+==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/think-tanks.page.css'|theme }}">{% endput %}
+
 {% component 'siteSearchInclude' %}
-<div class="container think_tanks_container">
-    <div class="row">
-        <nav class="tabs" aria-label="Think tanks topics navigation">
-            <h2 class="sr-only">Jump to Topic</h2>
-            <a href="#Reduce-Desertification">Reduce Desertification</a>
-            <a href="#Soil-organic-carbon-stocks">Soil organic carbon stocks</a>
-            <a href="#Soil-sealing-and-urban-soils">Soil sealing and urban soils</a>
-            <a href="#Pollution-and-restoration">Pollution and restoration</a>
-            <a href="#Erosion-prevention">Erosion prevention</a>
-            <a href="#Footprint-on-soils">Footprint on soils</a>
-            <a href="#Soil-structure">Soil structure</a>
-            <a href="#Soil-literacy">Soil literacy</a>
-            <a href="#Nature-conservation-of-soil-biodiversity">Nature conservation of soil biodiversity</a>
-            <a href="#Climate-smart-sustainable-agricultural-soil-management">Climate-smart sustainable agricultural soil management</a>
-        </nav>
+
+<div class="think-tanks-page">
+
+{% partial 'site/subhero' title='Think Tanks' %}
+
+<section class="tt-section">
+  <div class="container">
+    <div data-tt>
+      <div class="tt-list-view">
+        <div class="tt-intro" data-reveal>
+          {% if tt_intro and tt_intro.body|striptags|trim %}
+          {{ tt_intro.body|raw }}
+          {% else %}
+          <p>The Think Tanks are an essential part of the Soils for Europe project that will co-develop the European Union Mission: A Soil Deal for Europe roadmaps, facilitate knowledge exchange and establish a solid connection to current and future EU and international soil health projects. Each Think Tank, led by different SOLO partners, will correspond to a Soil Mission objective and will support its mission and goals. All Outlook chapters will be integrated into one overarching roadmap tailored towards policy implementation</p>
+          <p>Find out more information on the Think Tanks and their leaders below:</p>
+          {% endif %}
+        </div>
+
+        {% if think_tanks|length %}
+        {% partial 'solo/think-tank-tiles' items=think_tanks link=false %}
+        {% else %}
+        <div class="solo-empty" style="margin-top: 48px;">Think Tank details will be published soon.</div>
+        {% endif %}
+      </div>
+
+      {% for item in think_tanks %}
+      {% set tt = item.tt %}
+      <article class="tt-detail" id="{{ item.anchor }}" aria-labelledby="{{ item.anchor }}-title" tabindex="-1">
+        <button class="tt-back" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg>
+          All Think Tanks
+        </button>
+
+        {% if tt.ok %}
+        <div class="tt-detail-head">
+          <h2 id="{{ item.anchor }}-title">{{ item.title }}</h2>
+          {% if tt.leader %}<p class="tt-leader">Leader: <strong>{{ tt.leader }}</strong></p>{% endif %}
+          {% if tt.desc %}<p class="tt-desc">{{ tt.desc|raw }}</p>{% endif %}
+          <a class="btn btn-primary" href="{{ item.url ?: '/mission-objective-roadmaps' }}">{{ item.button_name ?: 'Go to roadmap' }}
+            <svg class="arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </div>
+
+        {% if tt.target %}
+        <div class="tt-banner tt-target">
+          {% if '<p' in tt.target %}<div>{{ tt.target|raw }}</div>{% else %}<p>{{ tt.target|raw }}</p>{% endif %}
+        </div>
+        {% endif %}
+
+        {% if tt.list|length %}
+        <div class="tt-objectives">
+          {% if tt.list_heading %}<h3>{{ tt.list_heading }}</h3>{% endif %}
+          <div class="tt-obj-list">
+            {% for li in tt.list %}
+            <div class="tt-obj">
+              <img src="{{ 'assets/solo/icons/goal-arrow.svg'|theme }}" alt="" width="41" height="41" decoding="async">
+              <p>{{ li|raw }}</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if tt.photo or tt.rest %}
+        <div class="tt-feature{% if not tt.photo %} tt-feature--text{% endif %}">
+          {% if tt.photo %}
+          <div class="tt-photo">
+            <img src="{{ tt.photo }}" alt="{{ tt.photo_alt ?: item.title }}" loading="lazy" decoding="async">
+          </div>
+          {% endif %}
+          {% if tt.rest %}
+          <div class="tt-feature-copy cms-content">{{ tt.rest|raw }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="tt-detail-head">
+          <h2 id="{{ item.anchor }}-title">{{ item.title }}</h2>
+        </div>
+        <div class="cms-content">{{ item.body|raw }}</div>
+        {% endif %}
+      </article>
+      {% endfor %}
     </div>
+  </div>
+</section>
 
-    <section class="row" id="Reduce-Desertification" aria-labelledby="heading-reduce-desertification">
-        <h2 id="heading-reduce-desertification" class="sr-only">Reduce Desertification</h2>
-        {% component 'jumbotron' %}
-    </section>
-
-
-    <section class="row" id="Soil-organic-carbon-stocks" aria-labelledby="heading-soil-organic-carbon">
-        <h2 id="heading-soil-organic-carbon" class="sr-only">Soil organic carbon stocks</h2>
-        {% component 'jumbotron2' %}
-    </section>
-
-
-    <section class="row" id="Soil-sealing-and-urban-soils" aria-labelledby="heading-soil-sealing">
-        <h2 id="heading-soil-sealing" class="sr-only">Soil sealing and urban soils</h2>
-        {% component 'jumbotron3' %}
-    </section>
-
-
-    <section class="row" id="Pollution-and-restoration" aria-labelledby="heading-pollution-restoration">
-        <h2 id="heading-pollution-restoration" class="sr-only">Pollution and restoration</h2>
-        {% component 'jumbotron7' %}
-    </section>
-
-
-    <section class="row" id="Erosion-prevention" aria-labelledby="heading-erosion-prevention">
-        <h2 id="heading-erosion-prevention" class="sr-only">Erosion prevention</h2>
-        {% component 'jumbotron4' %}
-    </section>
-
-    <section class="row" id="Footprint-on-soils" aria-labelledby="heading-footprint-soils">
-        <h2 id="heading-footprint-soils" class="sr-only">Footprint on soils</h2>
-        {% component 'footprint' %}
-    </section>
-
-
-    <section class="row" id="Soil-structure" aria-labelledby="heading-soil-structure">
-        <h2 id="heading-soil-structure" class="sr-only">Soil structure</h2>
-        {% component 'structure' %}
-    </section>
-
-
-    <section class="row" id="Soil-literacy" aria-labelledby="heading-soil-literacy">
-        <h2 id="heading-soil-literacy" class="sr-only">Soil literacy</h2>
-        {% component 'literacy' %}
-    </section>
-
-
-    <section class="row" id="Nature-conservation-of-soil-biodiversity" aria-labelledby="heading-nature-conservation">
-        <h2 id="heading-nature-conservation" class="sr-only">Nature conservation of soil biodiversity</h2>
-        {% component 'jumbotron5' %}
-    </section>
-
-
-    <section class="row" id="Climate-smart-sustainable-agricultural-soil-management" aria-labelledby="heading-climate-smart">
-        <h2 id="heading-climate-smart" class="sr-only">Climate-smart sustainable agricultural soil management</h2>
-        {% component 'jumbotron6' %}
-    </section>
 </div>
+
+{% put bodyScripts %}<script src="{{ 'assets/solo/think-tanks.js'|theme }}"></script>{% endput %}

@@ -1,0 +1,191 @@
+/* ============================================================
+   SOLO — theme integration layer
+   Pieces the static design does not cover but the CMS needs:
+   user menu, rich text coming from the CMS, generic content pages,
+   forms rendered by plugins, and the internal-tools layout.
+   Loaded after site.css on every page.
+   ============================================================ */
+
+/* ---------- Member bar (logged-in users, above the main header) ---------- */
+/* Links: BenFreke.MenuManager menu id 9 (partials/site/member-bar.htm). */
+:root { --member-bar-h: 40px; }
+.member-bar {
+  position: relative; z-index: 51;
+  background: var(--accent-ink);
+  color: rgba(251,247,240,.82);
+  font-size: 13px;
+}
+.member-bar .member-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  min-height: var(--member-bar-h);
+}
+.member-bar .member-nav { flex: 1 1 auto; min-width: 0; }
+.member-bar ul { list-style: none; margin: 0; padding: 0; }
+.member-bar .member-nav > ul { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.member-bar .member-nav > ul > li { position: relative; flex: none; }
+.member-bar a, .member-bar button {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: inherit; font-weight: 500; white-space: nowrap;
+  transition: background .15s var(--t), color .15s var(--t);
+}
+.member-bar a:hover, .member-bar button:hover { background: rgba(251,247,240,.10); color: #fff; }
+.member-bar .member-nav > ul > li.active > a,
+.member-bar a.active { background: rgba(251,247,240,.16); color: #fff; }
+.member-bar a:focus-visible, .member-bar button:focus-visible { outline: 2px solid #FBF7F0; outline-offset: 1px; }
+
+/* Second level: dropdown under its parent */
+.member-bar .caret {
+  display: inline-block; width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid currentColor;
+  opacity: .8;
+}
+.member-bar .member-nav ul ul {
+  position: absolute; top: 100%; left: 0; z-index: 70;
+  min-width: 220px; padding: 8px;
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  opacity: 0; visibility: hidden; transform: translateY(-4px);
+  transition: opacity .18s var(--t), transform .18s var(--t), visibility .18s var(--t);
+}
+.member-bar .member-nav > ul > li:hover > ul,
+.member-bar .member-nav > ul > li:focus-within > ul { opacity: 1; visibility: visible; transform: none; }
+.member-bar .member-nav ul ul a { display: flex; width: 100%; padding: 9px 12px; color: var(--fg); font-size: 14px; }
+.member-bar .member-nav ul ul a:hover, .member-bar .member-nav ul ul li.active > a { background: var(--accent-bg); color: var(--accent); }
+
+.member-bar .member-user { display: flex; align-items: center; gap: 4px; flex: none; }
+.member-bar .member-profile span { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; }
+.member-bar .member-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex: none; }
+.member-bar svg.member-avatar { padding: 3px; background: rgba(251,247,240,.14); }
+.member-bar .member-logout svg { width: 15px; height: 15px; }
+@media (max-width: 720px) {
+  .member-bar .member-inner { gap: 12px; }
+  /* One scrolling row; sub-menus would be clipped, so only top-level links show */
+  .member-bar .member-nav > ul { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .member-bar .member-nav > ul::-webkit-scrollbar { display: none; }
+  .member-bar .member-nav ul ul, .member-bar .caret { display: none; }
+  .member-bar .member-profile span { display: none; }
+  .member-bar .member-logout { font-size: 0; gap: 0; }
+  .member-bar .member-logout svg { width: 17px; height: 17px; }
+}
+/* Home: the transparent header is fixed; start it below the member bar. */
+.member-bar ~ .site-header.over-hero { top: var(--member-bar-h); }
+.member-bar ~ .site-header.over-hero.scrolled { top: 0; }
+
+/* Anchor targets clear the sticky header */
+[id] { scroll-margin-top: 96px; }
+
+/* ---------- Rich text from the CMS (jumbotrons, articles, events) ---------- */
+.cms-content { color: var(--fg-soft); font-size: 17px; line-height: 1.72; }
+.cms-content > * + * { margin-top: 1em; }
+.cms-content h1, .cms-content h2, .cms-content h3, .cms-content h4 { margin-top: 1.6em; color: var(--fg); }
+.cms-content h1:first-child, .cms-content h2:first-child, .cms-content h3:first-child, .cms-content h4:first-child { margin-top: 0; }
+.cms-content h1 { font-size: clamp(30px, 3.4vw, 42px); }
+.cms-content h2 { font-size: clamp(26px, 3vw, 36px); }
+.cms-content h3 { font-size: clamp(20px, 2.2vw, 26px); }
+.cms-content p { margin: 0; color: inherit; text-wrap: pretty; }
+.cms-content p + p { margin-top: 1em; }
+.cms-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--accent-line); }
+.cms-content a:hover { text-decoration-color: var(--accent); }
+.cms-content ul, .cms-content ol { padding-left: 1.3em; margin: 0; }
+.cms-content ul + *, .cms-content ol + * { margin-top: 1em; }
+.cms-content li + li { margin-top: .4em; }
+.cms-content li::marker { color: var(--accent); }
+.cms-content img { height: auto; border-radius: var(--radius); }
+.cms-content figure { margin: 0; }
+.cms-content blockquote {
+  margin: 0; padding: 18px 22px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--fg);
+}
+.cms-content table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.cms-content th, .cms-content td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.cms-content th { color: var(--fg); font-weight: 600; background: var(--surface); }
+.cms-content iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
+.cms-content hr { border: 0; height: 1px; background: var(--border); margin: 2em 0; }
+
+/* ---------- Generic content page (privacy, cookies, conference, …) ---------- */
+.page-body { padding: clamp(56px, 7vw, 96px) 0; }
+.page-body .cms-content { max-width: 78ch; }
+.page-body.center-col .cms-content { margin-inline: auto; }
+.page-body .block + .block { margin-top: 48px; }
+
+/* ---------- Forms rendered by plugins ---------- */
+.solo-form { display: grid; gap: 18px; }
+.solo-form label, .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--fg); margin-bottom: 6px; }
+.solo-form input[type="text"], .solo-form input[type="email"], .solo-form input[type="password"],
+.solo-form input[type="search"], .solo-form input[type="number"], .solo-form input[type="date"],
+.solo-form input[type="url"], .solo-form input[type="tel"], .solo-form select, .solo-form textarea,
+.form-control {
+  width: 100%;
+  padding: 13px 16px;
+  font: inherit; font-size: 15px; color: var(--fg);
+  background: var(--surface-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  transition: border-color .2s var(--t), box-shadow .2s var(--t);
+}
+.solo-form textarea { min-height: 140px; resize: vertical; }
+.solo-form input:focus, .solo-form select:focus, .solo-form textarea:focus, .form-control:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-bg);
+}
+.solo-form .checkbox, .solo-form .form-check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.solo-form .help, .solo-form small { font-size: 13px; color: var(--muted); }
+.solo-form button[type="submit"], .solo-form .btn-submit {
+  justify-self: start;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px;
+  border-radius: var(--radius-pill);
+  background: var(--accent); color: #fff; font-weight: 500; font-size: 15px;
+  box-shadow: 0 8px 24px -10px rgba(87,19,0,.55);
+  transition: background .2s var(--t), transform .25s var(--t);
+}
+.solo-form button[type="submit"]:hover, .solo-form .btn-submit:hover { background: var(--accent-2); transform: translateY(-1px); }
+
+/* October flash messages */
+.flash-message, .alert {
+  padding: 14px 18px; border-radius: 12px;
+  background: var(--accent-bg); color: var(--accent-ink);
+  border: 1px solid var(--accent-line); font-size: 14px;
+}
+.alert-success { background: #E6EEDC; color: #2E3F1C; border-color: #B8C9A0; }
+.alert-danger, .alert-error { background: #F6E0DA; color: #5A1407; border-color: #E0A898; }
+
+/* ---------- Empty and loading states ---------- */
+.solo-empty { padding: 48px 24px; text-align: center; color: var(--muted); border: 1px dashed var(--border-strong); border-radius: var(--radius-lg); }
+
+/* ---------- Internal / member tools (layouts/internal.htm) ---------- */
+/* The previous theme styles are loaded on these pages; keep the new shell intact. */
+.layout-internal #layout-content { padding-bottom: 0; }
+/* Member pages: plain white instead of the design's beige page colour */
+body.layout-internal { background: #fff; }
+.layout-internal .site-main.legacy-main { background: #fff; }
+.layout-internal .legacy-content { padding-top: 48px; padding-bottom: 96px; }
+.layout-internal .site-header, .layout-internal .site-footer { font-family: var(--font-sans); }
+.layout-internal .site-header h5, .layout-internal .site-footer h5 { margin: 0; }
+.layout-internal .site-footer p { color: rgba(255,255,255,.7); }
+.layout-internal .subhero h1 { color: #fff; margin-bottom: 0; }
+
+/* Home: main starts under the transparent header */
+.page-home .site-main { padding-top: 0; }
+
+/* ---------- Footer: EU funding flag ---------- */
+/* site.css sizes .eu-emblem as an 84x56 box for a placeholder; the real image is a
+   wide banner (3960x882), so give it its natural proportions and more width. */
+.site-footer img.eu-emblem {
+  flex: 0 0 auto;
+  width: 240px; max-width: 100%;
+  height: auto;
+  aspect-ratio: 3960 / 882;
+  object-fit: contain;
+  border-radius: 0;
+  background: none;
+}
+@media (max-width: 880px) {
+  .site-footer .eu { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .site-footer img.eu-emblem { width: 210px; }
+}

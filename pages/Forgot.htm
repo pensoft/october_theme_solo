@@ -1,6 +1,6 @@
 title = "Password reset"
 url = "/forgot"
-layout = "default"
+layout = "auth"
 is_hidden = 0
 robot_index = "index"
 robot_follow = "follow"
@@ -9,19 +9,11 @@ robot_follow = "follow"
 paramCode = "code"
 ==
 {% if not user %}
-<div class="container" style="padding-right: 10%;">
-    <div class="login_info row start-xs">
-        <div class="login_image aos-init aos-animate" data-aos="fade-up">
-            <img src="{{'login.jpg'|media}}"></div>
-        <div class="logn_form">
-            {% if resetPassword.code == null %}
-            {% partial 'components/resetpassword/restore' %}
-            {% else %}
-            {% partial 'components/resetpassword/reset' %}
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-
+{% if resetPassword.code == null %}
+{% partial 'solo/auth/shell' heading='Reset your password' desc='Enter the email address of your account and we will send you a link to choose a new password.' form='solo/auth/restore' %}
+{% else %}
+{% partial 'solo/auth/shell' heading='Choose a new password' desc='Please check your email for the reset code, then choose a new password.' form='solo/auth/reset' %}
+{% endif %}
+{% else %}
+{% partial 'solo/auth/shell' heading='You are already signed in' form='solo/auth/signed-in' %}
 {% endif %}

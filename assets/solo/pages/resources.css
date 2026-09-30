@@ -1,0 +1,55 @@
+/* SOLO — additions for Resources / Library / Impact framework / Roadmaps pages
+   (CMS-driven bits the static design does not cover). */
+
+.res-sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+.resources-page .subhero + section { padding-top: clamp(40px, 4vw, 56px); }
+
+.result-count { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.res-reset { font-size: 14px; font-weight: 600; color: var(--accent); }
+.res-reset:hover { text-decoration: underline; }
+
+.status-pill.pending { color: var(--ochre, #8a5a1c); }
+.pub-card .res-venue { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.pub-card .res-venue .yr::before { content: none; }
+.pub-card .card-foot:empty { display: none; }
+
+.media-card .body .res-meta { font-size: 13px; color: var(--muted); margin: -6px 0 0; }
+.media-card .body .res-actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px; }
+.media-card .body .res-actions .btn-download { margin-top: 0; }
+
+/* Impact Assessment Framework: CMS icons are uploaded images */
+.iaf-cat-ico img { width: 48px; height: 48px; object-fit: contain; display: block; }
+.iaf-detail-ico img { width: 34px; height: 34px; object-fit: contain; display: block; }
+a.iaf-cat { text-decoration: none; }
+a.iaf-cat:focus-visible { outline: none; }
+a.iaf-cat:focus-visible .iaf-cat-plate { outline: 2px solid var(--accent); outline-offset: 3px; }
+.iaf-cat-desc p { margin: 0; }
+.iaf-intro .cms-content, .iaf-intro .cms-content p { font-size: 16.5px; line-height: 1.78; color: var(--muted); }
+.iaf-intro .cms-content { margin-top: 22px; }
+.iaf-narrative-copy .cms-content p { margin: 0 0 20px; font-size: 16px; line-height: 1.78; color: var(--muted); text-align: left; }
+.iaf-narrative-copy .cms-content { text-align: left; }
+.iaf-back { text-decoration: none; }
+.kpi-desc.cms-content { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 0 0 22px; padding-top: 16px; border-top: 1px solid var(--border-soft); flex: 1 1 auto; }
+.kpi-desc.cms-content p { margin: 0 0 8px; }
+.kpi-card .btn { margin-top: auto; }
+.iaf-empty { margin-top: 8px; }
+
+/* Open review list */
+.review-list { display: grid; gap: 20px; max-width: 900px; margin: 0; }
+.review-card { display: flex; flex-direction: column; gap: 12px; }
+.review-card .review-due { font-size: 14px; font-weight: 600; color: var(--accent); }
+.review-card .card-foot { display: flex; gap: 12px; flex-wrap: wrap; }
+.review-intro { max-width: 72ch; margin: 0 0 32px; text-align: left; color: var(--muted); }
+.review-actions { display: flex; justify-content: flex-start; gap: 12px; margin: 0 0 32px; }
+.review-popup { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: rgba(20, 8, 2, .55); }
+.review-popup[hidden] { display: none; }
+.review-popup .review-popup-box { position: relative; max-width: 560px; width: 100%; max-height: 90vh; overflow: auto; background: var(--surface-elev, #fff); border-radius: var(--radius, 16px); padding: 32px 28px 28px; box-shadow: var(--shadow-lg); }
+.review-popup .review-popup-close { position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; border: 0; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: var(--muted); }
+.iaf-detail-head h2 { margin: 0; font-size: clamp(23px, 2.4vw, 32px); line-height: 1.16; letter-spacing: -0.025em; }

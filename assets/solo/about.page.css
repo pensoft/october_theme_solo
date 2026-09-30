@@ -1,0 +1,411 @@
+/* ============================================================
+   SOLO — About
+   Organic, circular-led layout: circular image frames, thick
+   ring accents, soil textures, expandable work packages.
+   ============================================================ */
+
+/* ---------- Sub-hero ---------- */
+/* Background, overlay and text colours come from the shared .subhero rules in
+   site.css — only the compact padding and title scale are page-specific. */
+.subhero {
+  padding: 74px 0 56px;
+}
+.subhero h1 {
+  margin: 20px 0 0;
+  font-size: clamp(38px, 4.6vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+/* ---------- Shared organic pieces ---------- */
+.circle-frame {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 14px solid var(--surface-elev);
+  box-shadow: var(--shadow-lg);
+}
+.circle-frame img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none;
+  aspect-ratio: auto !important;
+  object-fit: cover !important;
+  object-position: center;
+  display: block;
+  transition: transform .7s var(--t);
+}
+.circle-frame:hover img { transform: scale(1.06); }
+
+.ring-outline {
+  position: absolute;
+  border-radius: 50%;
+  border: 18px solid var(--accent-bg);
+  pointer-events: none;
+}
+.ring-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--ochre);
+  pointer-events: none;
+}
+
+.sec-title {
+  margin: 0 0 22px;
+  font-size: clamp(30px, 3.4vw, 44px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+/* ---------- Section 1: intro / lead ---------- */
+.intro-lead {
+  position: relative;
+  padding: 40px 0 90px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.intro-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 70px;
+  align-items: center;
+}
+.intro-grid p {
+  margin: 0;
+  font-size: clamp(21px, 2.1vw, 30px);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--fg-soft);
+  text-wrap: pretty;
+}
+/* Section 1 and Section 2 share the same orbit-ring composition. */
+.intro-media,
+.bg-media {
+  --orbit-r: 232px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+.intro-media .circle-frame,
+.bg-media .circle-frame {
+  width: 72%;
+  border-width: 16px;
+  z-index: 2;
+}
+.intro-media .ring-outline,
+.bg-media .ring-outline {
+  width: 100%;
+  aspect-ratio: 1;
+  z-index: 1;
+  border-color: var(--accent-bg);
+}
+
+/* ---------- Section 2: background ---------- */
+.background-sec {
+  position: relative;
+  padding: 96px 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.bg-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 70px;
+  align-items: center;
+}
+.bg-copy p {
+  margin: 0 0 20px;
+  font-size: 16.5px;
+  line-height: 1.78;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.bg-copy p:last-child { margin-bottom: 0; }
+
+/* Small dot travelling continuously around the outline ring. */
+.bg-media .ring-dot {
+  width: 30px; height: 30px;
+  top: 50%; left: 50%;
+  margin: -15px 0 0 -15px;
+  z-index: 3;
+  background: var(--accent);
+  animation: orbit 20s linear infinite;
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(var(--orbit-r)); }
+  to   { transform: rotate(360deg) translateX(var(--orbit-r)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-media .ring-dot { animation: none; transform: translateX(var(--orbit-r)); }
+}
+
+/* ---------- Section 3: EU Mission goals ---------- */
+.mission-sec {
+  position: relative;
+  padding: 96px 0;
+  background: var(--tone-paper);
+  overflow: hidden;
+}
+.mission-header {
+  max-width: 860px;
+  margin: 0 0 56px;
+}
+.mission-header .sec-title { margin-bottom: 18px; }
+.mission-intro {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* A single quiet panel: numeral + statement per row, hairline separated. */
+.goal-ledger {
+  max-width: 980px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.goal {
+  display: grid;
+  grid-template-columns: 41px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 26px 38px;
+  border-top: 1px solid var(--border-soft);
+  transition: background .25s var(--t);
+}
+.goal:first-child { border-top: 0; }
+.goal:hover { background: var(--surface); }
+.goal-arrow {
+  display: block;
+  width: 41px; height: 41px;
+  transition: transform .25s var(--t);
+}
+.goal:hover .goal-arrow { transform: translateX(4px); }
+.goal p {
+  margin: 0;
+  font-size: 16.5px;
+  line-height: 1.66;
+  color: var(--fg-soft);
+  text-wrap: pretty;
+}
+
+/* ---------- Section 4: objectives (contrast) ---------- */
+.objectives {
+  position: relative;
+  padding: 104px 0;
+  background-color: var(--accent);
+  color: #F6EFE5;
+  overflow: hidden;
+}
+/* Muted soil photograph over the brand colour — faded far enough back that
+   body text keeps full contrast. */
+.objectives::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('img/soil-bands.jpeg');
+  background-size: cover;
+  background-position: center;
+  opacity: .15;
+  pointer-events: none;
+}
+.objectives::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(46,10,0,.34) 0%, rgba(46,10,0,.62) 100%);
+  pointer-events: none;
+}
+.objectives .container { position: relative; z-index: 1; }
+.objectives .blob {
+  position: absolute;
+  width: 620px; height: 620px;
+  border-radius: 50%;
+  border: 40px solid rgba(246,239,229,.05);
+  top: -220px; left: -160px;
+  pointer-events: none;
+}
+.objectives .sec-title { color: #FFF6EA; }
+.obj-head { margin-bottom: 46px; }
+
+.obj-list { display: grid; gap: 16px; }
+.obj {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 24px 26px;
+  background: rgba(28,8,2,.30);
+  border: 1px solid rgba(246,239,229,.16);
+  border-radius: var(--radius-lg);
+}
+.obj-ico {
+  flex: none;
+  display: grid; place-items: center;
+  width: 74px; height: 74px;
+  border-radius: 50%;
+  background: rgba(246,239,229,.08);
+  border: 2px solid rgba(246,239,229,.26);
+}
+.obj-ico img { width: 38px; height: 38px; object-fit: contain; display: block; }
+.obj p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.68;
+  color: rgba(246,239,229,.9);
+  text-wrap: pretty;
+}
+
+/* ---------- Section 5: work packages (circles + panel) ---------- */
+.wp-section {
+  position: relative;
+  padding: 100px 0 120px;
+  background: var(--bg-deep);
+  overflow: hidden;
+}
+.wp-head { max-width: 720px; margin-bottom: 54px; }
+
+.wp-circles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  margin-bottom: 52px;
+}
+.wp-circle {
+  position: relative;
+  width: 160px; height: 160px;
+  flex: none;
+  display: grid; place-items: center;
+  padding: 0;
+  font: inherit;
+  text-align: center;
+  background: var(--surface-elev);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  color: var(--fg);
+  cursor: pointer;
+  transition: transform .25s var(--t), background .25s var(--t),
+              border-color .25s var(--t), color .25s var(--t), box-shadow .25s var(--t);
+}
+.wp-circle::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--border-soft);
+  transition: border-color .25s var(--t);
+}
+.wp-circle:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-line);
+  box-shadow: var(--shadow);
+}
+.wp-circle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wp-circle.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #F6EFE5;
+  box-shadow: 0 18px 40px -16px rgba(87,19,0,.55);
+}
+.wp-circle.active::before { border-color: rgba(255,255,255,.25); }
+.wp-circle .c-in { display: flex; flex-direction: column; align-items: center; }
+.wp-circle .wp-num {
+  font-family: var(--font-sans);
+  font-size: 11.5px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .7;
+  margin-bottom: 6px;
+}
+.wp-circle .wp-label {
+  font-size: 36px; font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+}
+
+.wp-panel-wrap {
+  background: var(--surface-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.wp-panel { display: none; padding: 46px 52px; }
+.wp-panel.active { display: block; }
+.wp-panel .meta {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
+}
+.wp-panel h3 {
+  margin: 14px 0 24px;
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.025em;
+  max-width: 24ch;
+  text-wrap: pretty;
+}
+.wp-panel ul {
+  margin: 0; padding: 0; list-style: none;
+  display: flex; flex-direction: column; gap: 13px;
+}
+.wp-panel li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 15.5px;
+  line-height: 1.68;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.wp-panel li::before {
+  content: '';
+  position: absolute;
+  left: 2px; top: 9px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2.5px solid var(--ochre);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .intro-grid,
+  .bg-grid { grid-template-columns: 1fr; gap: 46px; }
+  .intro-media,
+  .bg-media { --orbit-r: 208px; max-width: 450px; }
+  .mission-header { margin-bottom: 44px; }
+  .goal { padding: 24px 28px; gap: 20px; }
+}
+@media (max-width: 720px) {
+  .intro-lead { padding: 28px 0 64px; }
+  .background-sec,
+  .mission-sec { padding: 66px 0; }
+  .objectives { padding: 72px 0; }
+  .wp-section { padding: 70px 0 90px; }
+  .circle-frame { border-width: 10px; }
+  .goal { grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 20px 18px; }
+  .goal-arrow { width: 32px; height: 32px; }
+  .goal p { font-size: 15.5px; }
+  .intro-media,
+  .bg-media { --orbit-r: 158px; max-width: 340px; }
+  .intro-media .ring-outline,
+  .bg-media .ring-outline { border-width: 12px; }
+  .bg-media .ring-dot { width: 22px; height: 22px; margin: -11px 0 0 -11px; }
+  .obj { padding: 18px 18px; gap: 16px; }
+  .obj-ico { width: 58px; height: 58px; }
+  .obj-ico img { width: 30px; height: 30px; }
+  .wp-circles { gap: 18px; }
+  .wp-circle { width: 124px; height: 124px; }
+  .wp-circle .wp-label { font-size: 27px; }
+  .wp-panel { padding: 30px 22px; }
+}

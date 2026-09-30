@@ -43,74 +43,212 @@ description_limit = 0
 ==
 <?php
 use Pensoft\Accordions\Models\Item;
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
 
 function onStart(){
     $this['accorions'] = Item::where('category_id', 1)->get();
+
+    // Raw jumbotron records (Backend > Jumbotron), rendered in the new design markup
+    $j = [];
+    foreach (['about-intro', 'background', 'list-mission', 'objectives'] as $slug) {
+        $j[$slug] = JumbotronModel::where('slug', $slug)->first();
+    }
+    $this['j_intro'] = $j['about-intro'];
+    $this['j_background'] = $j['background'];
+    $this['j_mission'] = $j['list-mission'];
+    $this['j_objectives'] = $j['objectives'];
+
+    // Mission: "<p>heading</p><ul><li>…</li></ul><p>closing text</p>"
+    $mission = ['heading' => null, 'items' => [], 'outro' => null];
+    if ($j['list-mission'] && $j['list-mission']->body) {
+        $body = $j['list-mission']->body;
+        $mission['items'] = $this->soloListItems($body);
+        $parts = preg_split('/<(ul|ol)\b[\s\S]*<\/\1>/i', $body, 2);
+        if (count($parts) === 2) {
+            $mission['heading'] = trim(html_entity_decode(strip_tags($parts[0]), ENT_QUOTES, 'UTF-8'));
+            $mission['outro'] = trim(html_entity_decode(strip_tags($parts[1]), ENT_QUOTES, 'UTF-8'));
+        }
+    }
+    $this['mission'] = $mission;
+
+    // Objectives: "<div class='row objectives_list'><div class='col-…'>text</div>…</div>"
+    $objectives = [];
+    if ($j['objectives'] && $j['objectives']->body) {
+        preg_match_all('/<div[^>]*class="[^"]*\bcol-[^"]*"[^>]*>([\s\S]*?)<\/div>/i', $j['objectives']->body, $m);
+        foreach ($m[1] as $html) {
+            $html = trim(str_replace('&nbsp;', ' ', $html));
+            if ($html !== '') $objectives[] = $html;
+        }
+        if (!$objectives) $objectives = $this->soloListItems($j['objectives']->body);
+    }
+    $this['objective_items'] = $objectives;
+
+    // Work packages: list items of each accordion body
+    $wps = [];
+    foreach ($this['accorions'] as $item) {
+        $wps[] = [
+            'prefix' => $item->prefix,
+            'title' => trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />'], ' ', $item->title)))),
+            'items' => $this->soloListItems($item->body),
+            'body' => $item->body,
+        ];
+    }
+    $this['wps'] = $wps;
+}
+
+function soloListItems($html){
+    $out = [];
+    if (!$html) return $out;
+    preg_match_all('/<li\b[^>]*>([\s\S]*?)<\/li>/i', $html, $m);
+    foreach ($m[1] as $li) {
+        $li = trim(preg_replace('/(&nbsp;|\s)+$/u', '', str_replace('&nbsp;', ' ', $li)));
+        $li = rtrim($li, " ;");
+        if ($li !== '') $out[] = $li;
+    }
+    return $out;
 }
 ?>
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/about.page.css'|theme }}">{% endput %}
+
 {% component 'siteSearchInclude' %}
 
-<section class="container aims" aria-label="Project aims">
-    <div class="row middle-xs">
-        <div class="col-xs-12">
-            {% component 'aims' %}
+{% partial 'site/subhero' title='About SOLO' current='About' %}
+
+
+<section class="intro-lead" aria-label="Project aims">
+  <div class="container">
+    <div class="intro-grid">
+      <div data-reveal>
+        {% if j_intro and j_intro.body %}
+        {{ j_intro.body|raw }}
+        {% else %}
+        <p>SOLO aims to identify current knowledge gaps, drivers, bottlenecks, and novel research and innovation approaches to be considered in the European Soil Mission research and innovation roadmap.</p>
+        {% endif %}
+      </div>
+      <div class="intro-media" data-reveal data-reveal-delay="1">
+        <span class="ring-outline" aria-hidden="true"></span>
+        <div class="circle-frame">
+          <img src="{{ 'assets/solo/img/seedling.jpeg'|theme }}" alt="Two seedlings emerging from dark soil" loading="lazy" decoding="async">
         </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<section class="container image_bg" aria-label="Project image">
-    <div class="row middle-xs between-xs">
-        <div class="col-xs-12">
-            {% component 'image' %}
+
+{% if j_background %}
+<section class="background-sec" aria-labelledby="about-background-title">
+  <div class="container">
+    <div class="bg-grid">
+      <div class="bg-media" data-reveal>
+        <span class="ring-outline" aria-hidden="true"></span>
+        <div class="circle-frame">
+          <img src="{{ 'assets/solo/img/cricket-soil.jpeg'|theme }}" alt="A mole cricket on a mound of soil beside a green seedling" loading="lazy" decoding="async">
         </div>
+      </div>
+      <div class="bg-copy" data-reveal data-reveal-delay="1">
+        <h2 class="sec-title" id="about-background-title">{{ j_background.title ?: 'Background' }}</h2>
+        {{ j_background.body|raw }}
+      </div>
     </div>
+  </div>
 </section>
+{% endif %}
 
-<section class="container-fluid background_info_background" aria-label="Background information">
-    <div class="container mt-4">
-        <div class="row middle-xs">
-            <div class="col-xs-12">
-                <div class="background">
-                    <div class="some_background" role="presentation"></div>
-                    {% component 'background' %}
-                </div>
-            </div>
-        </div>
+
+{% if j_mission %}
+<section class="mission-sec" aria-label="The EU Soil Mission">
+  <div class="container">
+    {% if mission.items|length %}
+    <div class="mission-header">
+      {% if mission.heading %}
+      <h2 class="sec-title" data-reveal>{{ mission.heading }}</h2>
+      {% endif %}
+      {% if mission.outro %}
+      <p class="mission-intro" data-reveal data-reveal-delay="1">{{ mission.outro }}</p>
+      {% endif %}
     </div>
-</section>
 
-<section class="container-fluid list_background" aria-label="Mission">
-    <div class="container list_mission">
-        <div class="row middle-xs">
-            <div class="col-xs-12">
-                {% component 'list_mission' %}
-            </div>
-        </div>
+    <ol class="goal-ledger">
+      {% for goal in mission.items %}
+      <li class="goal" data-reveal data-reveal-delay="{{ min(loop.index, 5) }}">
+        <img class="goal-arrow" src="{{ 'assets/solo/icons/goal-arrow.svg'|theme }}" alt="" width="41" height="41" decoding="async">
+        <p>{{ goal|raw }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <div class="cms-content" data-reveal>{{ j_mission.body|raw }}</div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+
+{% if j_objectives %}
+<section class="objectives" aria-labelledby="about-objectives-title">
+  <span class="blob" aria-hidden="true"></span>
+  <div class="container">
+    <div class="obj-head">
+      <h2 class="sec-title" id="about-objectives-title" data-reveal>{{ j_objectives.title ?: 'Objectives' }}</h2>
     </div>
-</section>
-
-<section class="container-fluid objectives_background" aria-label="Objectives">
-    <div class="container objectives">
-        {% component 'objectives' %}
+    {% if objective_items|length %}
+    <div class="obj-list">
+      {% for obj in objective_items %}
+      <div class="obj" data-reveal data-reveal-delay="{{ min(loop.index, 5) }}">
+        <span class="obj-ico"><img src="{{ ('assets/solo/icons/obj-' ~ (loop.index0 % 5 + 1) ~ '.svg')|theme }}" alt="" width="38" height="38" decoding="async"></span>
+        <p>{{ obj|raw }}</p>
+      </div>
+      {% endfor %}
     </div>
+    {% else %}
+    <div class="cms-content">{{ j_objectives.body|raw }}</div>
+    {% endif %}
+  </div>
 </section>
+{% endif %}
 
-<section class="container work_packages" aria-label="Work packages">
-    <h2>Work Packages</h2>
-    <div class="row work_packages_container">
-        {% for key, item in accorions %}
-        <a class="col-md col-xs-12" onclick="showHideWP(this);" onkeypress="if(event.key==='Enter'||event.key===' '){showHideWP(this); event.preventDefault();}" aria-expanded="false" aria-controls="wp_content_{{key}}" type="button">
-            <div class="prefix_container">
-                <div class="wp_prefix">{{item.prefix | uppercase}}</div>
-                <div class="wp_title">{{item.title|raw}}</div>
-            </div>
-        </a>
-        <div class="wp_content wp_content_{{key}}" id="wp_content_{{key}}" role="region" aria-labelledby="wp_button_{{key}}" hidden>
-            {{item.body|raw}}
-        </div>
 
-        {% endfor %}
+{% if wps|length %}
+<section class="wp-section" aria-labelledby="about-wp-title">
+  <div class="container">
+    <div class="wp-head" data-reveal>
+      <h2 class="sec-title" id="about-wp-title">Work Packages</h2>
     </div>
-</section>
+    <div class="wp-circles" role="tablist" aria-label="Work Packages">
+      {% for wp in wps %}
+      {% set wpid = '%02d'|format(loop.index) %}
+      {% set wpnum = wp.prefix|upper|replace({'WP': '', ' ': ''}) %}
+      <button class="wp-circle" type="button" role="tab" data-wp-trigger="{{ wpid }}" id="wp-tab-{{ wpid }}" aria-controls="wp-panel-{{ wpid }}" aria-selected="false" tabindex="-1" aria-label="{{ wp.prefix|upper }}: {{ wp.title }}">
+        <span class="c-in">
+          <span class="wp-num">WP</span>
+          <span class="wp-label">{{ wpnum ? (wpnum|length == 1 ? '0' ~ wpnum : wpnum) : wpid }}</span>
+        </span>
+      </button>
+      {% endfor %}
+    </div>
 
+    <div class="wp-panel-wrap">
+      {% for wp in wps %}
+      {% set wpid = '%02d'|format(loop.index) %}
+      <div class="wp-panel" id="wp-panel-{{ wpid }}" data-wp-panel="{{ wpid }}" role="tabpanel" aria-labelledby="wp-tab-{{ wpid }}" hidden>
+        <div class="meta">{{ wp.prefix|upper }}</div>
+        <h3>{{ wp.title }}</h3>
+        {% if wp.items|length %}
+        <ul>
+          {% for li in wp.items %}
+          <li>{{ li|raw }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="cms-content">{{ wp.body|raw }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% put bodyScripts %}<script src="{{ 'assets/solo/about.js'|theme }}"></script>{% endput %}

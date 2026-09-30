@@ -42,46 +42,10 @@ flush();
 readfile($file_name);
 exit();
 }
-return Redirect::to('/media-center/flyer');
+return Redirect::to('/media-center/presentations');
 }
 
 }
 ?>
 ==
-<section class="container" aria-label="Presentations list">
-    <div class="row">
-        {% set records = mediaPresentationsList %}
-        {% set displayColumn = mediaPresentationsList.displayColumn %}
-        {% set noRecordsMessage = mediaPresentationsList.noRecordsMessage %}
-        {% set detailsPage = mediaPresentationsList.detailsPage %}
-        {% set detailsKeyColumn = mediaPresentationsList.detailsKeyColumn %}
-        {% set detailsUrlParameter = mediaPresentationsList.detailsUrlParameter %}
-
-        {% for record in records %}
-        {# Use spaceless tag to remove spaces inside the A tag. #}
-        {% spaceless %}
-        {% if record.presentation_image %}
-        <article class="col-md-3 col-xs-12 center-xs">
-            <p class="logo_container">
-                <img src="{{record.presentation_image.path}}" alt="{{record.name}} preview">
-            </p>
-
-            {% if record.file %}
-            <div class="col-xs-12">
-                <div class="text-center">
-                    <h2>{{record.name}}</h2>
-                    <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}}">Download</a>
-                </div>
-            </div>
-            {% endif %}
-
-        </article>
-
-        {% endif %}
-
-        {% endspaceless %}
-        {% else %}
-        <p>{{ noRecordsMessage }}</p>
-        {% endfor %}
-    </div>
-</section>
+{% partial 'solo/promo-subpage' records=mediaPresentationsList type='presentations' title='Presentations' noun='presentations' noun_one='presentation' %}

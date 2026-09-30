@@ -4,29 +4,115 @@ title = "Roadmaps review"
 header_text = "This page includes different roadmaps on the main knowledge gaps on research and innovation on soils across the different Mission Soil Objectives, created by SOLO's Think Tanks, which are ready for review. Please log in or create a profile in order to review them."
 
 [siteSearchInclude]
+==
+<?php
+use Pensoft\Externaldocuments\Components\Documents;
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
 
-[ExternalDocumentsList]
-externalLibrary = "arpha"
-paging = 10
-journal = 122
+function onStart()
+{
+    // Documents open for review come from the ARPHA database via the
+    // ExternalDocumentsList component (pensoft/externaldocuments). It is run
+    // here inside try/catch so an unreachable ARPHA connection shows the empty
+    // state instead of a 500 error.
+    $this['review_docs'] = null;
+    $this['review_component'] = null;
+    try {
+        $component = new Documents($this, [
+            'externalLibrary' => 'arpha',
+            'paging' => 10,
+            'journal' => 122,
+        ]);
+        $component->alias = 'ExternalDocumentsList';
+        $component->onRun();
+        $this['review_docs'] = $this['external_documents'];
+        $this['review_component'] = $component;
+    } catch (\Throwable $e) {
+        \Log::warning('Roadmaps review: external documents unavailable: ' . $e->getMessage());
+    }
+
+    $this['review_popup'] = JumbotronModel::where('slug', 'review-document-popup-text')->first();
+}
+?>
 ==
 {% component 'siteSearchInclude' %}
-<div class="container external_documents">
-            {% if user %}
-                {% set url = '/login-redirect/1' %}
-                <div class="some_news_background2"></div>
-                <div class="some_news_background"></div>
-                <div class="create_document">
-                        <a href="{{url}}" target="_blank">Create document</a>
-                </div>
-            {% else %}
-                {% set url = '/login' %}
-            {% endif %}
- <!-- Temporary Stopped becase -->
- <!--     <div class="container external_documents">
-              APRHA is under maintenance. We will be back shortly. Thank you for your patience!
-          </div>
- -->           
-{% component 'ExternalDocumentsList' %}
-    
+
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/resources.css'|theme }}">{% endput %}
+
+{% set arrow %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>{% endset %}
+
+<div class="solo-page">
+{% partial 'site/subhero' title='Open Review Process' crumbs=[{title:'R&I Roadmaps', url:'/mission-objective-roadmaps'}] %}
+
+<section>
+  <div class="container">
+    {% if this.page.header_text %}
+    <p class="review-intro">{{ this.page.header_text }}</p>
+    {% endif %}
+
+    {% if user %}
+    <div class="review-actions">
+      <a class="btn btn-primary" href="/login-redirect/1" target="_blank" rel="noopener">Create document</a>
+    </div>
+    {% endif %}
+
+    {% if review_docs and review_docs.count > 0 %}
+    <div class="review-list">
+      {% for record in review_docs %}
+      {% set due = review_component.calculatePanelDueDateDays(record.panel_duedate) %}
+      <article class="pub-card review-card">
+        {% if record.subjects_list %}
+        <div class="card-top"><span class="tag other">{{ record.subjects_list }}</span></div>
+        {% endif %}
+        <h3>{{ record.name|striptags }}</h3>
+        {% if record.authors_list %}<p class="authors" data-authors="{{ record.authors_list }}">{{ record.authors_list|replace({',': ', '}) }}</p>{% endif %}
+        {% if due %}<p class="review-due">Available for review in the next {{ due }}</p>{% endif %}
+        <div class="card-foot">
+          {% if user %}
+          <a class="btn-download" href="{{ review_component.encryptStringUrl(record.document_id, user.arpha_id) }}" target="_blank" rel="noopener">Review this document {{ arrow|raw }}</a>
+          {% else %}
+          <button class="btn-download" type="button" data-review-open aria-haspopup="dialog" aria-controls="review-popup">Review this document {{ arrow|raw }}</button>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% partial 'solo/resources/pagination' paginator=review_docs %}
+    {% else %}
+    <div class="empty-state" style="max-width:640px;margin:0 auto;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+      <h3>There are currently no documents available for review</h3>
+    </div>
+    {% endif %}
+  </div>
+</section>
 </div>
+
+{% if not user and review_docs and review_docs.count > 0 %}
+<div class="review-popup" id="review-popup" role="dialog" aria-modal="true" aria-label="Review this document" hidden>
+  <div class="review-popup-box">
+    <button type="button" class="review-popup-close" data-review-close aria-label="Close">&times;</button>
+    {% if review_popup and review_popup.body %}
+    <div class="cms-content">{{ review_popup.body|raw }}</div>
+    {% else %}
+    <p>Please <a href="/login">log in or create a profile</a> in order to review the documents.</p>
+    {% endif %}
+  </div>
+</div>
+{% put bodyScripts %}
+<script>
+(function () {
+  var pop = document.getElementById('review-popup');
+  if (!pop) return;
+  var last = null;
+  function close() { pop.hidden = true; if (last) last.focus(); }
+  document.querySelectorAll('[data-review-open]').forEach(function (b) {
+    b.addEventListener('click', function () { last = b; pop.hidden = false; pop.querySelector('[data-review-close]').focus(); });
+  });
+  pop.querySelector('[data-review-close]').addEventListener('click', close);
+  pop.addEventListener('click', function (e) { if (e.target === pop) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) close(); });
+})();
+</script>
+{% endput %}
+{% endif %}

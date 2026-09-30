@@ -42,51 +42,10 @@ flush();
 readfile($file_name);
 exit();
 }
-return Redirect::to('/media-center/flyer');
+return Redirect::to('/media-center/brochure');
 }
 
 }
 ?>
 ==
-<section class="container" aria-label="Brochures list">
-    <div class="row">
-        {% set records = mediaFlyersList %}
-        {% set displayColumn = mediaFlyersList.displayColumn %}
-        {% set noRecordsMessage = mediaFlyersList.noRecordsMessage %}
-        {% set detailsPage = mediaFlyersList.detailsPage %}
-        {% set detailsKeyColumn = mediaFlyersList.detailsKeyColumn %}
-        {% set detailsUrlParameter = mediaFlyersList.detailsUrlParameter %}
-
-        {% for record in records %}
-        {# Use spaceless tag to remove spaces inside the A tag. #}
-        {% spaceless %}
-        {% if record.flyer_image %}
-        <article class="col-md-3 col-xs-12 center-xs">
-            <p class="logo_container">
-                <img src="{{record.flyer_image.path}}" alt="{{record.name}} preview">
-            </p>
-            <div class="col-xs-12">
-                <div class="text-center">
-                    <h2>{{record.name}}</h2>
-                    {% if record.file_lang_versions %}
-                    <nav class="row lang_versions_btn" aria-label="Download {{record.name}} in different languages">
-                        <p>Download</p>
-                        {% for language_item in record.file_lang_versions %}
-                        <a href="{{ ''| page }}?{{queries}}&download={{language_item.id}}&file_name={{language_item.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}} in {{language_item.description}}">{{language_item.description}}</a>
-                        {% endfor %}
-                    </nav>
-                    {% else %}
-                    <a href="{{ ''| page }}?{{queries}}&download={{record.file.id}}&file_name={{record.file.file_name|replace({' ': '_'})}}" class="btn btn-primary" download aria-label="Download {{record.name}}">Download</a>
-                    {% endif %}
-                </div>
-            </div>
-        </article>
-
-        {% endif %}
-
-        {% endspaceless %}
-        {% else %}
-        <p>{{ noRecordsMessage }}</p>
-        {% endfor %}
-    </div>
-</section>
+{% partial 'solo/promo-subpage' records=mediaFlyersList type='brochure' title='Brochure' noun='brochures' noun_one='brochure' %}

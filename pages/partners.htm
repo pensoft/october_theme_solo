@@ -16,11 +16,81 @@ description_limit = 0
 <?php
 use Pensoft\Partners\Models\Partners;
 use Pensoft\Cardprofiles\Models\Profiles;
+use Pensoft\Jumbotron\Models\Jumbotron as JumbotronModel;
+use RainLab\Location\Models\Country as CountryModel;
 
 function onStart(){
-	$this['partners'] =  Partners::where('type', 1)->get();
-$this['members'] = Profiles::where('category_id',  2)->get();
+    $this['partners'] = Partners::where('type', 1)->get();
+    $this['members'] = Profiles::where('category_id', 2)->get();
+    $this['consortium_jumbotron'] = JumbotronModel::where('slug', 'consortium')->first();
 
+    // Design fallback logos (assets/solo/logos) – used only when a partner has no logo in the CMS
+    $fallbackLogos = [
+        'leipzig' => 'leipzig.png', 'pesticide' => 'pan.png', 'agroecology' => 'agroecology.png',
+        'leitat' => 'leitat.png', 'netherlands institute of ecology' => 'nioo.png', 'leibniz' => 'zalf.png',
+        'pensoft' => 'pensoft.png', 'lund' => 'lund.png', 'vora' => 'evora.png', 'kőszeg' => 'iask.png',
+        'koszeg' => 'iask.png', 'observatory of athens' => 'noa.png', 'norwegian university' => 'nmbu.png',
+        'antwerp' => 'antwerp.png', 'finland' => 'luke.png',
+    ];
+    $flagsDir = themes_path('pensoft-solo/assets/solo/flags');
+
+    $cards = [];
+    $countries = [];
+    foreach ($this['partners'] as $p) {
+        // Country codes: the "country" relation first, then the JSON "country_code" field
+        $codes = [];
+        $names = [];
+        foreach ($p->country as $c) {
+            if ($c->code) { $codes[] = strtoupper($c->code); $names[strtoupper($c->code)] = $c->name; }
+        }
+        if (!$codes && $p->country_code) {
+            $raw = is_array($p->country_code) ? $p->country_code : [$p->country_code];
+            array_walk_recursive($raw, function ($v) use (&$codes) {
+                if (is_string($v) && preg_match('/^[A-Za-z]{2}$/', trim($v))) $codes[] = strtoupper(trim($v));
+            });
+        }
+        $codes = array_values(array_unique($codes));
+        foreach ($codes as $code) {
+            if (!isset($names[$code])) {
+                $cm = CountryModel::where('code', $code)->first();
+                $names[$code] = $cm ? $cm->name : $code;
+            }
+        }
+
+        $logo = $p->cover ? $p->cover->getPath() : null;
+        if (!$logo) {
+            $hay = mb_strtolower($p->instituion);
+            foreach ($fallbackLogos as $needle => $file) {
+                if (mb_strpos($hay, $needle) !== false) { $logo = url('themes/pensoft-solo/assets/solo/logos/' . $file); break; }
+            }
+        }
+
+        $flags = [];
+        foreach ($codes as $code) {
+            $flags[] = [
+                'code' => $code,
+                'name' => $names[$code],
+                'src' => is_file($flagsDir . '/' . $code . '.png') ? url('themes/pensoft-solo/assets/solo/flags/' . $code . '.png') : null,
+            ];
+            if (!isset($countries[$code])) $countries[$code] = ['name' => $names[$code], 'members' => []];
+            $countries[$code]['members'][] = $p->instituion;
+        }
+
+        // Drop empty paragraphs such as <p><br></p>
+        $content = preg_replace('/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/i', '', (string) $p->content);
+
+        $cards[] = [
+            'id' => $p->id,
+            'name' => $p->instituion,
+            'url' => $p->instituion_url,
+            'logo' => $logo,
+            'code' => $codes ? $codes[0] : null,
+            'flags' => $flags,
+            'content' => trim($content),
+        ];
+    }
+    $this['partner_cards'] = $cards;
+    $this['map_countries'] = $countries;
 }
 
 function onPartners(){
@@ -48,84 +118,80 @@ return Profiles::where('partner_id', $id)->where('category_id',  2)->get();
 }
 ?>
 ==
-<section class="container-fluid partners_background" aria-label="Partners">
-    <div class="svg_map" role="img" aria-label="Interactive map of partner locations">
-        {% partial 'components/svg' %}
-    </div>
-    <div class="container">
-        <span class="tooltiptext" id="tooltip" role="tooltip" aria-live="polite">Bulgaria</span>
-        <div class="row">
-            <div class="col-md-7 col-xs-12 consortium">
-                <div class="row">
-                    <div class="col-xs-12">
-                        {% component 'consortium' %}
-                    </div>
-                </div>
-            </div>
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/partners.page.css'|theme }}">{% endput %}
+
+{% set crumb_sep %}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>{% endset %}
+
+<section class="consortium">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb" data-reveal>
+      <a href="{{ 'home'|page }}">Home</a>
+      {{ crumb_sep|raw }}
+      <a href="{{ 'about'|page }}">About</a>
+      {{ crumb_sep|raw }}
+      <span aria-current="page">Partners</span>
+    </nav>
+
+    <div class="consortium-grid">
+      <div class="c-text" data-reveal>
+        <h1>{{ consortium_jumbotron.title ?: 'Consortium' }}</h1>
+        {% if consortium_jumbotron and consortium_jumbotron.body %}
+        {{ consortium_jumbotron.body|raw }}
+        {% endif %}
+      </div>
+
+      <div data-reveal data-reveal-delay="1">
+        <div class="map-stage">
+          <div class="map-canvas"></div>
+          <div class="map-tip" role="status" aria-live="polite">
+            <div class="t-country"></div>
+            <p class="t-members"></p>
+          </div>
+          <p class="map-failed-note">The interactive map could not be loaded.</p>
         </div>
-        <div class="row container partners-map-container">
-            <div id="mycomponentpartners" class="row partners_list">
-                {% for partner in partners %}
-                <article class="col-md-4 col-xs-12 partner-item">
-                    <div class="row middle-xs logo_and_link">
-                        <div class="col-xs-8 col-md-8 partner_logo">
-                            <a href="{{partner.instituion_url}}" target="_blank" rel="noopener" aria-label="Visit {{partner.instituion}} website">
-                                <img alt="{{partner.instituion}} logo" src="{{partner.cover.thumb(150,auto,{'mode':'crop'})}}">
-                            </a>
-                        </div>
-                        <div class="col-xs-4 col-md-4 partner_link end-xs">
-                            <a href="{{partner.instituion_url}}" target="_blank" rel="noopener" aria-label="Visit {{partner.instituion}} website" class="external-link-icon">&nbsp;</a>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 partner_description mt-2">
-                        <h2>{{partner.instituion}}</h2>
-                        {{partner.content|raw}}
-                    </div>
-
-                    {% if insider_members.getIM(partner.id).count > 0 %}
-                    <div id="accordion-insider-members-{{partner.id}}">
-                        <div class="accordion-border">
-                            <div class="row middle-xs accordion-toggle mb-2">
-                                <div class="col-xs start-xs">
-                                    <button class="showmembers read_more" aria-expanded="false" aria-controls="insider-members-{{partner.id}}" type="button">
-                                        Show members <span aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="accordion-content" id="insider-members-{{partner.id}}" role="region" aria-labelledby="accordion-insider-members-{{partner.id}}" hidden>
-                                <div class="row top-xs">
-                                    {% for profile in insider_members.getIM(partner.id) %}
-                                    <article class="col-md-3 col-xs-12">
-                                        <div class="contact_info row">
-                                            <div class="col-xs-12 coordinator_image">
-                                                {% if profile.avatar %}
-                                                <img alt="{{profile.names}}" src="{{profile.avatar.thumb(236,236,{'mode':'crop'})}}">
-                                                {% else %}
-                                                <img alt="{{profile.names}}" src="{{ 'person.svg'|media }}" width="236" height="236" class="no-image">
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-xs-12 coordinator_info">
-                                                <h3>{{profile.names}}</h3>
-                                                <div class="body">
-                                                    <button class="read-more" onclick="expandReadMore(this);" onkeypress="if(event.key==='Enter'||event.key===' '){expandReadMore(this); event.preventDefault();}" type="button" aria-expanded="false">Read more</button>
-                                                    {{profile.content|raw}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </article>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                </article>
-
-                {% endfor %}
-
-            </div>
-        </div>
-
+        <script type="application/json" id="partners-map-data">{{ map_countries|json_encode|raw }}</script>
+      </div>
     </div>
-
+  </div>
 </section>
+
+
+<section class="partners-section" aria-label="Consortium partners">
+  <div class="container">
+    {% if partner_cards|length %}
+    <div class="partners-grid">
+      {% for p in partner_cards %}
+      <article class="partner-card"{% if p.code %} data-code="{{ p.code }}"{% endif %} data-reveal>
+        <div class="pc-top">
+          {% if p.logo %}
+          <div class="pc-logo"><img src="{{ p.logo }}" alt="{{ p.name }} logo" loading="lazy" decoding="async" /></div>
+          {% else %}
+          <div class="pc-logo"></div>
+          {% endif %}
+          {% for f in p.flags|slice(0, 1) %}
+          {% if f.src %}
+          <img class="pc-flag" src="{{ f.src }}" alt="{{ f.name }}" title="{{ f.name }}" width="84" height="60" decoding="async" />
+          {% endif %}
+          {% endfor %}
+        </div>
+        <div class="pc-body">
+          <h3>{{ p.name }}</h3>
+          {{ p.content|raw }}
+        </div>
+        {% if p.url %}
+        <a class="pc-link" href="{{ p.url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit {{ p.name }} website (opens in a new tab)">Visit website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></a>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="solo-empty">The partner list will be published soon.</div>
+    {% endif %}
+  </div>
+</section>
+
+{% put bodyScripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="{{ 'assets/solo/partners.map.js'|theme }}"></script>
+{% endput %}

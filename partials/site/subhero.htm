@@ -1,0 +1,22 @@
+{#
+  Content-page header band (new design).
+  Params:
+    title   – H1 text (defaults to the page title)
+    lead    – optional intro sentence under the title
+    crumbs  – optional list of {title, url} between "Home" and the current page
+    current – optional breadcrumb label for the current page (defaults to title)
+#}
+{% set sh_title = title ?: this.page.title %}
+<section class="subhero">
+  <div class="container">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="{{ 'home'|page }}">Home</a>
+      {% for c in crumbs %}
+      <span>/</span> <a href="{{ c.url }}">{{ c.title }}</a>
+      {% endfor %}
+      <span>/</span> <span>{{ current ?: sh_title }}</span>
+    </nav>
+    <h1>{{ sh_title|raw }}</h1>
+    {% if lead %}<p class="lead">{{ lead|raw }}</p>{% endif %}
+  </div>
+</section>

@@ -1,123 +1,121 @@
-[menu]
-start = "id-1"
-activeNode = 0
-listItemClasses = "nav-item"
-primaryClasses = "navbar-nav"
-secondaryClasses = "dropdown-menu"
-numberOfLevels = 2
+{#
+  SOLO — site header (new design).
+  Params: page_id (current CMS page id), over_hero (transparent header over a dark hero).
+  Logged-in users also get the member bar (partials/site/member-bar.htm) above the header.
+#}
+{% set caret %}<svg class="caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>{% endset %}
+{% set mcaret %}<svg class="caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>{% endset %}
 
-[menu login]
-start = "id-9"
-activeNode = 0
-listItemClasses = "item"
-primaryClasses = "nav nav-pills"
-secondaryClasses = "dropdown-menu"
-numberOfLevels = 2
-==
+{% set sec_about = page_id in ['about', 'partners', 'advisory-board'] %}
+{% set sec_tt = page_id in ['think-tanks', 'think-tanks-page'] %}
+{% set sec_roadmaps = page_id in ['mission-objective-roadmaps', 'solo-documents'] %}
+{% set sec_resources = page_id in ['resources', 'library', 'publicatons', 'solos-impact-assessment-framework'] %}
+{% set sec_reg = page_id == 'regionalisation' %}
+{% set sec_events = page_id in ['events', 'calendar'] %}
+{% set sec_news = page_id in ['news', 'newsletters', 'press-releases', 'media-center', 'flyer', 'logo', 'stickers', 'presentation', 'videos', 'gallery'] %}
+{% set sec_contact = page_id == 'contact' %}
+
 {% if user %}
 {% set is_external = false %}
-{% for group in user.groups %}
-{% if group.code == 'external-users' %}
-{% set is_external = true %}
-{% endif %}
-{% endfor %}
-
-<header>
-    <nav class="fixed navbar-loggedin-user" aria-label="User account navigation">
-        <div class="navbar-collapse collapse row middle-xs">
-            <div class="col-xs-12 col-md-9">{% if not is_external %} {% component 'login' %} {% endif %}</div>
-            <div class="col-xs-2 end-xs col-md-3 profile_container">
-                {% if user.avatar %}
-                <a href="/profile" class="profile_name" aria-label="View profile for {{ user.name }} {{ user.surname }}"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="" src="{{user.avatar.getThumb(30,30, { mode : 'crop' } )}}" style="border-radius: 50%;" role="presentation"> </a>
-                {% else %}
-                <a href="/profile" class="profile_name" aria-label="View profile for {{ user.name }} {{ user.surname }}"><span>{{ user.name }} {{ user.surname }} &nbsp; &nbsp; </span><img alt="" src="{{ 'CMS_icons_avatar_white.svg'|media }}" width="30" height="30" role="presentation"></a>
-                {% endif %}
-                <button data-request="onLogout" data-request-data="redirect: '/'" class="logoutbtn" aria-label="Logout">&nbsp;</button>
-            </div>
-        </div>
-    </nav>
-</header>
+{% for group in user.groups %}{% if group.code == 'external-users' %}{% set is_external = true %}{% endif %}{% endfor %}
+{% partial 'site/member-bar' page_id=page_id is_external=is_external %}
 {% endif %}
 
-<header>
-    <nav class="navbar fixed pr-1 pl-1" id="headernavbar" {% if user %} style="margin-top:57px;"{% endif %} aria-label="Main navigation">
-        <div id="menuToggle">
-            <input type="checkbox" id="mobileMenuToggle" aria-label="Toggle mobile menu" aria-expanded="false" />
-            <span></span>
-            <span></span>
-            <span></span>
-            {% component 'menu' %}
+<header class="site-header{{ over_hero ? ' over-hero' : '' }}">
+  <div class="container inner">
+    <a href="{{ 'home'|page }}" class="logo" aria-label="SOLO — Home">
+      {% partial 'site/logo-svg' %}
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <div class="has-dropdown">
+        <a href="/about" class="nav-link{{ sec_about ? ' active' : '' }}">About {{ caret|raw }}</a>
+        <div class="dropdown-menu" role="menu">
+          <a href="/about"{{ page_id == 'about' ? ' class="active"' : '' }}><span class="icon-dot"></span>Background and objectives</a>
+          <a href="/partners"{{ page_id == 'partners' ? ' class="active"' : '' }}><span class="icon-dot"></span>Partners</a>
         </div>
-
-        <a href="{{'home'|page}}" class="navbar-brand" id="navbar-brand" style="background-image: url('{{ this.theme.site_logo.getPath() }}'); background-position: center; background-size: contain;" aria-label="Home"></a>
-
-        <div class="navbar-collapse collapse end-xs" id="headerNavbarNav" style="display: none;">
-            {% component 'menu' %}
-            <div id="headerNavbarLogin">
-                <ul class="navbar-nav" style="padding: 0; margin: 0;">
-                </ul>
-            </div>
+      </div>
+      <a href="/think-tanks"{{ sec_tt ? ' class="active" aria-current="page"' : '' }}>Think Tanks</a>
+      <div class="has-dropdown">
+        <a href="/mission-objective-roadmaps" class="nav-link{{ sec_roadmaps ? ' active' : '' }}">R&amp;I Roadmaps {{ caret|raw }}</a>
+        <div class="dropdown-menu" role="menu">
+          <a href="/mission-objective-roadmaps"{{ page_id == 'mission-objective-roadmaps' ? ' class="active"' : '' }}><span class="icon-dot"></span>Mission Objective Roadmaps</a>
+          <a href="/roadmaps"{{ page_id == 'solo-documents' ? ' class="active"' : '' }}><span class="icon-dot"></span>Open Review Process</a>
         </div>
-
-        <section id="search" class="search" style="display: none;" aria-label="Search">
-            <button class="close-search" onclick="hideSearchForm();" aria-label="Close search">&#10006;</button>
-            <form class="input-group align-items-start" action="{{ url('search')}}" method="get" role="search">
-                <label for="searchInput" class="sr-only">Search</label>
-                <input id="searchInput" class="form-control search_input" name="q" type="text" autocomplete="on" placeholder="Search" aria-label="Search">
-                <button class="btn btn-link pr p-search big text-grey-search-btn" type="submit" aria-label="Submit search"></button>
-            </form>
-        </section>
+      </div>
+      <div class="has-dropdown">
+        <a href="/resources" class="nav-link{{ sec_resources ? ' active' : '' }}">Resources {{ caret|raw }}</a>
+        <div class="dropdown-menu" role="menu">
+          <a href="/resources#tab-framework">Impact Assessment Framework</a>
+          <a href="/resources#tab-publications">Publications</a>
+          <a href="/resources#tab-briefs">Policy Briefs</a>
+          <a href="/resources#tab-infographics">Infographics</a>
+        </div>
+      </div>
+      <a href="/regionalisation-of-ri-priorities"{{ sec_reg ? ' class="active" aria-current="page"' : '' }}>Regionalisation of R&amp;I Priorities</a>
+      <a href="/events"{{ sec_events ? ' class="active" aria-current="page"' : '' }}>Events</a>
+      <div class="has-dropdown">
+        <a href="/news" class="nav-link{{ sec_news ? ' active' : '' }}">News &amp; Media {{ caret|raw }}</a>
+        <div class="dropdown-menu" role="menu">
+          <a href="/news"{{ page_id == 'news' ? ' class="active"' : '' }}><span class="icon-dot"></span>News</a>
+          <a href="/media-center/newsletters"{{ page_id == 'newsletters' ? ' class="active"' : '' }}><span class="icon-dot"></span>Newsletter</a>
+          <a href="/media-center/announcements"{{ page_id == 'press-releases' ? ' class="active"' : '' }}><span class="icon-dot"></span>Press Releases</a>
+          <a href="/media-center"{{ page_id == 'media-center' ? ' class="active"' : '' }}><span class="icon-dot"></span>Promo Materials</a>
+        </div>
+      </div>
+      <a href="/contact"{{ sec_contact ? ' class="active" aria-current="page"' : '' }}>Contact</a>
     </nav>
+    <div class="nav-actions">
+      {% if not user %}
+      <a class="btn btn-primary" href="/login">Login</a>
+      {% endif %}
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
 </header>
 
-<div class="container-fluid header_container_background">
-    {% if this.theme.header_image and page_id == 'home' %}
-    <section class="header-image {{page_id}}" aria-label="Page header">
-
-        <div class="header-image-bar" style="background: url('{{this.theme.header_image.getPath()}}') right no-repeat; background-size: contain;" role="img" aria-label="Header background image"></div>
-        <div class="jumbotron" data-aos="fade-right">
-            {% if page_id != 'home' and page_id != 'search' %}
-            <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
-                {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
-
-            {%endif%}
-            {% if page_id == 'home' and tag_line%}
-            <div class="container">
-                <div class="intro">
-                    <div class="logo_main" role="img" aria-label="Site logo"></div>
-                    <div class="site-tag"><p>{{tag_line|raw}}<a href="/about" aria-label="Learn more about us"><i aria-hidden="true"></i></a></p></div>
-                    <nav class="home-btn-container col-md col-xs-12" aria-label="Quick links">
-                        
-                        <a class="btn-home" href="https://soils4europe2026.eu/" target="_blank">Soils for Europe Conference 2026</a>
-                        <a class="btn-home" href="/library?type=0&Filter%5Bsort%5D=year+desc&search=SOLO+Outlook+2025">Outlook 2025 Soil Health R&I Knowledge Gaps</a>
-                        <a class="btn-home" href="/roadmaps">Roadmaps Review</a>
-                    </nav>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </section>
-    {% else %}
-    <section class="header-image {{page_id}}" aria-label="Page header">
-        <div class="header-image-bar" style="background-image: url('{{'image-pages.jpg'|media}}'); background-position: left center; {% if user %}margin-top:57px;{% endif %}" role="img" aria-label="Header background image"></div>
-
-        <div class="jumbotron container" data-aos="fade-right" style="padding-top: 0;">
-            <h1 class="underline white" {% if user %} style="margin-top:35px;"{% endif %}>
-                {%if page_title%} {{page_title}} {%else%} {{site_name}} {%endif%}</h1>
-            {% if this.page.header_text %}
-            <p class="subtitle">{{this.page.header_text}}</p>
-            {%endif%}
-        </div>
-    </section>
-    {% endif %}
+<div class="mobile-nav" role="dialog" aria-label="Mobile navigation">
+  <div class="m-group">
+    <button class="m-trigger" type="button">About {{ mcaret|raw }}</button>
+    <div class="m-sub">
+      <a href="/about">Background and objectives</a>
+      <a href="/partners">Partners</a>
+    </div>
+  </div>
+  <a href="/think-tanks"{{ sec_tt ? ' class="active"' : '' }}>Think Tanks</a>
+  <div class="m-group">
+    <button class="m-trigger" type="button">R&amp;I Roadmaps {{ mcaret|raw }}</button>
+    <div class="m-sub">
+      <a href="/mission-objective-roadmaps">Mission Objective Roadmaps</a>
+      <a href="/roadmaps">Open Review Process</a>
+    </div>
+  </div>
+  <div class="m-group">
+    <button class="m-trigger" type="button">Resources {{ mcaret|raw }}</button>
+    <div class="m-sub">
+      <a href="/resources#tab-framework">Impact Assessment Framework</a>
+      <a href="/resources#tab-publications">Publications</a>
+      <a href="/resources#tab-briefs">Policy Briefs</a>
+      <a href="/resources#tab-infographics">Infographics</a>
+    </div>
+  </div>
+  <a href="/regionalisation-of-ri-priorities"{{ sec_reg ? ' class="active"' : '' }}>Regionalisation of R&amp;I Priorities</a>
+  <a href="/events"{{ sec_events ? ' class="active"' : '' }}>Events</a>
+  <div class="m-group">
+    <button class="m-trigger" type="button">News &amp; Media {{ mcaret|raw }}</button>
+    <div class="m-sub">
+      <a href="/news">News</a>
+      <a href="/media-center/newsletters">Newsletter</a>
+      <a href="/media-center/announcements">Press Releases</a>
+      <a href="/media-center">Promo Materials</a>
+    </div>
+  </div>
+  <a href="/contact"{{ sec_contact ? ' class="active"' : '' }}>Contact</a>
+  {% if user %}
+  <a href="/profile">My profile</a>
+  <a class="btn btn-primary" href="#" data-request="onLogout" data-request-data="redirect: '/'">Log out</a>
+  {% else %}
+  <a class="btn btn-primary" href="/login">Login</a>
+  {% endif %}
 </div>
-
-
-
-
-{% if user %}
-<script>$(document).trigger('profile')</script>
-<script>$(document).trigger('signout')</script>
-{% else %}
-<script>$(document).trigger('signin')</script>
-{% endif %}

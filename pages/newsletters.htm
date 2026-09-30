@@ -27,7 +27,7 @@ use Pensoft\Media\Models\Newsletters;
 use System\Models\File;
 
 function onStart(){
-	$this['mediaNewslettersList'] =  Newsletters::get();
+	$this['mediaNewslettersList'] =  Newsletters::orderBy('date', 'desc')->get();
 	if(get('download')){
 		$file = File::find((int)get('download'));
 		$file_name = $file->getLocalPath();
@@ -54,39 +54,77 @@ return Redirect::to('/media-center/newsletters');
 }
 ?>
 ==
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/pages/media.css'|theme }}">{% endput %}
 {% set records = mediaNewslettersList %}
+{% set jt = jumbotron.getJumbotron() %}
+{% set dl_icon %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>{% endset %}
 
-{% if records.count %}
-<section class="container" aria-label="Newsletters list">
-    <div class="row newsletter_container start-md around-xs">
+{% partial 'solo/media-subhero' title='Newsletter' active='newsletter' %}
 
-        {% for record in records %}
-        {# Use spaceless tag to remove spaces inside the A tag. #}
-        {% spaceless %}
-        {% if record.newsletter_image %}
-        <article class="col-md-4 col-xs-12 newsletter_item mb-4">
-            <div class="text-center">
-                <h2 class="card_title">{{record.name}}</h2>
-                <div class="card_image_container" style="background: url({{record.newsletter_image.path}}) center center no-repeat; height: 350px; background-size: contain;" role="img" aria-label="{{record.name}} cover image"></div>
-                <p class="date">
-                    <time datetime="{{record.date|date('Y-m')}}">{{record.date |date('F Y')}}</time>
-                </p>
-                <a href="{{ record.file.path }}#{{record.file.file_name}}" target="_blank" class="btn btn-primary" rel="noopener" download aria-label="Download {{record.name}} newsletter (opens in new tab)">Download</a>
-            </div>
-        </article>
-
-        {% endif %}
-
-        {% endspaceless %}
-        {% else %}
-        <p>{{ noRecordsMessage }}</p>
-        {% endfor %}
+{% if this.theme.subscribe %}
+<section style="padding-top: clamp(40px,5vw,64px);">
+  <div class="container">
+    <div class="featured-banner" style="grid-template-columns: 1.3fr 1fr;">
+      <span class="ring r1" aria-hidden="true"></span>
+      <span class="ring r2" aria-hidden="true"></span>
+      <div class="fb-content">
+        <h2>Join our community by subscribing to our newsletter!</h2>
+      </div>
+      <div class="fb-cta">
+        <a class="btn btn-primary" href="{{ this.theme.subscribe }}" target="_blank" rel="noopener">Subscribe
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
     </div>
-</section>
-
-
-{% else %}
-<section class="container-fluid bg-secondary coming_soon" aria-label="Coming soon">
-    {% component 'jumbotron' %}
+  </div>
 </section>
 {% endif %}
+
+<section style="padding-top: clamp(40px,5vw,64px);">
+  <div class="container">
+    <div class="section-head"><h2>Past editions</h2></div>
+    {% if records|length %}
+    <p class="result-count">{{ records|length }} edition{{ records|length == 1 ? '' : 's' }}</p>
+    <div class="grid-3">
+      {% for record in records %}
+      {% set links = [] %}
+      {% if record.url %}
+        {% set links = links|merge([{label: 'Download', url: record.url, ext: true, aria: 'Download ' ~ record.name ~ ' newsletter (opens in new tab)'}]) %}
+      {% elseif record.file %}
+        {% set links = links|merge([{label: 'Download', aria: 'Download ' ~ record.name ~ ' newsletter', url: '?download=' ~ record.file.id ~ '&file_name=' ~ (record.name|replace({' ': '_'})|url_encode)}]) %}
+      {% endif %}
+      {% for f in record.file_lang_versions %}
+        {% set lbl = f.description ?: f.title ?: ('Version ' ~ loop.index) %}
+        {% set links = links|merge([{label: lbl, aria: 'Download ' ~ record.name ~ ' newsletter – ' ~ lbl, url: '?download=' ~ f.id ~ '&file_name=' ~ (f.file_name|replace({' ': '_'})|url_encode)}]) %}
+      {% endfor %}
+      <article class="media-card infographic">
+        <div class="cover">
+          {% if record.newsletter_image %}
+          <img src="{{ record.newsletter_image.path }}" alt="{{ record.name }} cover" loading="lazy" decoding="async">
+          {% else %}
+          <span class="ring"></span><svg class="doc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+          {% endif %}
+        </div>
+        <div class="body">
+          {% if record.date %}<span class="eyebrow muted"><time datetime="{{ record.date|date('Y-m') }}">{{ record.date|date('F Y') }}</time></span>{% endif %}
+          <h3>{{ record.name }}</h3>
+          {% if links|length %}
+          <div class="dl-row">
+            {% for l in links %}
+            <a class="btn-download{% if not loop.first %} ghost{% endif %}" href="{{ l.url }}"{% if l.ext %} target="_blank" rel="noopener"{% else %} download{% endif %} aria-label="{{ l.aria }}">{{ l.label }} {{ dl_icon|raw }}</a>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <h3>{{ jt.title ?: 'The first edition is coming soon' }}</h3>
+      {% if jt.body %}<div class="cms-content">{{ jt.body|raw }}</div>{% else %}<p>Past newsletter editions will be listed here.</p>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>

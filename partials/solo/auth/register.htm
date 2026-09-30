@@ -1,0 +1,73 @@
+{# Registration form - RainLab.User "account" component; submitted to the page handler onMyCustomRegister (pages/register.htm) #}
+{% if canRegister %}
+{{ form_ajax('onMyCustomRegister', { 'class': 'auth-form', 'novalidate': 'novalidate', 'data-request-flash': '', 'data-request-validate': '' }) }}
+  <div class="field">
+    <label for="registerName">First name</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='user' %}</span>
+      <input id="registerName" name="name" type="text" autocomplete="given-name" placeholder="Enter your first name">
+    </div>
+    <span class="field-error" data-validate-for="name"></span>
+  </div>
+
+  <div class="field">
+    <label for="registerSurName">Last name</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='user' %}</span>
+      <input id="registerSurName" name="surname" type="text" autocomplete="family-name" placeholder="Enter your last name">
+    </div>
+    <span class="field-error" data-validate-for="surname"></span>
+  </div>
+
+  <div class="field">
+    <label for="registerEmail">Email address</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='mail' %}</span>
+      <input id="registerEmail" name="email" type="email" autocomplete="email" placeholder="you@institution.eu" required>
+    </div>
+    <span class="field-error" data-validate-for="email"></span>
+  </div>
+
+  {% if arpha_topics %}
+  <fieldset class="topic-list">
+    <legend class="field-label">Soil Mission Objectives</legend>
+    {% for key, name in arpha_topics %}
+    <label class="check">
+      <input id="topics_{{ key }}" name="topics[]" type="checkbox" value="{{ key }}">
+      <span>{{ name }}</span>
+    </label>
+    {% endfor %}
+  </fieldset>
+  {% endif %}
+
+  {% if loginAttribute == "username" %}
+  <div class="field">
+    <label for="registerUsername">Username</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='user' %}</span>
+      <input id="registerUsername" name="username" type="text" autocomplete="username" placeholder="Choose a username">
+    </div>
+    <span class="field-error" data-validate-for="username"></span>
+  </div>
+  {% endif %}
+
+  <div class="field">
+    <label for="registerPassword">Password</label>
+    <div class="input">
+      <span class="icon">{% partial 'solo/auth/icon' name='lock' %}</span>
+      <input id="registerPassword" class="has-toggle" name="password" type="password" autocomplete="new-password" placeholder="Choose a password" required>
+      <button type="button" class="toggle-pwd" data-target="registerPassword" aria-label="Show password" aria-pressed="false">{% partial 'solo/auth/icon' name='eye' %}</button>
+    </div>
+    <span class="field-error" data-validate-for="password"></span>
+  </div>
+
+  <button class="submit" type="submit" data-attach-loading>
+    Create account
+    {% partial 'solo/auth/icon' name='arrow' %}
+  </button>
+
+  <p class="alt-link">Already have an account? <a href="/login">Sign in</a></p>
+{{ form_close() }}
+{% else %}
+<div class="alert" role="status">Registration is currently disabled.</div>
+{% endif %}

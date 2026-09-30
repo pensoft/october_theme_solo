@@ -1,0 +1,128 @@
+url = "/regionalisation-of-ri-priorities"
+layout = "default"
+title = "Regionalisation of R&I Priorities"
+is_hidden = 0
+meta_description = "SOLO Soil Weeks and Regional Nodes across Europe - interactive map and country comparison table."
+robot_index = "index"
+robot_follow = "follow"
+
+[siteSearchInclude]
+
+[jumbotron regionalisation]
+jumbotron = "regionalisation"
+title = 0
+background = "transperant"
+templates = "template1"
+description_limit = 0
+==
+{% put styles %}
+<link rel="stylesheet" href="{{ 'assets/solo/regionalisation.page.css'|theme }}">
+{% endput %}
+
+{% partial 'site/subhero' title='Regionalisation of R&amp;I Priorities' current='Regionalisation of R&amp;I Priorities' %}
+
+<div class="solo-reg" data-asset-base="{{ 'assets/solo'|theme }}">
+
+<div class="reg-content">
+  <div class="container">
+    {% set reg_intro = regionalisation.getJumbotron() %}
+    {% if reg_intro and reg_intro.body %}
+    <div class="prose">
+      {{ reg_intro.body|raw }}
+      {% if user and regionalisation.loggedIn %}<p class="jt-edit"><a href="/admin/pensoft/jumbotron/jumbotron/update/{{ reg_intro.id }}" target="_blank" rel="noopener">Edit in backend</a></p>{% endif %}
+    </div>
+    {% else %}
+    {# Fallback while the jumbotron is missing or empty #}
+    <div class="prose">
+      <h2>What is a Soil Week?</h2>
+      <p>Soil weeks are annual outreach events that are organised in 12 countries across Europe. Their aim is to maximise public and scientific engagement for improving soil health and expand the SOLO network of soil stakeholders.</p>
+      <p>During the Soil Weeks, SOLO partners organised a wide range of activities, ranging from seminars and workshops to interviews and field visits. All events are centered around specific Soil Mission objectives - such as exploring nature-based solutions to stop soil sealing or improving regional monitoring.</p>
+      <h2>What is a Regional Node?</h2>
+      <p>Regional nodes are localised hubs that bring ground-level, regional perspectives into the broader European mission. While the SOLO Think Tanks look at soil health from a high-level, policy perspective, the Regional Nodes are designed to test, adapt, and shape those ideas directly with the local practitioners.</p>
+      <p>There are four Regional Nodes across Europe - in the Netherlands, Portugal, Sweden, and Hungary - and each focuses on a specific regional system or land-use type. Each Regional Node hosted a four-workshop series to discuss the R&amp;I needs and priorities for soil-related challenges at the national and regional scales.</p>
+      <p>The Regional Nodes bring together a diverse mix of local societal stakeholders - including farmers, advisors, land planners, industry and relevant companies, civil society organisations, researchers and regional authorities, such as policy makers and administration. The ultimate goal is to establish or reinforce regional stakeholder networks dedicated to promoting soil health. Their primary goal is to identify the most important Soil Mission objectives for the region and identify what knowledge is needed to improve respective objectives in the region. Moreover, regional nodes validate the relevance of the broader knowledge gaps identified by the SOLO Think Tanks for the region and what actions are needed to generate the required knowledge. All inputs resulted in regional research roadmaps co-developed with the local stakeholders.</p>
+      <h2>SOLO Regionalisation Interactive Map</h2>
+      <p>The SOLO Regionalisation interactive Map indicates all spots across Europe where the Soil Weeks and Regional Nodes happened. The following information is provided in an interface that allows comparison across regions:</p>
+      <p class="params">Priority Mission Objective, Number of knowledge gaps (KG) identified, Type of event, Types of stakeholders, Number of participants, Date of event</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <section class="map-section" aria-label="SOLO Regionalisation interactive map">
+    <div class="container">
+      <div class="map-shell">
+        <div class="map-stage">
+          <div class="map-head">
+            <div class="map-legend" role="group" aria-label="Filter pins by macro-region"></div>
+          </div>
+          <div class="map-canvas">
+            <div class="map-tip" aria-hidden="true"></div>
+            <div class="country-pop" role="dialog" aria-label="Selected country"></div>
+          </div>
+          <p class="map-failed-note">The base map could not be loaded. The country list in the comparison panel remains fully usable.</p>
+        </div>
+
+        <aside class="cmp-panel" aria-label="Country comparison">
+          <div class="cmp-head">
+            <h3 style="color: #A28A75">Compare countries</h3>
+            <span class="cmp-count">0 / 4 selected</span>
+          </div>
+          <p class="cmp-hint">Select two to four countries from the map or the list below - to compare side by side.</p>
+          <div class="cmp-selected" aria-live="polite"></div>
+          <div class="cmp-picker" role="group" aria-label="Select countries to compare"></div>
+          <div class="cmp-actions">
+            <button class="cmp-btn primary" type="button" disabled>Compare</button>
+            <button class="cmp-btn ghost" type="button" disabled>Clear</button>
+          </div>
+        </aside>
+      </div>
+
+      <div class="cmp-modal" role="dialog" aria-modal="true" aria-labelledby="cmp-modal-title">
+        <div class="modal-card">
+          <div class="modal-head">
+            <div>
+              <h3 id="cmp-modal-title">Comparison</h3>
+            </div>
+            <button class="modal-close cmp-modal-close" type="button" aria-label="Close comparison">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="cmp-matrix-scroll">
+              <table class="cmp-matrix">
+                <thead class="cmp-matrix-head"></thead>
+                <tbody class="cmp-matrix-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="reg-modal" role="dialog" aria-modal="true" aria-labelledby="reg-modal-title">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="mh-left">
+        <span class="mh-flag modal-flag" aria-hidden="true"></span>
+        <div>
+          <h3 class="modal-title" id="reg-modal-title"></h3>
+          <span class="mh-region modal-region"></span>
+        </div>
+      </div>
+      <button class="modal-close" type="button" aria-label="Close details">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+</div>
+
+{% put bodyScripts %}
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="{{ 'assets/js/regionalisation.js'|theme }}"></script>
+{% endput %}

@@ -1,5 +1,5 @@
 url = "/register"
-layout = "default"
+layout = "auth"
 title = "Register"
 is_hidden = 0
 robot_index = "index"
@@ -19,7 +19,14 @@ redirect = "login"
 use RainLab\User\Models\User;
 
 public function onStart(){
-    $this['arpha_topics'] = (new User())->getTopicsOptions();
+    // Topics come from the external ARPHA database; don't let a connection
+    // problem take the whole page down.
+    try {
+        $this['arpha_topics'] = (new User())->getTopicsOptions();
+    } catch (\Throwable $e) {
+        \Log::warning('Register page: could not load ARPHA topics: ' . $e->getMessage());
+        $this['arpha_topics'] = [];
+    }
 }
 
 public function onMyCustomRegister()
@@ -42,15 +49,7 @@ public function onMyCustomRegister()
 ==
 {% component 'session' %}
 {% if not user %}
-
-        {% partial 'components/account/register' %}
-
-    {% else %}
-
-<!--        {% partial 'components/account/activation_check' %}-->
-<!--    -->
-<!--        {% partial 'components/account/update' %}-->
-
-<!--        {% partial 'components/account/deactivate_link' %}-->
-
-    {% endif %}
+{% partial 'solo/auth/shell' heading='Create your account' desc='Register for access to the <span class="ink">internal, password-protected environment</span> for consortium members.' form='solo/auth/register' %}
+{% else %}
+{% partial 'solo/auth/shell' heading='You are already signed in' form='solo/auth/signed-in' %}
+{% endif %}
