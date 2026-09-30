@@ -8,6 +8,8 @@ robot_follow = "follow"
 
 [siteSearchInclude]
 
+[regionalisationMap]
+
 [jumbotron regionalisation]
 jumbotron = "regionalisation"
 title = 0
@@ -22,6 +24,8 @@ description_limit = 0
 {% partial 'site/subhero' title='Regionalisation of R&amp;I Priorities' current='Regionalisation of R&amp;I Priorities' %}
 
 <div class="solo-reg" data-asset-base="{{ 'assets/solo'|theme }}">
+{# Countries, Soil weeks and Regional nodes: Backend > Regionalisation (Pensoft.Regionalisation) #}
+<script type="application/json" id="reg-data">{{ regionalisationMap.json()|raw }}</script>
 
 <div class="reg-content">
   <div class="container">

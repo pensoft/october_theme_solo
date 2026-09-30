@@ -3,11 +3,10 @@
    Dark-mode Europe map · pulsing pins on the 12 SOLO countries ·
    pin pop-up card · comparison panel (up to 4) · details modal.
 
-   DATA INTEGRITY: every value below is reproduced verbatim from the
-   supplied country tables. Columns with fewer entries than the longest
-   column are left blank (rendered as "—") — no values are inferred,
-   averaged or invented. Countries without supplied tables use the
-   supplied template placeholders.
+   DATA: countries, sections (Soil week / Regional node) and events come
+   from the Pensoft.Regionalisation plugin (Backend > Regionalisation),
+   printed by the page as JSON in <script type="application/json" id="reg-data">.
+   Blank cells are rendered as "—"; no values are inferred.
    ============================================================ */
 (function () {
   'use strict';
@@ -33,23 +32,6 @@
     western: '#92D26B'
   };
 
-  // iso = ISO-3166 numeric (TopoJSON id) · capital = real [lng, lat]
-  var COUNTRIES = {
-    BE: { name: 'Belgium', flag: ASSET_BASE + 'flags/BE.png', iso: 56, region: 'western', capital: [4.35, 50.85] },
-    BG: { name: 'Bulgaria', flag: ASSET_BASE + 'flags/BG.png', iso: 100, region: 'eastern', capital: [23.32, 42.70] },
-    FI: { name: 'Finland', flag: ASSET_BASE + 'flags/FI.png', iso: 246, region: 'northern', capital: [24.94, 60.17] },
-    DE: { name: 'Germany', flag: ASSET_BASE + 'flags/DE.png', iso: 276, region: 'western', capital: [13.40, 52.52] },
-    GR: { name: 'Greece', flag: ASSET_BASE + 'flags/GR.png', iso: 300, region: 'southern', capital: [23.73, 37.98] },
-    HU: { name: 'Hungary', flag: ASSET_BASE + 'flags/HU.png', iso: 348, region: 'eastern', capital: [19.04, 47.50] },
-    IT: { name: 'Italy', flag: ASSET_BASE + 'flags/IT.png', iso: 380, region: 'southern', capital: [12.50, 41.90] },
-    NL: { name: 'Netherlands', flag: ASSET_BASE + 'flags/NL.png', iso: 528, region: 'western', capital: [4.90, 52.37] },
-    NO: { name: 'Norway', flag: ASSET_BASE + 'flags/NO.png', iso: 578, region: 'northern', capital: [10.75, 59.91] },
-    PT: { name: 'Portugal', flag: ASSET_BASE + 'flags/PT.png', iso: 620, region: 'southern', capital: [-9.14, 38.72] },
-    ES: { name: 'Spain', flag: ASSET_BASE + 'flags/ES.png', iso: 724, region: 'southern', capital: [-3.70, 40.42] },
-    SE: { name: 'Sweden', flag: ASSET_BASE + 'flags/SE.png', iso: 752, region: 'northern', capital: [18.07, 59.33] }
-  };
-  var ORDER = ['BE', 'BG', 'FI', 'DE', 'GR', 'HU', 'IT', 'NL', 'NO', 'PT', 'ES', 'SE'];
-
   var PARAMS = [
     { key: 'objective', label: 'Priority Mission Objective' },
     { key: 'kg', label: 'Nr of KG identified', num: true },
@@ -59,185 +41,37 @@
     { key: 'date', label: 'Date of event', num: true }
   ];
 
-  var CHART_SOIL = {
-    title: 'Nr of KG allocated to each overarching theme during the soil week events',
-    img: ASSET_BASE + 'chart-kg-themes-soil-week.png'
-  };
-  var CHART_NODE = {
-    title: 'Nr of KG allocated to each overarching theme during the regional nodes events',
-    img: ASSET_BASE + 'chart-kg-themes-regional-node.png'
-  };
-
-  // Template values for countries whose tables were not supplied.
-  function templateSection(name) {
-    return {
-      name: name,
-      template: true,
-      columns: {
-        objective: ['[Insert Priority Mission Objective]'],
-        kg: ['0'],
-        eventType: ['[Insert Event Type]'],
-        stakeholders: ['[Insert Typology of Stakeholders]'],
-        participants: ['0'],
-        date: ['[DD/MM/YYYY]']
-      }
-    };
-  }
-
-  var GR_STAKE = 'Scientists - Soil/Agronomy and Forestry/Environment, Geology and Biodiversity, Practitioners - Spatial planners, Practitioners and Sector organisation - Agriculture, Industry - Agri-food companies, Administration - Economy';
-  var HU_NODE_OBJ = 'Pollution and restoration, Land degradation and desertification, Nature conservation of soil biodiversity';
-
-  var DATA = {
-    BE: {
-      sections: [{
-        name: 'Soil week',
-        columns: {
-          objective: [
-            'Reduce EU Footprint on Soils, Increase Soil Literacy',
-            'Reduce EU Footprint on Soils, Conserve and Increase Soil Carbon Organic Stocks',
-            'Stop Soil Sealing, Enhance Soil Biodiversity, Increase Soil Literacy'
-          ],
-          kg: ['2', '3', '3'],
-          eventType: ['Workshop', 'Forum', 'Field visit'],
-          stakeholders: [
-            'Policy makers and administration - Focus land use/Environment, Practitioners and Sector organisations - Focus land use/Environment, Practitioners - Advisory services/Spatial planners, Scientists - Soil/Environment and Biodiversity, Civil society',
-            'Policy makers and administration - Focus land use/Environment/Other, Practitioners and Sector organisations - Focus land use/Environment/Other, Practitioners - Advisory services/Spatial planners, Industry - Agri-food companies, Scientists - Soil/Focus land use/Environment and Biodiversity, Civil society',
-            'Policy makers and administration - Environment/Other, Practitioners and Sector organisations - Environment/Other, Practitioners - Spatial planners, Scientists - Soil/Environment and Biodiversity, Civil society',
-            'Students, policy, academia, research institutions, private sector, civil society'
-          ],
-          participants: ['685', '175', '45', '75'],
-          date: ['30 workshop year-round + 10/02/2023', '05/12/2024', '23/09/2025', '20-24/04/2026']
-        },
-        chart: CHART_SOIL
-      }]
-    },
-    BG: {
-      sections: [{
-        name: 'Soil week',
-        columns: {
-          objective: [
-            'Enhance Soil Biodiversity',
-            'Reduce Soil Pollution, Prevent Erosion',
-            'Stop Soil Sealing, Reduce EU Footprint on Soils'
-          ],
-          kg: ['6', '6', '6'],
-          eventType: ['One-day conference', 'Scientific symposium', 'Webinar', 'Webinar'],
-          stakeholders: [
-            'Soil experts, Researchers, University lecturers, Farmers, NGOs, SME, media',
-            'Researchers, Government officials, Industry representatives',
-            'Academics, Researchers, Policy advisors, Technical experts',
-            'Academics, Researchers, Ministry representatives, Technical Experts'
-          ],
-          participants: ['20', '20', '5', '10'],
-          date: ['30/01/2024', '03/12/2024', '28/10/2025', '23/04/2026']
-        }
-      }]
-    },
-    FI: {
-      sections: [{
-        name: 'Soil week',
-        columns: {
-          objective: [
-            'Improve Soil Structure, Enhance Soil Biodiversity',
-            'Improve Soil Structure, Enhance Soil Biodiversity',
-            'Improve Soil Structure, Enhance Soil Biodiversity'
-          ],
-          kg: ['1', '5', '6'],
-          eventType: ['Workshop', 'Flash talk + poster in conference, survey', 'Seminar, survey', 'Seminar + panel discussion'],
-          stakeholders: [
-            'Policy makers and administration, Practitioners, Industry representatives, Scientists, Civil society',
-            'Policy makers and administration, Practitioners, Industry representatives, Scientists, Civil society',
-            'Civil society',
-            'Policy and public administration, ministry representatives, scientists, NGOs, private sector'
-          ],
-          participants: ['25', '200', '~ 100', '28'],
-          date: ['07/05/2024', '07-08/01/2025', '15/11/2025', '23/04/2026']
-        }
-      }]
-    },
-    DE: {
-      sections: [{
-        name: 'Soil week',
-        columns: {
-          objective: [
-            'Increase Soil Literacy, Reduce Land Degradation',
-            'Increase Soil Literacy',
-            'Reduce Land Degradation, Soil Organic Carbon Stocks, Increase Soil Literacy'
-          ],
-          kg: ['4', '2', '2'],
-          eventType: ['Workshop', 'Session in Conference', 'Field visit', 'Workshop'],
-          stakeholders: [
-            'Farmers, Civil society, Public sector, Science',
-            'Researchers, Students, Scientists, Civil society',
-            'Scientists, Farmers, Public sectors, Civil society',
-            'Researchers and specialists'
-          ],
-          participants: ['29', '~ 16', '~ 150', '12'],
-          date: ['25/10/2023', '18/09/2024', '04/09/2025', '23/04/2026']
-        }
-      }]
-    },
-    GR: {
-      sections: [{
-        name: 'Soil week',
-        columns: {
-          objective: [
-            'Reduce Land Degradation, Prevent Erosion',
-            'Reduce Land Degradation, Reduce Soil Pollution',
-            'Conserve and Increase Soil Organic Carbon Stocks, Soil Sealing and urban soils'
-          ],
-          kg: ['6', '7', '4'],
-          eventType: ['Conference', 'Webinar', 'Webinar', 'Webinar'],
-          stakeholders: [GR_STAKE, GR_STAKE, GR_STAKE, 'Academia (professors, researchers, students), business'],
-          participants: ['29', '30', '25', '18'],
-          date: ['13/05/2024', '26/02/2025', '21/10/2025', '22/04/2026']
-        }
-      }]
-    },
-    HU: {
-      sections: [
-        {
-          name: 'Soil week',
-          columns: {
-            objective: ['Reduce Soil Pollution', 'Conserve and Increase Soil Organic Carbon Stocks', 'Prevent Erosion'],
-            kg: ['7', '10', '10'],
-            eventType: ['Workshop', 'Hybrid workshop', 'Hybrid workshop'],
-            stakeholders: [
-              'Public sectors - Institutions on public health, Spatial planning, Water management, Project financing, and the secretariat of the Ombudsman for Future Generations, Science, Private sector and industry, Relevant practices',
-              'Academics, Stakeholders, NGOs, Farmers',
-              'Policy makers and administration, Practitioners, Industry, Scientists, Civil society'
-            ],
-            participants: ['25', '56', '46'],
-            date: ['14/12/2023', '04/12/2024', '0/10/2025']
-          },
-          chart: CHART_SOIL
-        },
-        {
-          name: 'Regional node',
-          columns: {
-            objective: [HU_NODE_OBJ, HU_NODE_OBJ, HU_NODE_OBJ, HU_NODE_OBJ],
-            kg: ['0', '53', '0', '0'],
-            eventType: ['Workshop', 'Workshop', 'Workshop', 'Workshop'],
-            stakeholders: [
-              'Practitioners and sector organization (focus land use), practitioners (advisory services), scientists (focus land use)',
-              'Policy makers and administration (focus land use, environment, other), practitioners and sector organization (focus land use), practitioners (advisory services), scientists (soil, environment and biodiversity), other (civil society)',
-              'Policy makers and administration (focus land use, environment, other), practitioners and sector organization (focus land use, other), practitioners (advisory services), industry (agri-food companies), scientists (soil, environment and biodiversity), other (civil society)'
-            ],
-            participants: ['5', '14', '17', '0'],
-            date: ['10/09/2024', '06/03/2025', '23/09/2025', '23/09/2025']
-          },
-          chart: CHART_NODE
-        }
-      ]
-    },
-    IT: { sections: [templateSection('Soil week')] },
-    NO: { sections: [templateSection('Soil week')] },
-    ES: { sections: [templateSection('Soil week')] },
-    // Regional Nodes named in the page text: Netherlands, Portugal, Sweden, Hungary
-    NL: { sections: [templateSection('Soil week'), templateSection('Regional node')] },
-    PT: { sections: [templateSection('Soil week'), templateSection('Regional node')] },
-    SE: { sections: [templateSection('Soil week'), templateSection('Regional node')] }
-  };
+  // Countries / sections / events from Pensoft.Regionalisation (see the page template).
+  //   COUNTRIES[code] = { name, flag, iso, region, capital: [lng, lat] }
+  //   DATA[code] = { sections: [{ name, columns: { <param key>: [one value per event] }, chart }] }
+  var COUNTRIES = {};
+  var ORDER = [];
+  var DATA = {};
+  (function loadData() {
+    var el = document.getElementById('reg-data');
+    var raw = null;
+    try { raw = el ? JSON.parse(el.textContent || 'null') : null; } catch (e) { raw = null; }
+    if (!raw) return;
+    if (raw.regions) {
+      Object.keys(raw.regions).forEach(function (key) {
+        REGION_NAMES[key] = raw.regions[key].name;
+        REGION_COLORS[key] = raw.regions[key].color;
+      });
+    }
+    (raw.countries || []).forEach(function (c) {
+      if (!c.code || !REGION_NAMES[c.region]) return;
+      COUNTRIES[c.code] = {
+        name: c.name,
+        // Uploaded flag, else the theme flag for the ISO code
+        flag: c.flag || (ASSET_BASE + 'flags/' + c.code + '.png'),
+        iso: c.iso,
+        region: c.region,
+        capital: c.capital
+      };
+      ORDER.push(c.code);
+      DATA[c.code] = { sections: c.sections || [] };
+    });
+  })();
 
   /* ---------- helpers ---------- */
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -263,6 +97,7 @@
         var v = (cols[p.key] || [])[i];
         row[p.key] = (v == null || v === '') ? '' : v;
       });
+      row.newsUrl = (cols.newsUrl || [])[i] || '';
       rows.push(row);
     }
     return rows;
@@ -614,10 +449,11 @@
 
   function detailTable(section) {
     var rows = rowsOf(section);
+    var hasNews = rows.some(function (r) { return /^https?:\/\//i.test(r.newsUrl); });
     var head = '<tr>' + PARAMS.map(function (p) {
       var cls = p.key === 'objective' ? ' class="c-obj"' : (p.key === 'stakeholders' ? ' class="c-stake"' : '');
       return '<th scope="col"' + cls + '>' + esc(p.label) + '</th>';
-    }).join('') + '</tr>';
+    }).join('') + (hasNews ? '<th scope="col">News</th>' : '') + '</tr>';
     var body = rows.map(function (r) {
       return '<tr>' + PARAMS.map(function (p) {
         var v = r[p.key];
@@ -627,7 +463,9 @@
         if (p.key === 'objective') cls.push('c-obj');
         if (p.key === 'stakeholders') cls.push('c-stake');
         return '<td' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' + esc(v === '' ? '—' : v) + '</td>';
-      }).join('') + '</tr>';
+      }).join('') + (hasNews ? '<td>' + (/^https?:\/\//i.test(r.newsUrl)
+        ? '<a class="detail-news" href="' + esc(r.newsUrl) + '" target="_blank" rel="noopener">Read the news</a>'
+        : '<span class="empty">—</span>') + '</td>' : '') + '</tr>';
     }).join('');
     return '<div class="detail-table-scroll"><table class="detail-table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>';
   }
