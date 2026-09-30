@@ -159,7 +159,11 @@
   box-shadow: 0 10px 30px -12px rgba(0,0,0,.7);
 }
 .map-tip.show { display: block; }
-.map-tip .tip-region { display: block; font-weight: 500; font-size: 11px; color: var(--m-muted); margin-top: 2px; }
+/* .map-canvas sets font-size/line-height to 0 (no gaps round the SVG); restore them for the
+   tooltip and the pop-up, otherwise the country name and region lines overlap. */
+.map-tip { line-height: 1.35; }
+.map-tip .tip-region { display: block; font-weight: 500; font-size: 11px; line-height: 1.35; color: var(--m-muted); margin-top: 4px; }
+.country-pop { font-size: 14px; line-height: 1.4; }
 
 .map-failed-note { display: none; }
 .map-stage.map-failed .map-failed-note {
