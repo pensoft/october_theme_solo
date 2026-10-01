@@ -1,4 +1,6 @@
-{# SOLO redesign: one pensoft/library record as a .pub-card. Param: record #}
+{# SOLO redesign: one pensoft/library record as a .pub-card. Param: record
+   The card always outputs the same 7 blocks (empty ones as placeholders) so that cards in a
+   .pub-grid row line up block by block (CSS subgrid in assets/solo/pages/resources.css). #}
 {% set dl_icon %}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"></path></svg>{% endset %}
 {% if record.type == 5 %}
   {% set st = record.status == 1 ? 'Approved' : 'Subject to change' %}
@@ -18,7 +20,7 @@
     {% if st %}<span class="status-pill{{ record.status == 1 ? ' published' : ' pending' }}"><span class="led"></span>{{ st }}</span>{% endif %}
   </div>
   <h3>{{ record.title }}</h3>
-  {% if record.authors %}<p class="authors" data-authors="{{ record.authors }}">{{ record.authors|replace({',': ', '}) }}</p>{% endif %}
+  {% if record.authors %}<p class="authors" data-authors="{{ record.authors }}">{{ record.authors|replace({',': ', '}) }}</p>{% else %}<div class="authors is-empty" aria-hidden="true"></div>{% endif %}
   <div class="meta-line"><span class="yr">{{ record.year_attr }}</span></div>
   {% if venue or record.deliverable_number or record.milestone_number %}
   <div class="meta-line res-venue">
@@ -26,9 +28,13 @@
     {% if record.milestone_number %}<span>{{ record.milestone_number }}</span>{% endif %}
     {% if venue %}<span>{{ venue }}{% if record.volume_issue %}, {{ record.volume_issue }}{% endif %}</span>{% endif %}
   </div>
+  {% else %}
+  <div class="meta-line res-venue is-empty" aria-hidden="true"></div>
   {% endif %}
   {% if doiUrl %}
   <div class="doi-line"><span class="doi-label">URL/DOI:</span> <a class="doi" href="{{ doiUrl }}" target="_blank" rel="noopener">{{ record.doi }}</a></div>
+  {% else %}
+  <div class="doi-line is-empty" aria-hidden="true"></div>
   {% endif %}
   <div class="card-foot">
     {% if record.file %}

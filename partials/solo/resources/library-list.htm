@@ -230,7 +230,7 @@ function onStart()
   </p>
 
   {% if lib_records.total %}
-  <div class="grid-3">
+  <div class="grid-3 pub-grid">
     {% for record in lib_records %}
       {% partial 'solo/resources/pub-card' record=record %}
     {% endfor %}

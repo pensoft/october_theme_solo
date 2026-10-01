@@ -18,7 +18,22 @@
 .status-pill.pending { color: var(--ochre, #8a5a1c); }
 .pub-card .res-venue { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .pub-card .res-venue .yr::before { content: none; }
-.pub-card .card-foot:empty { display: none; }
+.pub-card .card-foot:empty { border-top: 0; padding-top: 0; }
+
+/* Publication cards line up across each row whatever the title / author lengths:
+   each card spans 7 subgrid rows (top, title, authors, year, venue, link, foot). */
+@supports (grid-template-rows: subgrid) {
+  .pub-grid { row-gap: 24px; }
+  .pub-grid .pub-card {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 7;
+    row-gap: 0;
+    align-content: start;
+  }
+  .pub-grid .pub-card .card-foot { margin-top: 0; align-self: end; }
+}
+.pub-card .is-empty { margin: 0; padding: 0; border: 0; min-height: 0; }
 
 .media-card .body .res-meta { font-size: 13px; color: var(--muted); margin: -6px 0 0; }
 .media-card .body .res-actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px; }
