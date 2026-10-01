@@ -46,7 +46,7 @@ a.iaf-cat:focus-visible .iaf-cat-plate { outline: 2px solid var(--accent); outli
 .review-card { display: flex; flex-direction: column; gap: 12px; }
 .review-card .review-due { font-size: 14px; font-weight: 600; color: var(--accent); }
 .review-card .card-foot { display: flex; gap: 12px; flex-wrap: wrap; }
-.review-intro { max-width: 72ch; margin: 0 0 32px; text-align: left; color: var(--muted); }
+.review-intro { max-width: none; margin: 0 0 32px; text-align: left; font-size: var(--body-size); font-weight: 400; line-height: var(--body-lh); color: var(--body-color); } /* full container width, body text */
 .review-actions { display: flex; justify-content: flex-start; gap: 12px; margin: 0 0 32px; }
 .review-popup { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: rgba(20, 8, 2, .55); }
 .review-popup[hidden] { display: none; }

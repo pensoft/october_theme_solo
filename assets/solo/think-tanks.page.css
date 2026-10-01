@@ -5,7 +5,7 @@
 
 /* ---------- Intro ---------- */
 .tt-intro {
-  max-width: 82ch;
+  max-width: none; /* full container width */
   margin: 0;
   text-align: left;
 }
@@ -106,10 +106,11 @@
 .tt-leader strong { color: var(--fg-soft); font-weight: 600; }
 .tt-detail-head p.tt-desc {
   margin: 20px 0 0;
-  max-width: 76ch;
-  font-size: 16.5px;
-  line-height: 1.78;
-  color: var(--muted);
+  max-width: none; /* full container width */
+  font-size: var(--body-size);
+  font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
 .tt-detail-head .btn { margin-top: 26px; }

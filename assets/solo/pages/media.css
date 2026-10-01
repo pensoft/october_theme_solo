@@ -36,3 +36,9 @@
 .media-intro { margin-bottom: 40px; max-width: 760px; }
 .empty-state .cms-content { max-width: 52ch; margin: 10px auto 0; font-size: 16px; }
 .event-row time.date-block > span { display: block; }
+
+/* Newsletter page: Subscribe button at the right end of the banner (left again once the banner stacks) */
+.subscribe-banner .fb-cta { align-items: flex-end; justify-self: end; }
+@media (max-width: 860px) {
+  .subscribe-banner .fb-cta { align-items: flex-start; justify-self: start; }
+}

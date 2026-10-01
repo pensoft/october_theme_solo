@@ -9,7 +9,7 @@
 /* ---------- Overview ---------- */
 :root { --iaf-text-w: 92ch; }
 /* Intro, categories text and narrative: left-aligned, same width (their right edges line up) */
-.iaf-intro { max-width: var(--iaf-text-w); margin-inline: 0; text-align: left; }
+.iaf-intro { max-width: none; margin-inline: 0; text-align: left; } /* full container width */
 .iaf-intro .eyebrow { justify-content: flex-start; }
 .iaf-intro h2 {
   margin: 16px 0 0;

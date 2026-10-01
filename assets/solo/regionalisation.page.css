@@ -7,7 +7,7 @@
 /* ---------- Page content ---------- */
 .reg-content { padding: 88px 0 24px; }
 .reg-content .prose {
-  max-width: 74ch;
+  max-width: none; /* full container width */
   margin-inline: 0;
   text-align: left;
   display: flex; flex-direction: column; gap: 22px;
