@@ -7,7 +7,6 @@
    ============================================================ */
 
 /* ---------- Overview ---------- */
-:root { --iaf-text-w: 92ch; }
 /* Intro, categories text and narrative: left-aligned, same width (their right edges line up) */
 .iaf-intro { max-width: none; margin-inline: 0; text-align: left; } /* full container width */
 .iaf-intro .eyebrow { justify-content: flex-start; }
@@ -31,7 +30,7 @@
   margin: clamp(48px, 5vw, 70px) 0 0;
   padding-top: clamp(40px, 4vw, 56px);
   border-top: 1px solid var(--border-soft);
-  max-width: var(--iaf-text-w);
+  max-width: none; /* full container width */
   text-align: left;
 }
 .iaf-cats-head p {
