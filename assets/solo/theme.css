@@ -78,8 +78,15 @@
 /* Anchor targets clear the sticky header */
 [id] { scroll-margin-top: 96px; }
 
+/* ---------- Body text: one style for running text on every page ---------- */
+:root {
+  --body-size: 17px;
+  --body-lh: 1.72;
+  --body-color: var(--fg-soft);
+}
+
 /* ---------- Rich text from the CMS (jumbotrons, articles, events) ---------- */
-.cms-content { color: var(--fg-soft); font-size: 17px; line-height: 1.72; }
+.cms-content { color: var(--body-color); font-size: var(--body-size); font-weight: 400; line-height: var(--body-lh); }
 .cms-content > * + * { margin-top: 1em; }
 .cms-content h1, .cms-content h2, .cms-content h3, .cms-content h4 { margin-top: 1.6em; color: var(--fg); }
 .cms-content h1:first-child, .cms-content h2:first-child, .cms-content h3:first-child, .cms-content h4:first-child { margin-top: 0; }
@@ -88,7 +95,7 @@
 .cms-content h3 { font-size: clamp(20px, 2.2vw, 26px); }
 .cms-content p { margin: 0; color: inherit; text-wrap: pretty; }
 .cms-content p + p { margin-top: 1em; }
-.cms-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--accent-line); }
+.cms-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--accent-line); word-break: break-all; }
 .cms-content a:hover { text-decoration-color: var(--accent); }
 .cms-content ul, .cms-content ol { padding-left: 1.3em; margin: 0; }
 .cms-content ul + *, .cms-content ol + * { margin-top: 1em; }

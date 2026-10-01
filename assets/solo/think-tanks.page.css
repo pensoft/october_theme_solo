@@ -11,16 +11,13 @@
 }
 .tt-intro p {
   margin: 0;
-  font-size: clamp(16.5px, 1.6vw, 19px);
-  line-height: 1.78;
-  color: var(--muted);
+  font-size: var(--body-size);
+  font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
-.tt-intro p + p {
-  margin-top: 26px;
-  font-weight: 600;
-  color: var(--fg-soft);
-}
+.tt-intro p + p { margin-top: 1em; }
 
 /* ---------- Logo grid ---------- */
 .tt-grid {
@@ -145,9 +142,9 @@
 .tt-obj:hover img { transform: translateX(4px); }
 .tt-obj p {
   margin: 0;
-  font-size: 16px;
-  line-height: 1.7;
-  color: var(--muted);
+  font-size: var(--body-size); font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
 
@@ -170,9 +167,9 @@
 .tt-photo img { width: 100%; height: auto; display: block; }
 .tt-feature-copy p {
   margin: 0 0 20px;
-  font-size: 16px;
-  line-height: 1.78;
-  color: var(--muted);
+  font-size: var(--body-size); font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
 .tt-feature-copy p:last-child { margin-bottom: 0; }

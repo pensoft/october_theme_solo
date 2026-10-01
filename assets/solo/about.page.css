@@ -122,9 +122,9 @@
 }
 .bg-copy p {
   margin: 0 0 20px;
-  font-size: 16.5px;
-  line-height: 1.78;
-  color: var(--muted);
+  font-size: var(--body-size); font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
 .bg-copy p:last-child { margin-bottom: 0; }
@@ -160,9 +160,9 @@
 .mission-header .sec-title { margin-bottom: 18px; }
 .mission-intro {
   margin: 0;
-  font-size: 17px;
-  line-height: 1.75;
-  color: var(--muted);
+  font-size: var(--body-size); font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
 
@@ -197,9 +197,9 @@
 .goal:hover .goal-arrow { transform: translateX(4px); }
 .goal p {
   margin: 0;
-  font-size: 16.5px;
-  line-height: 1.66;
-  color: var(--fg-soft);
+  font-size: var(--body-size); font-weight: 400;
+  line-height: var(--body-lh);
+  color: var(--body-color);
   text-wrap: pretty;
 }
 
@@ -395,7 +395,7 @@
   .circle-frame { border-width: 10px; }
   .goal { grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 20px 18px; }
   .goal-arrow { width: 32px; height: 32px; }
-  .goal p { font-size: 15.5px; }
+  .goal p { font-size: var(--body-size); }
   .intro-media,
   .bg-media { --orbit-r: 158px; max-width: 340px; }
   .intro-media .ring-outline,

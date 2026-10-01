@@ -31,9 +31,9 @@ a.iaf-cat { text-decoration: none; }
 a.iaf-cat:focus-visible { outline: none; }
 a.iaf-cat:focus-visible .iaf-cat-plate { outline: 2px solid var(--accent); outline-offset: 3px; }
 .iaf-cat-desc p { margin: 0; }
-.iaf-intro .cms-content, .iaf-intro .cms-content p { font-size: 16.5px; line-height: 1.78; color: var(--muted); }
+.iaf-intro .cms-content, .iaf-intro .cms-content p { font-size: var(--body-size); font-weight: 400; line-height: var(--body-lh); color: var(--body-color); }
 .iaf-intro .cms-content { margin-top: 22px; }
-.iaf-narrative-copy .cms-content p { margin: 0 0 20px; font-size: 16px; line-height: 1.78; color: var(--muted); text-align: left; }
+.iaf-narrative-copy .cms-content p { font-size: var(--body-size); font-weight: 400; line-height: var(--body-lh); color: var(--body-color); }
 .iaf-narrative-copy .cms-content { text-align: left; }
 .iaf-back { text-decoration: none; }
 .kpi-desc.cms-content { font-size: 13px; line-height: 1.6; color: var(--muted); margin: 0 0 22px; padding-top: 16px; border-top: 1px solid var(--border-soft); flex: 1 1 auto; }
