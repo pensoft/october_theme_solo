@@ -185,16 +185,12 @@
   gap: 24px;
   padding: 26px 38px;
   border-top: 1px solid var(--border-soft);
-  transition: background .25s var(--t);
 }
 .goal:first-child { border-top: 0; }
-.goal:hover { background: var(--surface); }
 .goal-arrow {
   display: block;
   width: 41px; height: 41px;
-  transition: transform .25s var(--t);
 }
-.goal:hover .goal-arrow { transform: translateX(4px); }
 .goal p {
   margin: 0;
   font-size: var(--body-size); font-weight: 400;

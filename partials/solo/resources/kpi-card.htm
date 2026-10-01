@@ -41,14 +41,18 @@ function parseKpiFields($html)
 }
 ?>
 ==
+{# Always 5 blocks (badge, title, image, details, button; empty ones as placeholders) so that the
+   cards of a .kpi-grid row line up block by block - CSS subgrid in assets/solo/pages/resources.css #}
 <article class="kpi-card">
   <div class="kpi-body">
-    {% if sheet.label %}<span class="kpi-badge">{{ sheet.label }}</span>{% endif %}
+    {% if sheet.label %}<span class="kpi-badge">{{ sheet.label }}</span>{% else %}<span class="kpi-slot" aria-hidden="true"></span>{% endif %}
     <h4>{{ sheet.title }}</h4>
     {% if sheet.cover %}
     <div class="kpi-media">
       <img src="{{ sheet.cover.path }}" alt="" loading="lazy" decoding="async">
     </div>
+    {% else %}
+    <div class="kpi-slot" aria-hidden="true"></div>
     {% endif %}
     {% if kpi_fields|length %}
     <dl class="kpi-fields">
@@ -58,9 +62,13 @@ function parseKpiFields($html)
     </dl>
     {% elseif sheet.description %}
     <div class="kpi-desc cms-content">{{ sheet.description|raw }}</div>
+    {% else %}
+    <div class="kpi-slot" aria-hidden="true"></div>
     {% endif %}
     {% if sheet.file %}
     <a class="btn btn-secondary" href="/solos-impact-assessment-framework/{{ groupSlug }}?download={{ sheet.file.id }}&amp;file_name={{ sheet.file.file_name|replace({' ': '_'})|url_encode }}" aria-label="Download PDF: {{ sheet.title }}">Download PDF <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"></path></svg></a>
+    {% else %}
+    <span class="kpi-slot" aria-hidden="true"></span>
     {% endif %}
   </div>
 </article>

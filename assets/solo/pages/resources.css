@@ -68,3 +68,23 @@ a.iaf-cat:focus-visible .iaf-cat-plate { outline: 2px solid var(--accent); outli
 .review-popup .review-popup-box { position: relative; max-width: 560px; width: 100%; max-height: 90vh; overflow: auto; background: var(--surface-elev, #fff); border-radius: var(--radius, 16px); padding: 32px 28px 28px; box-shadow: var(--shadow-lg); }
 .review-popup .review-popup-close { position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; border: 0; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: var(--muted); }
 .iaf-detail-head h2 { margin: 0; font-size: clamp(23px, 2.4vw, 32px); line-height: 1.16; letter-spacing: -0.025em; }
+
+/* KPI cards: badge, title, image, details and button rows are shared across each row of
+   the grid, so every title takes the height of the tallest title next to it. */
+.kpi-slot { display: block; margin: 0; padding: 0; border: 0; }
+@supports (grid-template-rows: subgrid) {
+  .kpi-grid .kpi-card {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 5;
+    row-gap: 0;
+  }
+  .kpi-grid .kpi-body {
+    grid-row: 1 / -1;
+    display: grid;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+  .kpi-grid .kpi-card h4 { align-self: start; }
+  .kpi-grid .kpi-card .btn { margin-top: 0; align-self: end; }
+}
