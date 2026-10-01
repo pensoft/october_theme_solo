@@ -217,6 +217,7 @@
 .kpi-body { padding: 22px 24px 24px; display: flex; flex-direction: column; flex: 1 1 auto; }
 .kpi-badge {
   align-self: flex-start;
+  width: fit-content;
   padding: 5px 11px;
   font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   color: var(--accent);
