@@ -17,33 +17,32 @@ redirect = "login"
 ==
 <?php
 use Pensoft\Mailing\Models\Groups;
-use Pensoft\Mailing\Models\Mails;
 use RainLab\User\Models\User;
 
-function onFetchMailingList(){
-	if(post('search_str')){
+// Emails shown in the hover tooltip next to a group / individual (see initMailingTooltip in app.js).
+// A group lists its members, i.e. the addresses the message is actually sent to.
+function onFetchRecipientEmails(){
+    $id = (int) post('id');
 
-	    $this['result'] = DB::table('pensoft_mailing_groups')
-            ->leftJoin('pensoft_mailing_groups_users', 'pensoft_mailing_groups_users.groups_id', '=', 'pensoft_mailing_groups.id')
-            ->leftJoin('users', 'pensoft_mailing_groups_users.user_id', '=', 'users.id')
-            ->whereRaw('users.email ILIKE \''.post('search_str').'\' OR pensoft_mailing_groups.name ILIKE \''.post('search_str').'\'')
-            ->selectRaw('users.*')
+    if (post('type') === 'group') {
+        $group = Groups::find($id);
+        $emails = DB::table('pensoft_mailing_groups_users')
+            ->join('users', 'pensoft_mailing_groups_users.user_id', '=', 'users.id')
+            ->where('pensoft_mailing_groups_users.groups_id', $id)
             ->orderBy('users.email', 'asc')
-            ->get();
+            ->distinct()
+            ->pluck('users.email')
+            ->all();
 
-        $this['group_email'] = DB::table('pensoft_mailing_groups')
-            ->leftJoin('pensoft_mailing_groups_users', 'pensoft_mailing_groups_users.groups_id', '=', 'pensoft_mailing_groups.id')
-            ->leftJoin('users', 'pensoft_mailing_groups_users.user_id', '=', 'users.id')
-            ->whereRaw('users.email ILIKE \''.post('search_str').'\' OR pensoft_mailing_groups.name ILIKE \''.post('search_str').'\'')
-            ->selectRaw('pensoft_mailing_groups.*')
-            ->get();
+        return [
+            'group_email' => $group ? $group->email : null,
+            'emails' => $emails,
+        ];
     }
-}
 
-function onFetchSingleMail(){
-	if(post('search_str')){
-        $this['item']  = DB::table('users')->whereRaw('(TRIM(CONCAT(users.name, \' \', users.surname)) = \''.post('search_str').'\') OR users.email ILIKE \''.post('search_str').'\' ')->first();
-    }
+    $user = User::find($id);
+
+    return ['emails' => $user ? [$user->email] : []];
 }
 ?>
 ==

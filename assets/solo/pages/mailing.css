@@ -26,3 +26,57 @@
 #mails .inputHolder:has(input[name="users[]"]) label > span::after {
   background-image: url('/storage/app/media/CMS_icons_individuals.svg');
 }
+
+/* Intro sentences (inserted by initMailingTooltip) sit above the grid, not inside it,
+   so every row of checkboxes starts at the same x. */
+#mails .mails-intro {
+  margin: 6px 0 18px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+#mails .group-holder { row-gap: 14px; margin-bottom: 12px; }
+
+/* One line per item: [checkbox] Name [icon], vertically centred. */
+#mails .inputHolder label {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  min-height: 24px;
+  padding-left: 32px;
+  cursor: pointer;
+}
+#mails .inputHolder label > span {
+  margin-left: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+#mails .inputHolder input[type="checkbox"],
+#mails .inputHolder .mark {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+#mails .inputHolder input[type="checkbox"] { width: 20px; height: 20px; }
+
+/* Hover tooltip with the e-mail addresses (tippy, appended to <body>). */
+.tippy-box[data-theme~='mails'] {
+  background: var(--surface-elev, #fff);
+  color: var(--fg, #1F1208);
+  border: 1px solid var(--border, #E5DBCB);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(31, 18, 8, .14);
+  font-size: 14px;
+}
+.tippy-box[data-theme~='mails'] > .tippy-arrow { color: var(--surface-elev, #fff); }
+.tippy-box[data-theme~='mails'] .tippy-content { padding: 10px 14px; }
+.mails-tip {
+  max-height: 260px;
+  overflow-y: auto;
+  line-height: 1.7;
+  user-select: text;
+}
+.mails-tip strong { display: block; margin-bottom: 4px; }

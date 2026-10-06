@@ -1096,69 +1096,66 @@ function onCustomPartners(code) {
 
 
 
-function hideMe(elem){
-    $(elem).parent().hide();
-}
-
-function fetchMails(i, searchStr){
-    // $('.group_mailing_list').hide();
-    if($('.group_mailing_list_'+i).is(":visible")){
-        $('.group_mailing_list_'+i).hide();
-    }else{
-        //groups
-        $.request('onFetchMailingList', {
-            update: { 'mailing_list': '#mailing_list_tooltip_content_'+i,
-            },
-            data: {
-                search_str: searchStr
-            },
-        }).then(response => {
-            $('.group_mailing_list_'+i).html('<a class="close-btn" onclick="hideMe(this)">X</a>' + response.mailing_list);
-        });
-        $('.group_mailing_list').hide();
-        $('.group_mailing_list_'+i).show();
-    }
-
-}
-
-
-function fetchSingleMail(i, searchStr){
-    if($('.single_mailing_list_'+i).is(":visible")){
-        $('.single_mailing_list_'+i).hide();
-    }else{
-        //groups
-        $.request('onFetchSingleMail', {
-            update: { 'individual_email': '#individual_tooltip_content_'+i,
-            },
-            data: {
-                search_str: searchStr
-            },
-        }).then(response => {
-            $('.single_mailing_list_'+i).html('<a class="close-btn" onclick="hideMe(this)">X</a>' + response.individual_email);
-        });
-        $('.single_mailing_list').hide();
-        $('.single_mailing_list_'+i).show();
-    }
-}
-
+// Mails page (/mails): hovering (or focusing) a group or a person shows the e-mail
+// addresses the message would go to. Loaded once per item via onFetchRecipientEmails.
 function initMailingTooltip(){
-    var searchStr = '';
-    $('.group-holder').eq(0).find('.inputWithTooltip span').each(function(i, obj) {
-        searchStr = $.trim($(obj).text());
-        $(this).parent().css('display', 'inline-grid');
-        $('<div class="group_mailing_list group_mailing_list_' + i + '" style="display: none;"></div>').insertAfter($(this).parent());
+    var $holders = $('#mails .group-holder');
+    var intro = [
+        'Prior to sending group emails, please make sure that all individuals you want to contact have been included in the respective group. Hover over a group to see its members’ emails.',
+        'Hover over a name to see the person’s email.'
+    ];
 
-
-    });
-    $('.group-holder').eq(1).find('.inputWithTooltip span').each(function(i, obj) {
-        searchStr = $.trim($(obj).text());
-        $(this).parent().css('display', 'inline-grid');
-        $('<div class="single_mailing_list single_mailing_list_' + i + '" style="display: none;"></div>').insertAfter($(this).parent());
+    $holders.each(function(h){
+        $('<p class="mails-intro"></p>').text(intro[h]).insertBefore(this);
     });
 
-    $('.group-holder').eq(0).prepend( "<p style='margin-left: 10px; width: 100%;'>Prior to sending group emails, please make sure that all individuals you want to contact have been included in the respective group by clicking on the group icon.</p><p></p>" );
-    $('.group-holder').eq(1).prepend( "<p style='margin-left: 10px; width: 100%;'>To see each person’s email, click on the account icon.</p><p></p>" );
+    if (typeof tippy !== 'function') return;
 
+    $holders.find('.inputHolder label').each(function(){
+        var $input = $(this).find('input[type=checkbox]');
+        var type = $input.attr('name') === 'groups[]' ? 'group' : 'user';
+        var loaded = false;
+
+        tippy(this, {
+            content: 'Loading…',
+            theme: 'mails',
+            placement: 'bottom-start',
+            trigger: 'mouseenter focusin',
+            interactive: true,
+            appendTo: function(){ return document.body; },
+            maxWidth: 360,
+            delay: [200, 0],
+            onShow: function(instance){
+                if (loaded) return;
+                loaded = true;
+                $.request('onFetchRecipientEmails', {
+                    data: { type: type, id: $input.val() },
+                    success: function(data){
+                        var box = document.createElement('div');
+                        box.className = 'mails-tip';
+                        if (data.group_email) {
+                            var head = document.createElement('strong');
+                            head.textContent = data.group_email;
+                            box.appendChild(head);
+                        }
+                        (data.emails || []).forEach(function(email){
+                            var row = document.createElement('div');
+                            row.textContent = email;
+                            box.appendChild(row);
+                        });
+                        if (!box.childNodes.length) {
+                            box.textContent = type === 'group' ? 'No members in this group yet.' : 'No email found.';
+                        }
+                        instance.setContent(box);
+                    },
+                    error: function(){
+                        loaded = false;
+                        instance.setContent('Could not load emails.');
+                    }
+                });
+            }
+        });
+    });
 }
 
 function init() {
