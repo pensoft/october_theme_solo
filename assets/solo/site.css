@@ -269,10 +269,14 @@ section { padding: clamp(64px, 8vw, 120px) 0; position: relative; }
   color: var(--fg);
 }
 .menu-toggle svg { width: 20px; height: 20px; }
+.menu-toggle .icon-close { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
 
 /* Mobile drawer */
+/* --mobile-nav-top is set by site.js to the header's bottom edge (the member bar can push it down) */
 .mobile-nav {
-  position: fixed; inset: 80px 0 0; z-index: 40;
+  position: fixed; inset: var(--mobile-nav-top, 80px) 0 0; z-index: 49;
   background: var(--bg);
   display: none;
   flex-direction: column;
@@ -308,7 +312,8 @@ section { padding: clamp(64px, 8vw, 120px) 0; position: relative; }
 .mobile-nav .btn { margin-top: 24px; align-self: flex-start; }
 
 @media (max-width: 1080px) {
-  .nav { display: none; }
+  /* Scoped: the member bar's menu <ul> also carries the "nav" class */
+  .site-header .nav { display: none; }
   .menu-toggle { display: inline-flex; }
 }
 

@@ -177,6 +177,47 @@ body.layout-internal { background: #fff; }
 .layout-internal .site-footer p { color: rgba(255,255,255,.7); }
 .layout-internal .subhero h1 { color: #fff; margin-bottom: 0; }
 
+/* ---------- Internal repository (plugin markup, styled from the theme) ---------- */
+/* Folder rows: drag handle / folder icon, title and plus sign on one line */
+.layout-internal .internal-documents .accordion-toggle.folder {
+  display: flex; flex-wrap: nowrap; align-items: center; gap: 12px;
+}
+.layout-internal .internal-documents .accordion-toggle.folder > [id^="tipContainer"] {
+  flex: 1 1 auto; max-width: none; min-width: 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0;
+}
+.layout-internal .internal-documents .accordion-toggle.folder [id^="folderName-"] { min-width: 0; overflow-wrap: anywhere; }
+.layout-internal .internal-documents .accordion-toggle .drag-handle {
+  float: none; flex: none; align-self: stretch; min-height: 22px; margin-right: 0;
+}
+.layout-internal .internal-documents .accordion-toggle .plusminus {
+  flex: none; max-width: none; width: 18px; height: 18px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.layout-internal .internal-documents .accordion-toggle .plus,
+.layout-internal .internal-documents .accordion-toggle .minus { top: 0; left: 0; }
+/* Sub-folders (folder icon on the left): same single line */
+.layout-internal .internal-documents .accordion-toggle.subfolder_files,
+.layout-internal .internal-documents .accordion-toggle.subfolder_photos {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 33px;
+}
+.layout-internal .internal-documents .accordion-toggle.subfolder_files > [id^="tipContainer"],
+.layout-internal .internal-documents .accordion-toggle.subfolder_photos > [id^="tipContainer"] {
+  display: flex; align-items: center; gap: 10px; min-width: 0;
+}
+
+/* Photos: small hint above "Download all" (only rendered when a folder has photos) */
+.layout-internal .all_images_container + div + p::before {
+  content: "Tip: right-click a photo and choose \201C Download\201D  to save it.";
+  display: block;
+  margin-bottom: 6px; padding-left: 20px;
+  font-size: 13px; line-height: 1.5; font-style: italic;
+  color: var(--muted);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239A8978' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E") left center / 14px no-repeat;
+}
+
 /* Home: main starts under the transparent header */
 .page-home .site-main { padding-top: 0; }
 
