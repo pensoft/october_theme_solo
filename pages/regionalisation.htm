@@ -18,7 +18,7 @@ templates = "template1"
 description_limit = 0
 ==
 {% put styles %}
-<link rel="stylesheet" href="{{ 'assets/solo/regionalisation.page.css'|theme }}?v=20261004">
+<link rel="stylesheet" href="{{ 'assets/solo/regionalisation.page.css'|theme }}?v=20261012">
 {% endput %}
 
 {% partial 'site/subhero' title='Regionalisation of R&I Priorities' %}
@@ -128,5 +128,5 @@ description_limit = 0
 {% put bodyScripts %}
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
-<script src="{{ 'assets/js/regionalisation.js'|theme }}"></script>
+<script src="{{ 'assets/js/regionalisation.js'|theme }}?v=20261012"></script>
 {% endput %}

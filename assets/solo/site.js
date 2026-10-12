@@ -28,6 +28,31 @@
     });
   }
 
+  // Header search: the icon opens a search panel under the header (falls back to the /search link)
+  const searchToggle = document.querySelector('.search-toggle');
+  const searchPanel = document.getElementById('header-search');
+  if (searchToggle && searchPanel) {
+    const searchInput = searchPanel.querySelector('input[type="search"]');
+    const setSearchOpen = open => {
+      searchPanel.hidden = !open;
+      searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open && searchInput) searchInput.focus();
+    };
+    searchToggle.addEventListener('click', e => {
+      e.preventDefault();
+      setSearchOpen(searchPanel.hidden);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !searchPanel.hidden) {
+        setSearchOpen(false);
+        searchToggle.focus();
+      }
+    });
+    document.addEventListener('click', e => {
+      if (!searchPanel.hidden && !searchPanel.contains(e.target) && !searchToggle.contains(e.target)) setSearchOpen(false);
+    });
+  }
+
   // Mobile nav: collapsible groups (About + Partners)
   document.querySelectorAll('.mobile-nav .m-group').forEach(group => {
     const trig = group.querySelector('.m-trigger');

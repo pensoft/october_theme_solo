@@ -65,6 +65,9 @@
       <a href="/contact"{{ sec_contact ? ' class="active" aria-current="page"' : '' }}>Contact</a>
     </nav>
     <div class="nav-actions">
+      <a class="search-toggle{{ page_id == 'search' ? ' active' : '' }}" href="/search" aria-label="Search" aria-expanded="false" aria-controls="header-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </a>
       {% if not user %}
       <a class="btn btn-primary" href="/login">Login</a>
       {% endif %}
@@ -74,9 +77,26 @@
       </button>
     </div>
   </div>
+  {% if page_id != 'search' %}
+  <div class="header-search" id="header-search" hidden>
+    <div class="container">
+      <form action="/search" method="get" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <label for="header-search-q" class="sr-only">Search the SOLO website</label>
+        <input id="header-search-q" type="search" name="q" placeholder="Search the SOLO website" autocomplete="off" required>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
 </header>
 
 <div class="mobile-nav" role="dialog" aria-label="Mobile navigation">
+  <form class="m-search" action="/search" method="get" role="search">
+    <label for="mobile-search-q" class="sr-only">Search the SOLO website</label>
+    <input id="mobile-search-q" type="search" name="q" placeholder="Search the SOLO website" autocomplete="off" required>
+    <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+  </form>
   <div class="m-group">
     <button class="m-trigger" type="button">About {{ mcaret|raw }}</button>
     <div class="m-sub">

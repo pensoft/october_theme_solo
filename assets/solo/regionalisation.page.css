@@ -470,7 +470,7 @@
 }
 .reg-modal .modal-head .mh-left { display: flex; align-items: center; gap: 14px; }
 .reg-modal .modal-head .mh-flag { display: inline-flex; line-height: 0; }
-.reg-modal .modal-head h3 { font-size: 24px; letter-spacing: -0.02em; }
+.reg-modal .modal-head h3 { font-size: 24px; letter-spacing: -0.02em; color: #fff; }
 .reg-modal .modal-head .mh-region {
   display: inline-flex; align-items: center; gap: 7px;
   margin-top: 7px;

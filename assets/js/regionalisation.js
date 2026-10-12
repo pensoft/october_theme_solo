@@ -453,7 +453,7 @@
     var head = '<tr>' + PARAMS.map(function (p) {
       var cls = p.key === 'objective' ? ' class="c-obj"' : (p.key === 'stakeholders' ? ' class="c-stake"' : '');
       return '<th scope="col"' + cls + '>' + esc(p.label) + '</th>';
-    }).join('') + (hasNews ? '<th scope="col">News</th>' : '') + '</tr>';
+    }).join('') + (hasNews ? '<th scope="col">News article</th>' : '') + '</tr>';
     var body = rows.map(function (r) {
       return '<tr>' + PARAMS.map(function (p) {
         var v = r[p.key];
@@ -464,7 +464,7 @@
         if (p.key === 'stakeholders') cls.push('c-stake');
         return '<td' + (cls.length ? ' class="' + cls.join(' ') + '"' : '') + '>' + esc(v === '' ? '—' : v) + '</td>';
       }).join('') + (hasNews ? '<td>' + (/^https?:\/\//i.test(r.newsUrl)
-        ? '<a class="detail-news" href="' + esc(r.newsUrl) + '" target="_blank" rel="noopener">Read the news</a>'
+        ? '<a class="detail-news" href="' + esc(r.newsUrl) + '" target="_blank" rel="noopener">Learn more</a>'
         : '<span class="empty">—</span>') + '</td>' : '') + '</tr>';
     }).join('');
     return '<div class="detail-table-scroll"><table class="detail-table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>';
