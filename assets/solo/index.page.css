@@ -140,6 +140,7 @@
     background: linear-gradient(140deg, #2C160A, #5A2C12 50%, #8C5424);
   }
   .event-visual svg.terrain { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .event-visual img.cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
   .event-visual .date-chip {
     position: absolute; top: 32px; left: 32px;
     background: #FBF7F0;

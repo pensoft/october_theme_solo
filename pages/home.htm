@@ -44,7 +44,7 @@ function onStart(){
 }
 ?>
 ==
-{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/index.page.css'|theme }}?v=3">{% endput %}
+{% put styles %}<link rel="stylesheet" href="{{ 'assets/solo/index.page.css'|theme }}?v=4">{% endput %}
 
 {% set arrow %}<svg class="arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endset %}
 
@@ -154,7 +154,10 @@ function onStart(){
       <h2 id="featured-event-heading">Latest Events.</h2>
     </div>
     <article class="event-card" data-reveal data-reveal-delay="1">
-      <div class="event-visual">
+      <div class="event-visual{% if ev.cover_image %} has-cover{% endif %}">
+        {% if ev.cover_image %}
+        <img class="cover" src="{{ ev.cover_image.getThumb(1000, 1000, {mode: 'crop'}) }}" alt="{{ ev.cover_image.description ?: ev.title|striptags }}" loading="lazy" />
+        {% else %}
         <svg class="terrain" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <defs>
             <radialGradient id="g1" cx="30%" cy="30%" r="80%">
@@ -182,6 +185,7 @@ function onStart(){
             <circle cx="380" cy="60" r="3"/>
           </g>
         </svg>
+        {% endif %}
         {% if ev.start %}
         <time class="date-chip" datetime="{{ ev.start|date('Y-m-d') }}">
           <span class="day">{{ ev.start|date('d') }}</span>
