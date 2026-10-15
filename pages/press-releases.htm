@@ -73,7 +73,9 @@ function onStart(){
           <div class="ev-body">
             <h3>{{ record.name }}</h3>
             {% if record.category %}<div class="ev-meta"><span>{{ record.category.title }}</span></div>{% endif %}
+            {# Description hidden on request — uncomment to restore
             {% if record.description %}<div class="cms-content">{{ record.description|raw }}</div>{% endif %}
+            #}
           </div>
           <div class="ev-action">
             {% for link in record.link if link.url %}
