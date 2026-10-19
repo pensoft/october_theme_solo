@@ -394,7 +394,6 @@
 
 /* Country row header — spans that country's category rows. */
 .cmp-matrix .col-country {
-  position: sticky; left: 0; z-index: 1;
   vertical-align: middle;
   background: rgba(246,239,229,.05);
   border-right: 1px solid var(--m-line-2);
