@@ -542,7 +542,7 @@
   border-radius: var(--radius);
   padding: 16px;
 }
-.detail-chart img { display: block; width: 100%; height: auto; margin: 0 auto; }
+.detail-chart img { display: block; width: 100%; max-width: 560px; height: auto; margin: 0 auto; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 940px) {
